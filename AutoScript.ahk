@@ -523,13 +523,22 @@ IniWrite, %endUserNa%, %IniFilePath%, orderInfo, endUserNa
 return
 
 CheckIfFolderExists:
+if (RegExMatch(cpq, "(?:^00*)", quoteNumberCpq))
+{
 folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - CPQ-%cpq%
+} else if (RegExMatch(cpq, "(?:^[2].*)", quoteNumberSap))
+{
+folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - Quote %cpq%
+} else if (cpq != quoteNumberCpq || cpq != quoteNumbSap)
+{
+MsgBox, Invalid Quote
+}
 if FileExist(folderPath)
 	return
 if !FileExist(folderPath)
 	FileCreateDir, %folderPath%
 	run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\
-	Clipboard = SO | CPQ-%cpq% | PO %po% | %customer%	
+    Return
 return
 
 SaveBar:
