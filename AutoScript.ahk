@@ -329,12 +329,21 @@ IniRead, phone, %SelectedFile%, orderInfo, phone
 GuiControl,, phone, %phone%
 IniRead, email, %SelectedFile%, orderInfo, email
 GuiControl,, email, %email%
-IniRead, endUse, %SelectedFile%, orderInfo, endUse
-GuiControl,, endUse, %endUse%
-IniRead, notes, %SelectedFile%, orderInfo, notes
+
+IniRead, endUseEscaped, %SelectedFile%, orderInfo, endUse
+; Get back newline separated list.
+StringReplace, endUseDeescaped, endUseEscaped, ``n, `n, All
+StringReplace, endUseDeescaped, endUseDeescaped, ``r, `r, All
+GuiControl,, endUse, %endUseDeescaped%
+
+IniRead, notesEscaped, %SelectedFile%, orderInfo, notes
+; Get back newline separated list.
+StringReplace, notesDeescaped, notesEscaped, ``n, `n, All
+StringReplace, notesDeescaped, notesDeescaped, ``r, `r, All
 if % notes == "ERROR"
 	notes := 
-GuiControl,, notes, %notes%
+GuiControl,, notes, %notesDeescaped%
+
 IniRead, software, %SelectedFile%, orderInfo, software
 GuiControl,, software, %software%
 IniRead, serialNumber, %myinipath%\PO %po%.ini, orderInfo, serialNumber
@@ -518,8 +527,17 @@ IniWrite, %sapDate%, %IniFilePath%, orderInfo, sapDate
 IniWrite, %endUser%, %IniFilePath%, orderInfo, endUser
 IniWrite, %phone%, %IniFilePath%, orderInfo, phone
 IniWrite, %email%, %IniFilePath%, orderInfo, email
-IniWrite, %endUse%, %IniFilePath%, orderInfo, endUse
-IniWrite, %notes%, %IniFilePath%, orderInfo, notes
+
+	; Escape all newlines before writing it to ini file.
+	StringReplace, endUseEscaped, endUse, `n, ``n, All
+	StringReplace, endUseEscaped, endUseEscaped, `r, ``r, All
+	IniWrite, %endUseEscaped%, %IniFilePath%, orderInfo, endUse
+
+	; Escape all newlines before writing it to ini file.
+	StringReplace, notesEscaped, notes, `n, ``n, All
+	StringReplace, notesEscaped, notesEscaped, `r, ``r, All
+	IniWrite, %notesEscaped%, %IniFilePath%, orderInfo, notes
+
 IniWrite, %software%, %IniFilePath%, orderInfo, software
 IniWrite, %serialNumber%, %IniFilePath%, orderInfo, serialNumber
 if (software == 0)
@@ -657,13 +675,13 @@ return
 
 ^!v:: ; Show/Hide Order Info GUI
 DetectHiddenWindows, on
-if !WinActive(Order Info "ahk_class AutoHotkeyGUI")
+if !WinActive(Order Organizer "ahk_class AutoHotkeyGUI")
 {
-	WinActivate, Order Info ahk_class AutoHotkeyGUI, 
+	WinActivate, Order Organizer ahk_class AutoHotkeyGUI, 
 	;~ WinWaitActive, Order Info ahk_class AutoHotkeyGUI,
 	return
 }
-else if WinActive(Order Info "ahk_class AutoHotkeyGUI")
+else if WinActive(Order Organizer "ahk_class AutoHotkeyGUI")
 {
 	WinMinimize
 	return
