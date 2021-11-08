@@ -1,8 +1,7 @@
 ﻿#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-;~ #Include WatchFolder.ahk
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs ; Ensures a consistent starting directory.
+SetWorkingDir, C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Documents ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch Lazaro|Tucker Lincoln|Jawad Pashmi|Julie Sawicki|Mike Hughes|Steve Boyanoski"
@@ -15,34 +14,32 @@ salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch La
 . "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch"
-
 salesDirectors := "|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|N/A"
-
 salesCodes := "|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|N/A"
 
-myinipath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB
+; Set Order Organizer Path
+myinipath := A_WorkingDir 
 
-I_Icon = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico
-IfExist, %I_Icon%
-	Menu, Tray, Icon, %I_Icon%
-
-Menu, FileMenu, Add
+; Include Icon
+FileInstall, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico, A_WorkingDir, 1
 
 SetTitleMatchMode, 2
 
-orderInfo(){
-	global
 ;/******** GUI START ********\
+orderInfo(){
+    global
 Gui, destroy
+Gui -DPIScale
 Gui, Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, hWndhTxtOrderDetails23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer - SO# %soNumber%
 Gui, Font
 Gui, Color, 79b8d1
 Gui, Font, S9, Segoe UI Semibold
-Gui, Add, Button, xm+410 ym+10 w70 greadtheini, O&pen
+Gui, Add, Button, xm+525 ym+10 w70 greadtheini, O&pen
 Gui, Add, Button, x+25 w70 gSaveToIni, &Save
 Gui, Add, Button, x+25 w150 grestartScript, &New PO or Reload
+;******** Placeholder for search ********
 ; Gui Add, Edit, x+25 y22 w175 h20, Search
 Gui Add, Tab3, xm ym+30, Order Info|Checklist
 Gui Tab, 1
@@ -139,7 +136,6 @@ LV_Add(Col1, "End User Phone (zph)")
 ;~ Gui Add, Text, y+5, Phone - zph
 LV_Add(Col1, "End Use (zuse)")
 ;~ Gui Add, Text, y+5, End Use - zuse
-
 ;======== END KEYBOARD SHORTCUTS ========
 
 ;******** CHECKLIST GUI ********
@@ -195,6 +191,40 @@ Gui, Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
 ;~ Gui, add, Text, x60 y400 , Order Progress
 ;~ Gui, Add, Progress, w800 h25, 25
 ;******** END CHECKLIST GUI ********
+
+;======== KEYBOARD SHORTCUTS ========
+Gui Add, Listview, xm+525 ym+70 w215 h275 R13 grid ReadOnly, Value (Keyboard Shortcut)
+LV_ModifyCol(1,190)
+;~ LV_ModifyCol(2, 115)
+LV_Add(Col1, "CPQ (zpq)") ;"zpq")
+;~ Gui Add, Text,, CPQ - zpq
+LV_Add(Col1, "PO# (zpo)") ;,"zpo")
+;~ Gui Add, Text, y+5, PO# - zpo
+LV_Add(Col1, "SO# (zso)") ;,"zso")
+;~ Gui Add, Text, y+5, SO# - zso
+LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
+;~ Gui Add, Text, y+5, SOT Line# - zsot
+LV_Add(Col1, "Customer (zcust)") ;,"zcust")
+;~ Gui Add, Text, y+5, Customer - zcust
+LV_Add(Col1, "PO Value (zval)") ;,"zval")
+;~ Gui Add, Text, y+5, PO Value - zval
+LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
+;~ Gui Add, Text, y+5, Salesperson - zsal
+LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
+;~ Gui Add, Text, x775 y225, Customer Contact -
+;~ Gui Add, Text, y+5, zcon
+LV_Add(Col1, "Cust Email (zem)")
+;~ Gui Add, Text, y+5, Customer Email - 
+;~ Gui Add, Text, y+5, zem
+LV_Add(Col1, "System (zsys)")
+;~ Gui Add, Text, y+5, System - zsys
+LV_Add(Col1, "End User (zenu)")
+;~ Gui Add, Text, y+5, End User - zenu
+LV_Add(Col1, "End User Phone (zph)")
+;~ Gui Add, Text, y+5, Phone - zph
+LV_Add(Col1, "End Use (zuse)")
+;~ Gui Add, Text, y+5, End Use - zuse
+;======== END KEYBOARD SHORTCUTS ========
 
 Gui Show,w920 h485, Order Organizer SO# %soNumber%
 Gui, Submit, NoHide
@@ -299,21 +329,12 @@ IniRead, phone, %SelectedFile%, orderInfo, phone
 GuiControl,, phone, %phone%
 IniRead, email, %SelectedFile%, orderInfo, email
 GuiControl,, email, %email%
-
-IniRead, endUseEscaped, %SelectedFile%, orderInfo, endUse
-; Get back newline separated list.
-StringReplace, endUseDeescaped, endUseEscaped, ``n, `n, All
-StringReplace, endUseDeescaped, endUseDeescaped, ``r, `r, All
-GuiControl,, endUse, %endUseDeescaped%
-
-IniRead, notesEscaped, %SelectedFile%, orderInfo, notes
-; Get back newline separated list.
-StringReplace, notesDeescaped, notesEscaped, ``n, `n, All
-StringReplace, notesDeescaped, notesDeescaped, ``r, `r, All
+IniRead, endUse, %SelectedFile%, orderInfo, endUse
+GuiControl,, endUse, %endUse%
+IniRead, notes, %SelectedFile%, orderInfo, notes
 if % notes == "ERROR"
 	notes := 
-GuiControl,, notes, %notesDeescaped%
-
+GuiControl,, notes, %notes%
 IniRead, software, %SelectedFile%, orderInfo, software
 GuiControl,, software, %software%
 IniRead, serialNumber, %myinipath%\PO %po%.ini, orderInfo, serialNumber
@@ -400,6 +421,7 @@ GuiControl,, endUserNa, %endUserNa%
 return
 
 SaveToIni:
+Gosub, WriteIniVariables
 if (!cpq) || (!po)
 {
 	MsgBox, Please enter a quote and PO#.
@@ -412,7 +434,7 @@ if FileExist(IniFilePath) && (soNumber)
 	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, WriteIniVariables
-	gosub, SaveBar
+	; gosub, SaveBar
 	gosub, CheckIfFolderExists
 	return
 }
@@ -420,20 +442,20 @@ else if FileExist(IniFilePathWithSo)
 {
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, WriteIniVariables
-	gosub, SaveBar
+	; gosub, SaveBar
 	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
 {
 	gosub, WriteIniVariables
-	gosub, SaveBar
+	; gosub, SaveBar
 	gosub, CheckIfFolderExists
 	return
 }
 else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 {
 	gosub, WriteIniVariables
-	gosub, SaveBar
+	; gosub, SaveBar
 	gosub, CheckIfFolderExists
 	return
 }
@@ -496,17 +518,8 @@ IniWrite, %sapDate%, %IniFilePath%, orderInfo, sapDate
 IniWrite, %endUser%, %IniFilePath%, orderInfo, endUser
 IniWrite, %phone%, %IniFilePath%, orderInfo, phone
 IniWrite, %email%, %IniFilePath%, orderInfo, email
-
-	; Escape all newlines before writing it to ini file.
-	StringReplace, endUseEscaped, endUse, `n, ``n, All
-	StringReplace, endUseEscaped, endUseEscaped, `r, ``r, All
-	IniWrite, %endUseEscaped%, %IniFilePath%, orderInfo, endUse
-
-	; Escape all newlines before writing it to ini file.
-	StringReplace, notesEscaped, notes, `n, ``n, All
-	StringReplace, notesEscaped, notesEscaped, `r, ``r, All
-	IniWrite, %notesEscaped%, %IniFilePath%, orderInfo, notes
-
+IniWrite, %endUse%, %IniFilePath%, orderInfo, endUse
+IniWrite, %notes%, %IniFilePath%, orderInfo, notes
 IniWrite, %software%, %IniFilePath%, orderInfo, software
 IniWrite, %serialNumber%, %IniFilePath%, orderInfo, serialNumber
 if (software == 0)
@@ -543,10 +556,10 @@ return
 CheckIfFolderExists:
 if (RegExMatch(cpq, "(?:^00*)", quoteNumberCpq))
 {
-folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - CPQ-%cpq%
+folderPath = C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Documents\PO %po% %customer% - CPQ-%cpq%
 } else if (RegExMatch(cpq, "(?:^[2].*)", quoteNumberSap))
 {
-folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - Quote %cpq%
+folderPath = C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Documents\PO %po% %customer% - Quote %cpq%
 } else if (cpq != quoteNumberCpq || cpq != quoteNumbSap)
 {
 MsgBox, Invalid Quote
@@ -555,78 +568,45 @@ if FileExist(folderPath)
 	return
 if !FileExist(folderPath)
 	FileCreateDir, %folderPath%
-	run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\
+	run, C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Documents\
     Return
 return
 
-SaveBar:
-WinGetPos x, y, Width, Height, Order Organizer
-    x += 350
-	y += 50
-myRange:=90
-Gui, 2: -Caption
-Gui, 2:+AlwaysOnTop
-Gui, 2: Color, default
-Gui, 2: Font, S8 cBlack, Segoe UI Semibold
-Gui, 2: Add, Text, x0 y1 w208 h16 +Center, Saving
-Gui, 2: Add,Progress, x10 y20 w190 h20 cblue vPro1 Range0-%myRange%,0
-;~ Gui,1: Add, Button, x10 w150 h30 glooping, Loop over list
-Gui, 2: Show, w210 h50 x847 y313
-Gosub, Looping
-Return
+; SaveBar:
+; WinGetPos x, y, Width, Height, Order Info
+;     x := x + 350
+; 	y := y + 30
+; myRange:=90
+; Gui, 2: -Caption
+; Gui, 2:+AlwaysOnTop
+; Gui, 2: Color, default
+; Gui, 2: Font, S8 cBlack, Segoe UI Semibold
+; Gui, 2: Add, Text, x0 y1 w208 h16 +Center, Saving
+; Gui, 2: Add,Progress, x10 y20 w190 h20 cblue vPro1 Range0-%myRange%,0
+; ;~ Gui,1: Add, Button, x10 w150 h30 glooping, Loop over list
+; Gui, 2: Show, x%X% y%Y% w210 h50 
+; Gosub, Looping
+; Return
 
-Looping:
-List1:=[1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0]
-Pro1:=0
-GuiControl,2:,Pro1,% Pro1
-Temp:=""
-Loop, 20
-	{
-		Temp.=List1[A_Index]
-		Pro1 +=10
-		GuiControl,2:,Pro1,% Pro1
-		sleep, 20
-	}
-Gui, 2: Destroy
-Return
+; Looping:
+; List1:=[1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0]
+; Pro1:=0
+; GuiControl,2:,Pro1,% Pro1
+; Temp:=""
+; Loop, 20
+; 	{
+; 		Temp.=List1[A_Index]
+; 		Pro1 +=10
+; 		GuiControl,2:,Pro1,% Pro1
+; 		sleep, 20
+; 	}
+; Gui, 2: Destroy
+; Return
 }
 
 orderInfo()
 
-; myFunc(path, changes) {
-;     for k, change in changes
-;         ; 1 means new file was added
-;         if (change.action = 1) {
-;             gosub doStuff
-;             return
-;         }
-; }
-
-;/******** OPEN QUOTE AND GET INFO ********\
-; WatchFolder("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Sales Quotes", "myFunc", , Watch := 1)
-; return
-
-;~ myFunc(path, changes)
-
-; doStuff:
-; nitroPath := "C:\Program Files\Nitro\Pro\13\NitroPDF.exe"
-; adobePath := "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"
-; SetTitleMatchMode 2
-; myPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Sales Quotes"
-; Sleep, 250
-; Loop %myPath%\*.*               
-; If ( A_LoopFileTimeModified >= Time )
-; 	Time := A_LoopFileTimeModified, attachedFile := A_LoopFileName
-; 	Run %nitroPath% "%myPath%\%attachedFile%"
-	
-; 	KeyWait, F14, d
-; 	FileDelete, %myPath%\%attachedFile%
-; return
-
 ;******** HOTSTRINGS (TEXT EXPANSION) ********
-#c::run calc.exe ; Run calculator
-F13::Send, +{F7} ; Next line in item Conditions SAP SOs
-;----- Order keyboard shortcuts -----
 ::zpo::
 Send, %po%
 return
@@ -672,1357 +652,331 @@ return
 ::zuse::
 Send, %endUse%
 return
-::zsot::
-Send, %sot% ;^{Left}{BackSpace}
-return
-:O:zcod::Close Out Document
-::zcem::Contracts Email - 
-::zwin::
-Send WIN Form - CPQ-%cpq%
-return
-::ejim::10246281
-;----- End Order keyboard shortcuts -----
 
-::emlinv::E-MAIL INVOICES TO:{space}
-::sontc::Hi ,`nPlease see the SO notification below.`n`nThanks{up 4}{left}
-::tenaa::THERMO ELECTRON NORTH AMERICA LLC
-::zsig:: ; Default Email Signature
-Send, !e2as{Enter}{down 10}{BackSpace 2}
-return
-
-:O:etid::everytime2Die{!} ; O at the beginning removes trailing space
-:O:igans::I'vegotanewshirt1996{!} ; O at the beginning removes trailing space
-::mttf::matthew.terbeek@thermofisher.com
-
-::shrug::¯\_(ツ)_/¯ 
-::winf::
-Send, Hi %salesPerson%^+{left}{delete}{BackSpace},`nGreat order{!} Thanks for filling out the WIN form.`n`nRegards{up 3}{left}
-return
-::sohu::Hi ,`nThe SO has been updated.`n`nThanks{up 3}{left}
-::orn::
-Send, Order Notice - %customer% - $%poValue%
-return
-::ccpp::
-InputBox, so, Enter SO#,
-Sleep, 1000
-Send, SO{#} %so%{Tab}Hello,`nCan you provide an update on when SO{#}{Space}%so%{Space}will deliver?`n`nThanks{up 4}{left}
-return
-::sjr::PLEASE RETURN THESE ITEMS PREPAID TO:`nTHERMO FISHER SCIENTIFIC`nRMA #: XXXXXXX`n355 RIVER OAKS PARKWAY`nSAN JOSE, CA 95134{`n 2}PLEASE INCLUDE A COMPILED DECONTAMINATION FORM & A COPY OF THIS RETURN AUTHORIZATION
-::rht::ORIGINAL SO# XXXXXX`nITEMS CONFIRMED DOWN BY FSE XXXXXXX{`n 2}REPLACEMENT SO# XXXXXX
 ;******** END HOTSTRINGS (TEXT EXPANSION) ********
-
-ToAttachments:
-gosub,ToDisplaySap
-Send, ^+{Tab}!{down}
-Return
-
-^\:: ;To main attachments Button in SAP
-Gosub, ToAttachments
-return
-
-#F3:: ; Search SOT by line#
-Send, ^g
-Sleep, 750
-Send, ^a{BackSpace}a%sot%{Enter}
-return
-
-!2:: ; Forward SW Licenses
-gosub, ForwardEmail
-Send, {tab 4}Hi%firstname%`nPlease find the license attached for SO{#}{Space}%soNumber%.`n`nThanks{pgup}
-return
-
-^!c:: ; Import Clip
-gosub, ImportClip
-return
-
-^#c:: ; Save Clip
-gosub, SaveClip
-return
 
 ^!v:: ; Show/Hide Order Info GUI
 DetectHiddenWindows, on
-if !WinActive(Order Organizer "ahk_class AutoHotkeyGUI")
+if !WinActive(Order Info "ahk_class AutoHotkeyGUI")
 {
-	WinActivate, Order Organizer ahk_class AutoHotkeyGUI, 
+	WinActivate, Order Info ahk_class AutoHotkeyGUI, 
 	;~ WinWaitActive, Order Info ahk_class AutoHotkeyGUI,
 	return
 }
-else if WinActive(Order Organizer "ahk_class AutoHotkeyGUI")
+else if WinActive(Order Info "ahk_class AutoHotkeyGUI")
 {
 	WinMinimize
 	return
 }
 return
 
-!#t:: ; Search Outlook Tasks
-Send, ^e
-KeyWait, enter, down
-Send, !js2f
+kellerDropDown:
+GuiControl, Choose, salesManager, Anjou Keller
+GuiControl, ChooseString, managerCode, 202375
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, N/A
+GuiControl, ChooseString, directorCode, N/A
+Gui, Submit, NoHide
 return
 
-^!s:: ;Save to SO Docs
-gosub, SaveToSoDocs
+mccormackDropDown:
+GuiControl, Choose, salesManager, Doug McCormack
+GuiControl, ChooseString, managerCode, 1261
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, N/A
+GuiControl, ChooseString, directorCode, N/A
+Gui, Submit, NoHide
 return
 
-#5:: ; -------- Navigate to Exped Def 5 Day ---------
-Send, fah{left 12}
+hewittDropDown:
+GuiControl, Choose, salesManager, Joe Hewitt
+GuiControl, ChooseString, managerCode, 98866
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, N/A
+GuiControl, ChooseString, directorCode, N/A
+Gui, Submit, NoHide
 return
 
-!':: ; Seach SAP By PO#
-Send, {down 6}
-Send, {Tab}{Enter}
+foelsDropDown:
+GuiControl, Choose, salesManager, Natalie Foels
+GuiControl, ChooseString, managerCode, 96715
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, N/A
+GuiControl, ChooseString, directorCode, N/A
+Gui, Submit, NoHide
 return
 
-!#u:: ; Update Order Status
-SetTitleMatchMode, 2
-Send, !ghs
-WinWait, Header Data, 
-IfWinNotActive, Header Data, , WinActivate, Header Data, 
-WinWaitActive, Header Data,
-Send, ^{tab 4}{enter}
-WinWait, Change Status, 
-IfWinNotActive, Change Status, , WinActivate, Change Status, 
-WinWaitActive, Change Status,
-Send, ^{tab 4}{Down}{Space}
+secondDropDown:
+GuiControl, Choose, salesManager, Tonya Second
+GuiControl, ChooseString, managerCode, 95410
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, Maroun El Khoury
+GuiControl, ChooseString, directorCode, 1076
+Gui, Submit, NoHide
 return
 
-^#h:: ;hhbr
-gosub WaitInbox
-gosub, GetSubjectFromOutlook
-ClipWait, 1
-RegExMatch(Clipboard, "(\d{7})", cshSoNumber)
-SendMode, Event
-SetKeyDelay, 70
-Sleep, 500
-gosub, OpenSAPWindowForCsh
-WinActivate, Order %cshSoNumber%,,ClipAngel,
-Send, !ghd
-WinWait, Change Standard Order %cshSoNumber%: Header Data,,ClipAngel,
-Send, ^c
-ClipWait, 1
-cshPo := Clipboard
-Send, {F3}
-gosub, WaitCshSO
-gosub WaitInbox
-Send, ^!s
-gosub WaitSaveAs
-Send, PO %cshPo%{Down}{Enter}CSH Removal Email
-gosub WaitSaveAs
-Send, !s
-gosub WaitCshSO
-Send, ^{tab 3}!{Down}
-Sleep, 500
-Send, {Down 2}{Enter}
-gosub WinWaitAttachmentList
-SendMode, Input
-Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}{tab 6}{Space}{Tab}{Down}{Enter}
-KeyWait F14, d ; Navigate to CSH Removal Email
-gosub WinWaitAttachmentList
-Send, ^{Tab}{Enter}
-gosub WaitCshSO
-Sleep, 1000
-Send, ^{tab 4}{down}{tab}{Delete}{Enter}
-gosub, WaitCshSO
-Send, ^{tab 3}!{Down}{c 2}{Enter}
-Sleep, 2000
-gosub, WaitInbox
-Send, ^+r
-gosub, GetSenderOrToFieldFromOutlook
-Send, Hi%firstname%,`nThe hold has been removed.`n`nThanks ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
+mcfaddenDropDown:
+GuiControl, Choose, salesManager, Joe McFadden
+GuiControl, ChooseString, managerCode, 202610
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, N/A
+GuiControl, ChooseString, directorCode, N/A
+Gui, Submit, NoHide
 return
 
-; Save OA Checklist
-!#k::
-Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist - TEMPLATE.docx
-Sleep, 200
-Send, {f12}
-WinWait, Save As, 
-IfWinNotActive, Save As, , WinActivate, Save As, 
-WinWaitActive, Save As,
-Sleep, 1000
-Send, +{tab 3}{Home}{down 2}
-Send, {Enter}
-Send, {tab}{space}
-Send, {Enter}
-Send, {tab 2}{End}^{Left}{Left}^+{Left}
-SendRaw, SO#
-Send, {Space}
+butlerDropDown:
+GuiControl, Choose, salesManager, John Butler
+GuiControl, ChooseString, managerCode, 1026
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, Maroun El Khoury
+GuiControl, ChooseString, directorCode, 1076
+Gui, Submit, NoHide
 return
 
-^Numpad4::
-gosub, CopySOFromSubjectInOutlook
+kleinDropDown:
+GuiControl, Choose, salesManager, Richard Klein
+GuiControl, ChooseString, managerCode, 1042
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, Maroun El Khoury
+GuiControl, ChooseString, directorCode, 1076
+Gui, Submit, NoHide
 return
 
-!#w:: ; Save from Word to SO Docs
-Send, {f12}
-WinWait, Save As, 
-IfWinNotActive, Save As, , WinActivate, Save As, 
-WinWaitActive, Save As,
-Sleep, 1000
-Send, +{tab 3}{Home}{down 2}
-Send, {Enter}
-Sleep, 500
-Send, {tab}{space}
+nadjieDropDown:
+GuiControl, Choose, salesManager, Zee Nadjie
+GuiControl, ChooseString, managerCode, 96695
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, N/A
+GuiControl, ChooseString, directorCode, N/A
+Gui, Submit, NoHide
 return
 
-WaitSaveAs:
-WinWait, Save As, 
-IfWinNotActive, Save As, , WinActivate, Save As, 
-WinWaitActive, Save As,
+chenDropDown:
+GuiControl, Choose, salesManager, Ray Chen
+GuiControl, ChooseString, managerCode, 202756
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, Jimmy Yuk
+GuiControl, ChooseString, directorCode, 202611
+Gui, Submit, NoHide
 return
 
-;~ JS / Chrome Test
-;~ WinActivate, ahk_exe chrome.exe
-
-OpenEmailAttachments:
-Emails := ComObjActive("Outlook.Application").ActiveExplorer.Selection
-for Email in Emails
-	for Attachment in Email.Attachments
-		 if !(Attachment.FileName ~= "^image\d+") ; exlude image files often created by embedded images in email signatures
-		{
-			Attachment.SaveAsFile(A_Temp "\" Attachment.FileName)
-			Run, % A_Temp "\" Attachment.FileName
-		}
-WinWaitActive, % Attachment.Filename
+porchDropDown:
+GuiControl, Choose, salesManager, Randy Porch
+GuiControl, ChooseString, managerCode, 1041
+Gui, Submit, NoHide
+GuiControl, Choose, salesDirector, Maroun El Khoury
+GuiControl, ChooseString, directorCode, 1076
+Gui, Submit, NoHide
 return
 
-/*
--------- MONITOR COUNT --------
------------------------------------
-------------------------------------------
-	*/
+findSales:
+;=============== KELLER ===================
+if salesPerson = Julie Sawicki
+    gosub, kellerDropDown
+if salesPerson = Justin Carder 
+    gosub, kellerDropDown
+if salesPerson = Brent Boyle
+    gosub, kellerDropDown
+if salesPerson = Luke Marty
+    gosub, kellerDropDown
+if salesPerson = Aeron Avakian 
+    gosub, kellerDropDown
+if salesPerson = Jon Needels
+    gosub, kellerDropDown
+if salesPerson = Brian Dowe
+    gosub, kellerDropDown
+if salesPerson = Lisa Kasper
+    gosub, kellerDropDown
+if salesPerson = John Bailey
+    gosub, kellerDropDown
+if salesPerson = Aeron Avakian
+    gosub, kellerDropDown
+if salesPerson = Luke Marty
+    gosub, kellerDropDown
+if salesPerson = Brandon Markle
+    gosub, kellerDropDown
+;=============== END KELLER ===================
 
-	SysGet, MonitorCount, MonitorCount
-	SysGet, MonitorPrimary, MonitorPrimary
-	MsgBox, Monitor Count:`t%MonitorCount%`nPrimary Monitor:`t%MonitorPrimary%
-	Loop, %MonitorCount%
-	{
-		SysGet, MonitorName, MonitorName, %A_Index%
-		SysGet, Monitor, Monitor, %A_Index%
-		SysGet, MonitorWorkArea, MonitorWorkArea, %A_Index%
-		MsgBox, Monitor:`t#%A_Index%`nName:`t%MonitorName%`nLeft:`t%MonitorLeft% (%MonitorWorkAreaLeft% work)`nTop:`t%MonitorTop% (%MonitorWorkAreaTop% work)`nRight:`t%MonitorRight% (%MonitorWorkAreaRight% work)`nBottom:`t%MonitorBottom% (%MonitorWorkAreaBottom% work)
-	}
+;============ NADJIE ================
+if salesPerson = Jawad Pashmi
+    gosub, nadjieDropDown
+if salesPerson = Navette Shirakawa
+    gosub, nadjieDropDown
+if salesPerson = Alicia Arias
+    gosub, nadjieDropDown
+if salesPerson = Gabriel Mendez
+    gosub, nadjieDropDown
+if salesPerson = Rhonda Oesterle
+    gosub, nadjieDropDown
+if salesPerson = Alexander James
+    gosub, nadjieDropDown
+if salesPerson = Shijun Sheng
+    gosub, nadjieDropDown
+if salesPerson = Brian Luckenbill
+    gosub, nadjieDropDown
+if salesPerson = Amy Allgower
+    gosub, nadjieDropDown
+if salesPerson = Michael Burnett
+    gosub, nadjieDropDown
+;============ END NADJIE ================
 
-	X := 250, Y := 250 ; Starting position for the Gui on your main monitor
-	CoordMode, Mouse, Screen
-	MouseGetPos, MX, MY
-	If (MX > A_ScreenWidth)
-		X += A_ScreenWidth
-	Gui, Show, x%X% y%Y% w300 h300
-	return
+;========== DOUG MCCORMACK =================
+if salesPerson = Mark Krigbaum
+    gosub, mccormackDropDown
+if salesPerson = Samantha Stikeleather
+    gosub, mccormackDropDown
+if salesPerson = Jeff Weller
+    gosub, mccormackDropDown
+if salesPerson = Jerry Holycross
+    gosub, mccormackDropDown
+if salesPerson = Dan Ciminelli
+    gosub, mccormackDropDown
+if salesPerson = Theresa Borio
+    gosub, mccormackDropDown
+if salesPerson = Cynthia Spittler
+    gosub, mccormackDropDown
+if salesPerson = Fred Simpson
+    gosub, mccormackDropDown
+if salesPerson = Gwyn Trojan
+    gosub, mccormackDropDown
+if salesPerson = Nick Hubbard
+    gosub, mccormackDropDown
+if salesPerson = Kristen Luttner
+    gosub, mccormackDropDown
+;========== END DOUG MCCORMACK =================
 
-	; ------------------------------------------
+;=========== HEWITT ============
+if salesPerson = Douglas Sears
+    gosub, hewittDropDown
+if salesPerson = Melissa Chandler
+    gosub, hewittDropDown
+if salesPerson = Hillary Tennant
+    gosub, hewittDropDown
+if salesPerson = Don Rathbauer
+    gosub, hewittDropDown
+if salesPerson = Tucker Lincoln
+    gosub, hewittDropDown
+if salesPerson = Joel Stradtner
+    gosub, hewittDropDown
+if salesPerson = Stephanie Koczur
+    gosub, hewittDropDown
+if salesPerson = Mike Hughes
+    gosub, hewittDropDown
+;=========== END HEWITT ============
 
-	!+a:: ; Attach last file inside
-		Send, !e2af{Enter}
-	return
+;============ FOELS ================
+if salesPerson = Larry Bellan
+    gosub, foelsDropDown
+if salesPerson = Kevin Clodfelter
+    gosub, foelsDropDown
+if salesPerson = Brian Thompson
+    gosub, foelsDropDown
+if salesPerson = Rashila Patel
+    gosub, foelsDropDown
+if salesPerson = Bill Balsanek
+    gosub, foelsDropDown
+if salesPerson = Chuck Costanza
+    gosub, foelsDropDown
+if salesPerson = Karl Kastner
+    gosub, foelsDropDown
+if salesPerson = Bob Riggs
+    gosub, foelsDropDown
+if salesPerson = Drew Smillie
+    gosub, foelsDropDown
+if salesPerson = Crystal Flowers
+    gosub, foelsDropDown
+;============ END FOELS ================
 
-	!#a:: ; Attach last file pop out
-		Send, !haf{Enter}
-	return
+;========= SECOND ==============
+if salesPerson = Helen Sun
+    gosub, secondDropDown
+if salesPerson = Steven Danielson
+    gosub, secondDropDown
+if salesPerson = Dominique Figueroa
+    gosub, secondDropDown
+if salesPerson = Jonathan McNally
+    gosub, secondDropDown
+if salesPerson = Yan Chen
+    gosub, secondDropDown
+if salesPerson = Katianna Pihakari
+    gosub, secondDropDown
+if salesPerson = Timothy Johnson
+    gosub, secondDropDown
+;========= END SECOND ==============
 
-	; ***** FUNCTIONS ***** | ***** FUNCTIONS ***** | ***** FUNCTIONS***** | ***** FUNCTIONS ***** 
-	orderFocus() ; Display documents button on SAP Standard Order Page
-	{
-		ControlFocus, Button1, Change Standard Order %soNumber%,
-	}
-	return
+;========= MCFADDEN ==============
+if salesPerson = May Chou
+    gosub, mcfaddenDropDown
+if salesPerson = Steve Boyanoski
+    gosub, mcfaddenDropDown
+if salesPerson = Mark Woodworth
+    gosub, mcfaddenDropDown
+if salesPerson = Murray Fryman
+    gosub, mcfaddenDropDown
+if salesPerson = Lorraine Foglio
+    gosub, mcfaddenDropDown
+if salesPerson = Lauren Fischer
+    gosub, mcfaddenDropDown
+;========= END MCFADDEN ==============
 
-	toMiddle() ; To the middle section of SAP Standard Order Page
-	{
-		orderWindowActivate()
-		Send, ^{Tab 3}
-	}
-	return
+;=========== BUTLER ==========
+if salesPerson = Andrew Clark
+    gosub, butlerDropDown
+if salesPerson = Giovanni Pallante
+    gosub, butlerDropDown
+if salesPerson = David Kage
+    gosub, butlerDropDown
+if salesPerson = David Scott
+    gosub, butlerDropDown
+if salesPerson = Susan Gelman
+    gosub, butlerDropDown
+if salesPerson = Cari Randles
+    gosub, butlerDropDown
+if salesPerson = Sean Bennett
+    gosub, butlerDropDown
+;=========== END BUTLER ==========
 
-	orderWindowActivate() ; Activate SAP Change Order Window
-	{
-		WinActivate, Change Standard Order %soNumber%, 
-	}
-	return
+;=========== KLEIN ==========
+if salesPerson = Susan Bird
+    gosub, kleinDropDown
+if salesPerson = Jerry Pappas
+    gosub, kleinDropDown
+if salesPerson = Jie Qian
+    gosub, kleinDropDown
+if salesPerson = Joe Bernholz
+    gosub, kleinDropDown
+if salesPerson = Yuriy Dunayevskiy
+    gosub, kleinDropDown
+if salesPerson = Nelson Huang
+    gosub, kleinDropDown
+;=========== END KLEIN ==========
 
-	; ***** END FUNCTIONS ***** | ***** END FUNCTIONS ***** | ***** END FUNCTIONS***** | ***** END FUNCTIONS ***** 
+;=========== CHEN ==========
+if salesPerson = Haris Dzaferbegovic
+    gosub, chenDropDown
+if salesPerson = Donna Zwirner
+    gosub, mccormackDropDown
+;=========== END CHEN ==========
 
-	; ***** LABELS ***** | ***** LABELS ***** | ***** LABELS ***** | ***** LABELS ***** 
+;=========== PORCH ==========
+if salesPerson = Todd Stoner
+    gosub, porchDropDown
+if salesPerson = Jonathan Ferguson
+    gosub, porchDropDown
+if salesPerson = Nick Duczak
+    gosub, porchDropDown
+if salesPerson = Gerald Koncar
+    gosub, porchDropDown
+;=========== END PORCH ==========
 
-	WaitSpin:
-		Loop, ;Wait for mouse to not spin
-		{
-			if (A_Cursor = "AppStarting")
-			{
-				Loop, 
-				{
-					; MsgBox, In the loop
-					if !(A_Cursor = "AppStarting")
-						Break
-				}
-			}
-		}
-	Return
-
-	WaitArrow:
-		Loop, ;Wait for mouse to be arrow
-		{
-			Sleep, 500
-			if (A_Cursor = "Arrow")
-				Break
-		}
-	return
-
-	OrderFocus:
-		ControlFocus, Button1, Change Standard Order %soNumber%,
-	return
-
-	toMiddle:
-		gosub, OrderWindowActivate
-		Send, ^{Tab 3}
-	return
-
-	OrderWindowActivate:
-		WinActivate, Change Standard Order %soNumber%, 
-	return
-
-	ToDisplaySap:
-		ControlFocus, Button1, Standard Order
-	return
-
-	ImportClip:
-		DetectHiddenWindows, On
-		WinActivate, ClipAngel
-		SendMode, event
-		SetKeyDelay, 40
-		Send, {AltDown}{AltUp}{AltDown}{AltUp}
-		Send, {Right 2}{up 3}{Enter}
-	return
-
-	SaveClip:
-		DetectHiddenWindows, On
-		WinActivate, ClipAngel
-		SendMode, event
-		SetKeyDelay, 40
-		Send, ^a{AltDown}{AltUp}{AltDown}{AltUp}
-		Send, {Right 2}{up 4}{Enter}
-	return
-
-	CopySOFromSubjectInOutlook:
-		gosub, GetSubjectFromOutlook
-		ClipWait, 1
-		RegExMatch(Clipboard, "(\d{7})", soFromOutlook)
-		Clipboard := soFromOutlook
-	return
-
-	ForwardEmail:
-		WinActivate, Outlook
-		olApp := ComObjCreate("Outlook.Application")
-		olForward := olApp.ActiveExplorer.Selection.Item(1)
-		olForward := olForward.Forward
-		olForward.Display ; Remove to work in background
-	return
-
-	SaveToSoDocs: ; Go to SO Docs
-		Send, {f12}
-		WinWaitActive, Save As,
-		Send, !d+{tab 10}{Home}{down 2}{ENTER}{Tab 3}
-	return
-
-	GetSubjectFromOutlook:
-		; Get the subject of the active item in Outlook. Works in both the main window and
-		; if the email is open in its own window.
-		olApp := ComObjActive("Outlook.Application")
-		olNamespace := olApp.GetNamespace("MAPI")
-		; Get the active window so we can determine if an Explorer or Inspector window is active.
-		Window := olApp.ActiveWindow 
-		if (Window.Class = 34) { ; 34 = An Explorer object. (The Outlook main window)
-			Selection := Window.Selection
-			if (Selection.Count > 0)
-				Clipboard := Selection.Item(1).Subject
-			return
-		}
-		else
-			return
-
-	GetSenderOrToFieldFromOutlook:
-		Clipboard := % COMObjActive("Outlook.Application").ActiveExplorer.Selection.Item(1).SenderName
-		RegExMatch(Clipboard, "\s([a-zA-Z]*)", firstName)
-	return
-
-	; Find order by PO# in SAP
-	!#f::
-		send, {tab 7}{enter}
-	return
-
-	WaitOrderSO:
-		SetTitleMatchMode, 2
-		WinActivate, Order %soNumber%,,ClipAngel,
-		WinWaitActive, Order %soNumber%,,ClipAngel,
-	return
-
-	WaitCshSO:
-		WinActivate, Order %cshSoNumber%,,ClipAngel,
-		WinWaitActive, Order %cshSoNumber%,,ClipAngel,
-	Return
-
-	WaitHeaderData:
-		SetTitleMatchMode, 2
-		WinWait, Change Standard Order %soNumber%: Header Data,,ClipAngel,
-		IfWinNotActive, Change Standard Order %soNumberso%: Header Data,,ClipAngel, WinActivate, Change Standard Order %soNumber%: Header Data, 
-			WinWaitActive, Change Standard Order %soNumber%: Header Data,,ClipAngel,
-	return
-
-	WaitStandardOrder:
-		SetTitleMatchMode, 2
-		WinWait, Change Standard Order %soNumber%: Overview, 
-		IfWinNotActive, Change Standard Order %soNumber%: Overview, , WinActivate,Change Standard Order %soNumber%: Overview, 
-			WinWaitActive, Change Standard Order %soNumber%: Overview,
-	return
-
-	addAttachment: ; Add Attachment
-		Send, !{down}
-		Sleep, 1000
-		Send, a
-		Sleep, 2000
-		Send, ^+{tab 3}{left 14}{enter}{down}{enter}
-		Sleep, 500
-		Send ^4
-		Sleep, 500
-		Send, !#s
-	return
-
-	WaitInbox:
-		WinWait, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
-		IfWinNotActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, , WinActivate, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
-			WinWaitActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
-	return
-
-	; ***** END LABELS ***** | ***** END LABELS ***** | ***** END LABELS ***** | ***** END LABELS ***** 
-
-	^1:: ; Create Attachment
-		Gosub, OpenSAPWindow
-		Gosub, ToAttachments
-		Sleep, 500
-		Send, c{Enter}
-		Gosub, WinWaitImportFile
-		Gosub, ToSoDocAttachments
-		Send, !n
-		Send, po{Space}%po%
-		Sleep, 500
-		Send, {Down}{Enter}
-		Sleep, 1000
-		Send, po
-		Sleep, 500
-		Send, {Down}{Enter}
-		Sleep, 1000 
-		Send, ^{tab 3}
-		Sleep, 1500
-		Send, !{Down}
-		Sleep, 500
-		Send, {down}a
-		gosub, WinWaitAttachmentList
-		Send, ^+{tab 3}{left 14}{enter}{down}{enter}
-		WinWaitActive, Import file
-		Send, !n
-		gosub, WinWaitImportFile
-		Send, cpq{Down}{enter}
-		Sleep, 2000
-		Send, ^+{tab}{left 14}{enter}{down}{enter}
-		gosub, WinWaitImportFile
-		Send, !n
-		Send, d
-		Sleep, 200
-		Send, {down}{enter}
-		Sleep, 2000
-		Send, ^+{tab}{left 14}{enter}
-		Sleep, 200
-		Send, {down}{enter}
-		gosub, WinWaitImportFile
-		Send, !n
-		Send, d
-		Sleep, 200
-		Send, {down 2}{enter}
-	Return
-
-	ToSoDocAttachments:
-		WinWaitActive, Import file
-		ControlFocus, ToolbarWindow322, Import file
-		Send {space}
-		Sleep 1000
-		Send {tab}so{Enter}
-		Sleep, 500
-	Return
-
-	; Send, {tab 6}+{Space}
-	; Sleep, 1000
-	; Send, {Tab}{down}{Enter}
-	; Sleep, 1000
-	; Send, !n
-	; Send, po{Space}%po%
-	; Sleep, 200
-	; Send, {Down}{Enter}
-	; Sleep, 1000
-	; Send, po
-	; Sleep, 500
-	; Send, {Down}{Enter}
-	; Sleep, 1000 
-	; Send, ^{tab 3}
-	; Sleep, 1500
-	; Send, !{Down}
-	; Sleep, 500
-	; Send, {down}a
-	; gosub, WinWaitAttachmentList
-	; Send, ^+{tab 3}{left 14}{enter}{down}{enter}
-	; gosub, WinWaitImportFile
-	; Send, !n
-	; gosub, WinWaitImportFile
-	; Send, cpq-{Down}{enter}
-	; Sleep, 2000
-	; Send, ^+{tab}{left 14}{enter}{down}{enter}
-	; gosub, WinWaitImportFile
-	; Send, !n
-	; Send, d
-	; Sleep, 200
-	; Send, {down}{enter}
-	; Sleep, 2000
-	; Send, ^+{tab}{left 14}{enter}
-	; Sleep, 200
-	; Send, {down}{enter}
-	; gosub, WinWaitImportFile
-	; Send, !n
-	; Send, d
-	; Sleep, 200
-	; Send, {down 2}{enter}
-	return
-
-	WinWaitImportFile:
-		WinWait, Import file, 
-		WinActivate, Import file, 
-		WinWaitActive, Import file,
-	return
-
-	WinWaitAttachmentList:
-		WinWait, Service: Attachment list, 
-		IfWinNotActive, Service: Attachment list, , WinActivate, Service: Attachment list, 
-			WinWaitActive, Service: Attachment list, 
-	return
-
-	GetSOFromSubject:
-		gosub, GetSubjectFromOutlook
-		ClipWait, 1
-		RegExMatch(Clipboard, "(\d{7})", so)
-	return
-
-	!#i:: ; Get Invoice - Not finished
-		WinWait, Change Billing Document, 
-		IfWinNotActive, Change Billing Document, , WinActivate, Change Billing Document, 
-			WinWaitActive, Change Billing Document, 
-		Sleep, 100
-		Send, {ALTDOWN}{ALTUP}u
-		WinWait, Output output, 
-		IfWinNotActive, Output output, , WinActivate, Output output, 
-			WinWaitActive, Output output, 
-		Send, {DOWN}{SHIFTDOWN}{SPACE}{SHIFTUP}{TAB 4}{ENTER}
-		WinWait, Print:, 
-		IfWinNotActive, Print:, , WinActivate, Print:, 
-			WinWaitActive, Print:, 
-		Send, {CTRLDOWN}{SHIFTDOWN}{TAB}{SHIFTUP}{CTRLUP}{TAB}{ENTER}
-		WinWait, Print Preview, 
-		IfWinNotActive, Print Preview, , WinActivate, Print Preview, 
-			WinWaitActive, Print Preview,
-		MouseClick, left, 1807, 170
-		WinWait,, Nitro Pro, 
-		IfWinNotActive,, Nitro Pro, WinActivate,,Nitro Pro,
-			WinWaitActive,, Nitro Pro, 
-		Send, ^s
-		WinWait, Save As, 
-		IfWinNotActive, Save As, , WinActivate, Save As, 
-			WinWaitActive, Save As, 
-	return
-
-	^l::
-		gosub, WaitInbox
-		Send, ^n
-		WinWait, Untitled, 
-		IfWinNotActive, Untitled, , WinActivate, Untitled, 
-			WinWaitActive, Untitled, 
-		Send, chmielowski{enter}{tab}{tab}SO{#}{space}%soNumber%
-		Send, {space}Level 2 Approval{tab}Hi Ellen, `nPlease review SO{#}{space}
-		SendRaw, %soNumber% for level 2 approval.`n`nThanks
-			Send, !h
-		Sleep, 500
-		Send, af{Enter}
-	return
-
-	F15:: ; Copy / Paste - Plant Coding
-		Sleep, 200
-		Send, +{Home}+{Backspace}
-		Send, ^v
-		Send, {Down} 
-		Send, {esc}{down}
-	return
-
-	+F15:: ; Delete coding
-		Send, {End}+{Home}{backspace}{Esc}{Down}
-	return
-
-	!#s:: ;CPQ
-		Send, !n
-		sleep, 1000
-		Send, cpq-{Down}{enter}
-		Sleep, 2000
-		Send, !d
-		Sleep, 1000
-	return
-
-	!x::Send +{F10},F,C ; Find related email in Outlook
-	return
-
-	^2:: ; Add'l Attachment
-		Send, ^+{tab}{Home}{enter}{down}{enter}
-		WinWait, Import file, 
-		IfWinNotActive, Import file, , WinActivate, Import file, 
-			WinWaitActive, Import file, 
-		Send, !n
-	return
-
-	^+u:: ;---- To UPPERCASE ----
-		Clipboard:= ""
-		Sleep, 500
-		Send, ^c ; copies selected text
-		ClipWait
-		StringUpper Clipboard, Clipboard
-	return
-
-	!o:: ;Navigate to Order Notice
-		Send, !n
-		sleep, 500
-		Send, Ord{Down}{enter}
-	return
-
-	!+g:: ;---- Delete GSA Price --------
-		Send, {tab}{tab}{del}{enter}
-		Sleep, 500
-		Send, +{F7}
-	return
-
-	;;;; Remapping Keys & Shortcuts ;;;;
-	; !k::
-	; Send, ^v ; if modifier is different, it must be on new line as shown here <-
-
-	;;;; Sending Mouse Clicks ;;;;
-	; ^p::
-	; MouseGetPos, Locx, LocY
-	; MsgBox X is at %Locx% and Y is at %LocY%
-	; Click,598,86
-
-	InputBox, string, String
-	StringUpper, string, string
-	SetTitleMatchMode, 2
-	if WinExist("Change Standard Order") {
-		WinActivate ; use the window found above
-	} else {
-	return
+;======== BLANKS =======
+if salesPerson =
+{
+    GuiControl, Choose, salesManager, |1 
+    GuiControl, Choose, managerCode, |1
+    Gui, Submit, NoHide
+    GuiControl, Choose, salesDirector, |1
+    GuiControl, Choose, directorCode, |1
+    Gui, Submit, NoHide
 }
-KeyWait, Left, d
-Send, %string%
 return
-
-OpenSAPWindow:
-	SetTitleMatchMode, 2
-	if WinExist("Change Standard Order") {
-		WinActivate, Change Standard Order,
-		WinWaitActive, Change Standard Order,
-		Send, {F3}{BackSpace}
-		Sleep, 500
-		Send, %soNumber%
-		Sleep, 500
-		Send, {Enter}
-		Sleep, 500
-		Send, {Tab}{Enter}
-		IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-			WinWaitActive, Change Standard Order,
-	} else if WinExist("Change Sales Order") {
-		WinActivate, Change Sales Order,
-		WinWaitActive, Change Sales Order,
-		Sleep, 200
-		Send, {end}+{Home}{BackSpace}%soNumber%{Enter}
-		Sleep, 500
-		Send, {Tab}{Enter}
-		IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-			WinWaitActive, Change Standard Order,
-		WinActivate ; use the window found above
-	} else if WinExist("SAP Easy Access") {
-		IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-			WinWaitActive, SAP Easy Access,
-		WinActivate
-		MouseClick, left, 90, 66
-		Send, va02{enter}
-		WinWait, SAP Easy Access, 
-		WinWaitActive, Change Sales Order,
-		Send, %soNumber%{enter}
-		IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-			WinWaitActive, Change Standard Order,
-		WinActivate ; use the window found above
-	}
-return
-
-OpenSAPWindowForCsh:
-	if WinExist("Change Standard Order") {
-		WinActivate, Change Standard Order,
-		WinWaitActive, Change Standard Order,
-		Send, {F3}{BackSpace}
-		Sleep, 500
-		Send, %cshSoNumber%
-		Sleep, 500
-		Send, {Enter}
-		Sleep, 500
-		Send, {Tab}{Enter}
-		IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-			WinWaitActive, Change Standard Order,
-	} else if WinExist("Change Sales Order") {
-		WinActivate, Change Sales Order,
-		WinWaitActive, Change Sales Order,
-		Sleep, 200
-		Send, {end}+{Home}{BackSpace}%cshSoNumber%{Enter}
-		Sleep, 500
-		Send, {Tab}{Enter}
-		IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-			WinWaitActive, Change Standard Order,
-		WinActivate ; use the window found above
-	} else if WinExist("SAP Easy Access") {
-		IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-			WinWaitActive, SAP Easy Access,
-		WinActivate
-		MouseClick, left, 90, 66
-		Send, va02{enter}
-		WinWait, SAP Easy Access, 
-		IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access, 
-			WinWaitActive, SAP Easy Access, 
-		Send, %cshSoNumber%{enter}
-		IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-			WinWaitActive, Change Standard Order,
-		WinActivate ; use the window found above
-	}
-return
-
-WaitSAPEasyAccess:
-	ifWinExist, SAP Easy Access
-	{
-		IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-			WinWaitActive, SAP Easy Access,
-		WinActivate
-		return
-	} else
-	{
-		MsgBox, Win Doesn't Exist
-		return
-	}
-return
-
-;================================
-;========= Get quote pdf ========
-;================================
-
-^!q::
-	quoteNumber:= Clipboard
-	Run, https://tfs-3.my.salesforce.com/
-	WinWaitActive, Home | Salesforce
-	Send {tab 3}{Space}
-	Sleep, 1000
-	Send, %quoteNumber%{Enter}
-	WinWait, %quoteNumber% - Search | Salesforce
-	Send, ^f
-	Sleep, 500
-	Send, Cpq
-	Sleep, 1000
-	PixelSearch, x, y, 261, 346, 311, 393, #ff9632, 1, Fast
-	If(ErrorLevel = 0)
-	{
-		MouseClick, left, x+10, y, 1, 0
-		WinWaitActive, CPQ-%quoteNumber% | Salesforce
-		Send, ^f
-		Sleep, 500
-		Send, opportunity info
-		PixelSearch, x, y, 51, 481,233, 524, #ff9632, 1, Fast
-		Sleep, 500
-		MouseClick, Right, x+180, y+50,
-		Sleep, 200
-		Send, {Down}{Enter}
-		Sleep, 200
-		Send, ^f
-		Sleep, 200
-		Send, edit
-		PixelSearch, x, y, 1612, 210,1663, 243, #FBFB04, 1, Fast
-		MouseClick, Left, x, y
-		Return
-		Send, document
-		Sleep, 200
-		PixelSearch, x, y, 536, 403, 884, 610, #ff9632, 1, Fast
-		MouseClick, left, %x%, %y%, 1, 0
-		Sleep, 500
-		Send, ^f
-		Sleep, 200
-		Send, print proposal pdf
-		Sleep, 200
-		PixelSearch, x, y, 66, 413, 463, 647, ff9632, 2, Fast
-		MouseClick, left, %x%, %y%, 1, 0
-		Sleep, 2000
-		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211014093314.png
-		If (ErrorLevel = 0)
-		{
-			FoundX := FoundX + 50
-			FoundY := FoundY + 25
-			MouseClick, left, FoundX, FoundY, 1, 0
-		}
-
-	}
-	else MsgBox, dalak
-		return
-
-	; Use Numpad 7 To Restart script if VS Code is active window
-	#IfWinActive, Visual Studio Code
-		{
-			Numpad7::Send ^s^{F5}
-		}
-		#IfWinNotActive, Visual Studio Code
-			{
-				$Numpad7::Send 7
-			}
-			Return
-
-			!#c:: ;DocuSign
-				Send, %customer%
-				KeyWait, F14, d
-				Send, {tab 2}{down}
-				Send, {tab 2}{down}{Tab}
-				Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%so%{Tab}%type%{Tab}n{tab}{Down}{Tab}NET30{tab 3}
-			return
-
-			!1:: ; CRD Date
-				FormatTime, TimeString, %crd%, MM/dd/yyyy
-				gosub, OrderFocus
-				gosub, ToMiddle
-				Send, {tab}%TimeString%{Enter}
-				Sleep, 1000
-				Loop, 10
-				{
-					CoordMode, Pixel, Window
-					ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211013092931.png
-					If (ErrorLevel = 0)
-					{
-						Send, {Enter}
-						WinWaitActive, Information
-						WinWaitNotActive, Information
-						break
-					}
-					Sleep, 500
-				}
-				WinWaitNotActive, Information
-				Sleep, 2000
-				Send, ^{tab}
-				Send, {tab 4}{enter}
-				Sleep, 2000
-				Send, !e
-				Send, st
-				WinWait, Change Delivery Date
-				; Loop, {
-				; 	IfWinActive, Change Delivery Date,
-				; 		ControlSend, Button2, {enter}, Change Delivery Date
-				; 	IfWinNotActive, Change Delivery Date, 
-				; 		break
-				; }
-				; Sleep, 2000
-				WinWaitNotActive, Standard Order: Availability Control
-				WinWaitActive, Change Standard Order %soNumber%: Overview,,ClipAngel,
-				Sleep, 2000
-				Send, +{F4} ; Go to Sales Header
-				WinWait, Change Standard Order %soNumber%: Header Data,,ClipAngel,
-				Send, ^{Tab}{Tab 2}{Down 2}{Right 2}{Enter} ; Sets 110 volts on sales tab
-				Sleep, 1000
-				Send, ^{pgdn}
-			return
-
-			!#m:: ;Merge Report
-				FormatTime, TimeString, %sapDate%, MM/dd/yyyy
-				sleep, 500
-				gosub, WaitSAPEasyAccess
-				Send, ^/
-				SendMode, event
-				SetKeyDelay, 70
-				Send, ZSOMRG{enter}
-				WinWait, IOLS Merge Drop Ship Report
-				Send, %soNumber%{tab 3}0020 ;{Down 9}
-				;~ Send, %TimeString%{enter}
-				;~ Send, {up 10}
-				;~ Send, +{end}^c
-				Send, {f8}
-				Sleep, 1000
-				Send, !l
-				Sleep, 750
-				Send, e
-				Sleep, 750
-				Send, a
-				Sleep, 750
-				Send, !n
-				Send, Merge Report - SO{#} %soNumber%
-				Send, {enter} 
-			return
-
-			^9:: ;Sales Employee 9
-				Send, ^+{end}
-				Sleep, 1000
-				Send, +{tab}
-
-				if (directorCode = "N/A")
-				{
-					Send, s{right 11}{Tab}
-					Send, %managerCode%{enter}
-				}
-				else 
-				{
-					Send, s{right 10}{Tab}%directorCode%{down}+{Tab}
-					Send, s{right 11}{Tab}
-					Send, %managerCode%{enter}
-				}
-				Sleep, 1000
-				Send, ^{PGUP}
-			return
-
-			!+d:: ; GET DPS REPORTS
-				MsgBox,,Tab check, Is CPQ on the Attachments tab?
-				WinWait, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-				IfWinNotActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window, WinActivate, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-					WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-				MouseClick, left, 291, 190
-				Send, TENA-CPQ-%cpq%
-				Sleep, 100
-				MouseClick, left, 537, 250
-				Sleep, 100
-				WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-				IfWinNotActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window, WinActivate, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-					WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-				MouseClick, left, 1210, 377
-				Sleep, 200
-				Send, TENA-CPQ-%cpq%
-				Sleep, 500
-				MouseClick, left, 310, 494
-				Send, %customer%
-				Sleep, 500
-				MouseClick, left, 541, 527
-				Send, %address%
-				Sleep, 500
-				WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-				IfWinNotActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window, WinActivate, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-					WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-				MouseClick, left, 1789, 279
-				KeyWait, ', d
-				Send, {Enter}
-				Sleep, 4000 ; Wait for report
-				Send, {tab 9}{Enter}
-				Sleep, 4000 ; Wait for print dialog
-				Send, {Enter}
-				KeyWait, Left, d
-				Send, ^a!nDPS - %customer%!s
-				Sleep, 1000
-				Send, ^w
-				Sleep, 4000
-				Send, {tab 5}{BackSpace}+{Tab}{BackSpace}%contact%+{tab 7}{enter}
-				;Generate Report
-				KeyWait, ', d
-				Send, {Enter}
-				Sleep, 4000
-				Send, {tab 9}{Enter}
-				Sleep, 4000
-				Send, {Enter}
-				Sleep, 3000
-				Send, !nDPS - %contact%!s
-				Sleep, 1000									
-				Send, ^w
-				Sleep, 200
-				Send, ^w
-
-				; ---- Add to SalesForce
-				;~ Sleep, 500
-				;~ Send, {TAB}{ENTER}
-				;~ Sleep, 1500
-				;~ IfWinNotActive, "Open", , WinActivate, "Open", 
-				;~ else 
-				;~ IfWinNotActive, Import file, , WinActivate, Import file, 
-				;~ Send, {SHIFTDOWN}{TAB 3}{SHIFTUP}{PGUP 2}{ENTER}{ALTDOWN}n{ALTUP}
-				;~ Sleep, 500
-				;~ Send, so{space}docs
-				;~ Sleep, 1000
-				;~ Send, {down}{enter}
-				;~ Sleep, 200
-				;~ Send, po{space}%po%
-				;~ Sleep, 200
-				;~ Send, {down}{enter}
-				;~ Sleep, 200
-				;~ Send, d
-				;~ Sleep, 200
-				;~ Send, {down}{enter}
-				;~ WinWait, Salesforce, 
-				;~ IfWinNotActive, Salesforce, , WinActivate, Salesforce, 
-				;~ WinWaitActive, Salesforce, 
-				;~ Send, {tab}{enter}
-				;~ Sleep, 1000
-				;~ Send, d
-				;~ Sleep, 500
-				;~ Send, {DOWN 2}
-				;~ Sleep, 200
-				;~ Send, {ENTER}
-			return
-
-			SetTitleMatchMode, 2
-			WinActivate, Change Standard Order
-			WinMenuSelectItem, Change Standard Order,, 3& ;Header, Sales
-
-			^6:: ;End User Info
-				endUserInfo = END USER: %endUser%`nPHONE: %phone%`nEMAIL: %email%`n`nEND USE: %endUse%`n`nCPQ-%cpq%
-				StringUpper, endUserInfo, endUserInfo
-				Clipboard := % endUserInfo
-				gosub, WaitHeaderData
-				Send, ^+{tab 3}{Right}{Enter} ; Navigate to texts tab
-				Sleep, 1000
-				MouseClick, left, 90,320
-				Sleep, 1000
-				Send, {PGDN}
-				Sleep, 200
-				Send, {Down 3} ; Navigate to End User Tab
-				Sleep, 200 
-				Send, ^{tab 2}{enter}
-				Sleep, 500
-				Send, %endUserInfo% ; Navigate to Entry textbox and paste
-				Sleep, 200
-				Send, {Up 4}{End}+{PGUP 3}^c
-				ClipWait, 1
-				Send, {F3}
-				gosub, WaitStandardOrder
-				Send, !g
-				Sleep, 200
-				Send, hp ; back to the partners tab
-				gosub, WaitHeaderData
-				Send, ^{end} ; back to end user
-				Sleep, 500
-				Send, {F2}
-				Sleep, 200
-				Send, {tab 3}{Enter}
-				Sleep, 500
-				Send, {tab 2}^v{Enter}
-				Sleep, 500
-				Send, ^{PGUP}
-			return
-
-			^!z::
-				Send, ^s
-				reload
-			return
-
-			kellerDropDown:
-				GuiControl, Choose, salesManager, Anjou Keller
-				GuiControl, ChooseString, managerCode, 202375
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, N/A
-				GuiControl, ChooseString, directorCode, N/A
-				Gui, Submit, NoHide
-			return
-
-			mccormackDropDown:
-				GuiControl, Choose, salesManager, Doug McCormack
-				GuiControl, ChooseString, managerCode, 1261
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, N/A
-				GuiControl, ChooseString, directorCode, N/A
-				Gui, Submit, NoHide
-			return
-
-			hewittDropDown:
-				GuiControl, Choose, salesManager, Joe Hewitt
-				GuiControl, ChooseString, managerCode, 98866
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, N/A
-				GuiControl, ChooseString, directorCode, N/A
-				Gui, Submit, NoHide
-			return
-
-			foelsDropDown:
-				GuiControl, Choose, salesManager, Natalie Foels
-				GuiControl, ChooseString, managerCode, 96715
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, N/A
-				GuiControl, ChooseString, directorCode, N/A
-				Gui, Submit, NoHide
-			return
-
-			secondDropDown:
-				GuiControl, Choose, salesManager, Tonya Second
-				GuiControl, ChooseString, managerCode, 95410
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, Maroun El Khoury
-				GuiControl, ChooseString, directorCode, 1076
-				Gui, Submit, NoHide
-			return
-
-			mcfaddenDropDown:
-				GuiControl, Choose, salesManager, Joe McFadden
-				GuiControl, ChooseString, managerCode, 202610
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, N/A
-				GuiControl, ChooseString, directorCode, N/A
-				Gui, Submit, NoHide
-			return
-
-			butlerDropDown:
-				GuiControl, Choose, salesManager, John Butler
-				GuiControl, ChooseString, managerCode, 1026
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, Maroun El Khoury
-				GuiControl, ChooseString, directorCode, 1076
-				Gui, Submit, NoHide
-			return
-
-			kleinDropDown:
-				GuiControl, Choose, salesManager, Richard Klein
-				GuiControl, ChooseString, managerCode, 1042
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, Maroun El Khoury
-				GuiControl, ChooseString, directorCode, 1076
-				Gui, Submit, NoHide
-			return
-
-			nadjieDropDown:
-				GuiControl, Choose, salesManager, Zee Nadjie
-				GuiControl, ChooseString, managerCode, 96695
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, N/A
-				GuiControl, ChooseString, directorCode, N/A
-				Gui, Submit, NoHide
-			return
-
-			chenDropDown:
-				GuiControl, Choose, salesManager, Ray Chen
-				GuiControl, ChooseString, managerCode, 202756
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, Jimmy Yuk
-				GuiControl, ChooseString, directorCode, 202611
-				Gui, Submit, NoHide
-			return
-
-			porchDropDown:
-				GuiControl, Choose, salesManager, Randy Porch
-				GuiControl, ChooseString, managerCode, 1041
-				Gui, Submit, NoHide
-				GuiControl, Choose, salesDirector, Maroun El Khoury
-				GuiControl, ChooseString, directorCode, 1076
-				Gui, Submit, NoHide
-			return
-
-			findSales:
-				;=============== KELLER ===================
-				if salesPerson = Julie Sawicki
-					gosub, kellerDropDown
-				if salesPerson = Justin Carder 
-					gosub, kellerDropDown
-				if salesPerson = Brent Boyle
-					gosub, kellerDropDown
-				if salesPerson = Luke Marty
-					gosub, kellerDropDown
-				if salesPerson = Aeron Avakian 
-					gosub, kellerDropDown
-				if salesPerson = Jon Needels
-					gosub, kellerDropDown
-				if salesPerson = Brian Dowe
-					gosub, kellerDropDown
-				if salesPerson = Lisa Kasper
-					gosub, kellerDropDown
-				if salesPerson = John Bailey
-					gosub, kellerDropDown
-				if salesPerson = Aeron Avakian
-					gosub, kellerDropDown
-				if salesPerson = Luke Marty
-					gosub, kellerDropDown
-				if salesPerson = Brandon Markle
-					gosub, kellerDropDown
-				;=============== END KELLER ===================
-
-				;============ NADJIE ================
-				if salesPerson = Jawad Pashmi
-					gosub, nadjieDropDown
-				if salesPerson = Navette Shirakawa
-					gosub, nadjieDropDown
-				if salesPerson = Alicia Arias
-					gosub, nadjieDropDown
-				if salesPerson = Gabriel Mendez
-					gosub, nadjieDropDown
-				if salesPerson = Rhonda Oesterle
-					gosub, nadjieDropDown
-				if salesPerson = Alexander James
-					gosub, nadjieDropDown
-				if salesPerson = Shijun Sheng
-					gosub, nadjieDropDown
-				if salesPerson = Brian Luckenbill
-					gosub, nadjieDropDown
-				if salesPerson = Amy Allgower
-					gosub, nadjieDropDown
-				if salesPerson = Michael Burnett
-					gosub, nadjieDropDown
-				;============ END NADJIE ================
-
-				;========== DOUG MCCORMACK =================
-				if salesPerson = Mark Krigbaum
-					gosub, mccormackDropDown
-				if salesPerson = Samantha Stikeleather
-					gosub, mccormackDropDown
-				if salesPerson = Jeff Weller
-					gosub, mccormackDropDown
-				if salesPerson = Jerry Holycross
-					gosub, mccormackDropDown
-				if salesPerson = Dan Ciminelli
-					gosub, mccormackDropDown
-				if salesPerson = Theresa Borio
-					gosub, mccormackDropDown
-				if salesPerson = Cynthia Spittler
-					gosub, mccormackDropDown
-				if salesPerson = Fred Simpson
-					gosub, mccormackDropDown
-				if salesPerson = Gwyn Trojan
-					gosub, mccormackDropDown
-				if salesPerson = Nick Hubbard
-					gosub, mccormackDropDown
-				if salesPerson = Kristen Luttner
-					gosub, mccormackDropDown
-				;========== END DOUG MCCORMACK =================
-
-				;=========== HEWITT ============
-				if salesPerson = Douglas Sears
-					gosub, hewittDropDown
-				if salesPerson = Melissa Chandler
-					gosub, hewittDropDown
-				if salesPerson = Hillary Tennant
-					gosub, hewittDropDown
-				if salesPerson = Don Rathbauer
-					gosub, hewittDropDown
-				if salesPerson = Tucker Lincoln
-					gosub, hewittDropDown
-				if salesPerson = Joel Stradtner
-					gosub, hewittDropDown
-				if salesPerson = Stephanie Koczur
-					gosub, hewittDropDown
-				if salesPerson = Mike Hughes
-					gosub, hewittDropDown
-				;=========== END HEWITT ============
-
-				;============ FOELS ================
-				if salesPerson = Larry Bellan
-					gosub, foelsDropDown
-				if salesPerson = Kevin Clodfelter
-					gosub, foelsDropDown
-				if salesPerson = Brian Thompson
-					gosub, foelsDropDown
-				if salesPerson = Rashila Patel
-					gosub, foelsDropDown
-				if salesPerson = Bill Balsanek
-					gosub, foelsDropDown
-				if salesPerson = Chuck Costanza
-					gosub, foelsDropDown
-				if salesPerson = Karl Kastner
-					gosub, foelsDropDown
-				if salesPerson = Bob Riggs
-					gosub, foelsDropDown
-				if salesPerson = Drew Smillie
-					gosub, foelsDropDown
-				if salesPerson = Crystal Flowers
-					gosub, foelsDropDown
-				;============ END FOELS ================
-
-				;========= SECOND ==============
-				if salesPerson = Helen Sun
-					gosub, secondDropDown
-				if salesPerson = Steven Danielson
-					gosub, secondDropDown
-				if salesPerson = Dominique Figueroa
-					gosub, secondDropDown
-				if salesPerson = Jonathan McNally
-					gosub, secondDropDown
-				if salesPerson = Yan Chen
-					gosub, secondDropDown
-				if salesPerson = Katianna Pihakari
-					gosub, secondDropDown
-				if salesPerson = Timothy Johnson
-					gosub, secondDropDown
-				;========= END SECOND ==============
-
-				;========= MCFADDEN ==============
-				if salesPerson = May Chou
-					gosub, mcfaddenDropDown
-				if salesPerson = Steve Boyanoski
-					gosub, mcfaddenDropDown
-				if salesPerson = Mark Woodworth
-					gosub, mcfaddenDropDown
-				if salesPerson = Murray Fryman
-					gosub, mcfaddenDropDown
-				if salesPerson = Lorraine Foglio
-					gosub, mcfaddenDropDown
-				if salesPerson = Lauren Fischer
-					gosub, mcfaddenDropDown
-				;========= END MCFADDEN ==============
-
-				;=========== BUTLER ==========
-				if salesPerson = Andrew Clark
-					gosub, butlerDropDown
-				if salesPerson = Giovanni Pallante
-					gosub, butlerDropDown
-				if salesPerson = David Kage
-					gosub, butlerDropDown
-				if salesPerson = David Scott
-					gosub, butlerDropDown
-				if salesPerson = Susan Gelman
-					gosub, butlerDropDown
-				if salesPerson = Cari Randles
-					gosub, butlerDropDown
-				if salesPerson = Sean Bennett
-					gosub, butlerDropDown
-				;=========== END BUTLER ==========
-
-				;=========== KLEIN ==========
-				if salesPerson = Susan Bird
-					gosub, kleinDropDown
-				if salesPerson = Jerry Pappas
-					gosub, kleinDropDown
-				if salesPerson = Jie Qian
-					gosub, kleinDropDown
-				if salesPerson = Joe Bernholz
-					gosub, kleinDropDown
-				if salesPerson = Yuriy Dunayevskiy
-					gosub, kleinDropDown
-				if salesPerson = Nelson Huang
-					gosub, kleinDropDown
-				;=========== END KLEIN ==========
-
-				;=========== CHEN ==========
-				if salesPerson = Haris Dzaferbegovic
-					gosub, chenDropDown
-				if salesPerson = Donna Zwirner
-					gosub, mccormackDropDown
-				;=========== END CHEN ==========
-
-				;=========== PORCH ==========
-				if salesPerson = Todd Stoner
-					gosub, porchDropDown
-				if salesPerson = Jonathan Ferguson
-					gosub, porchDropDown
-				if salesPerson = Nick Duczak
-					gosub, porchDropDown
-				if salesPerson = Gerald Koncar
-					gosub, porchDropDown
-				;=========== END PORCH ==========
-
-				;======== BLANKS =======
-				if salesPerson =
-				{
-					GuiControl, Choose, salesManager, |1 
-					GuiControl, Choose, managerCode, |1
-					Gui, Submit, NoHide
-					GuiControl, Choose, salesDirector, |1
-					GuiControl, Choose, directorCode, |1
-					Gui, Submit, NoHide
-				}
-			return
