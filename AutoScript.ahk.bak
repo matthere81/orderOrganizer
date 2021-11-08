@@ -1,5 +1,5 @@
 ﻿#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-;~ #Include WatchFolder.ahk
+#Include WatchFolder.ahk
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs ; Ensures a consistent starting directory.
@@ -36,14 +36,14 @@ orderInfo(){
 Gui, destroy
 Gui, Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
-Gui Add, Text, hWndhTxtOrderDetails23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer - SO# %soNumber%
+Gui Add, Text, hWndhTxtOrderDetails23 x15 y-2 w125 h33 +0x200 +Left, Order Details
 Gui, Font
 Gui, Color, 79b8d1
 Gui, Font, S9, Segoe UI Semibold
 Gui, Add, Button, xm+410 ym+10 w70 greadtheini, O&pen
 Gui, Add, Button, x+25 w70 gSaveToIni, &Save
-Gui, Add, Button, x+25 w150 grestartScript, &New PO or Reload
-; Gui Add, Edit, x+25 y22 w175 h20, Search
+Gui, Add, Button, x+25 w70 grestartScript, &New PO
+Gui Add, Edit, x+25 y22 w175 h20, Search
 Gui Add, Tab3, xm ym+30, Order Info|Checklist
 Gui Tab, 1
 Gui Add, Text,, CPQ:
@@ -196,7 +196,7 @@ Gui, Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
 ;~ Gui, Add, Progress, w800 h25, 25
 ;******** END CHECKLIST GUI ********
 
-Gui Show,w920 h485, Order Organizer SO# %soNumber%
+Gui Show,w920 h485, Order Info
 Gui, Submit, NoHide
 
 submitChecklist:
@@ -542,9 +542,9 @@ if !FileExist(folderPath)
 return
 
 SaveBar:
-WinGetPos x, y, Width, Height, Order Organizer
-    x += 350
-	y += 50
+WinGetPos x, y, Width, Height, Order Info
+    x := x + 350
+	y := y + 30
 myRange:=90
 Gui, 2: -Caption
 Gui, 2:+AlwaysOnTop
@@ -553,7 +553,7 @@ Gui, 2: Font, S8 cBlack, Segoe UI Semibold
 Gui, 2: Add, Text, x0 y1 w208 h16 +Center, Saving
 Gui, 2: Add,Progress, x10 y20 w190 h20 cblue vPro1 Range0-%myRange%,0
 ;~ Gui,1: Add, Button, x10 w150 h30 glooping, Loop over list
-Gui, 2: Show, w210 h50 x847 y313
+Gui, 2: Show, x%X% y%Y% w210 h50 
 Gosub, Looping
 Return
 
@@ -575,35 +575,35 @@ Return
 
 orderInfo()
 
-; myFunc(path, changes) {
-;     for k, change in changes
-;         ; 1 means new file was added
-;         if (change.action = 1) {
-;             gosub doStuff
-;             return
-;         }
-; }
+myFunc(path, changes) {
+    for k, change in changes
+        ; 1 means new file was added
+        if (change.action = 1) {
+            gosub doStuff
+            return
+        }
+}
 
 ;/******** OPEN QUOTE AND GET INFO ********\
-; WatchFolder("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Sales Quotes", "myFunc", , Watch := 1)
-; return
+WatchFolder("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Sales Quotes", "myFunc", , Watch := 1)
+return
 
 ;~ myFunc(path, changes)
 
-; doStuff:
-; nitroPath := "C:\Program Files\Nitro\Pro\13\NitroPDF.exe"
-; adobePath := "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"
-; SetTitleMatchMode 2
-; myPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Sales Quotes"
-; Sleep, 250
-; Loop %myPath%\*.*               
-; If ( A_LoopFileTimeModified >= Time )
-; 	Time := A_LoopFileTimeModified, attachedFile := A_LoopFileName
-; 	Run %nitroPath% "%myPath%\%attachedFile%"
+doStuff:
+nitroPath := "C:\Program Files\Nitro\Pro\13\NitroPDF.exe"
+adobePath := "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"
+SetTitleMatchMode 2
+myPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Sales Quotes"
+Sleep, 250
+Loop %myPath%\*.*               
+If ( A_LoopFileTimeModified >= Time )
+	Time := A_LoopFileTimeModified, attachedFile := A_LoopFileName
+	Run %nitroPath% "%myPath%\%attachedFile%"
 	
-; 	KeyWait, F14, d
-; 	FileDelete, %myPath%\%attachedFile%
-; return
+	KeyWait, F14, d
+	FileDelete, %myPath%\%attachedFile%
+return
 
 ;******** HOTSTRINGS (TEXT EXPANSION) ********
 #c::run calc.exe ; Run calculator
@@ -1668,7 +1668,7 @@ return
 				Sleep, 1000
 				Send, {PGDN}
 				Sleep, 200
-				Send, {Down 3} ; Navigate to End User Tab
+				Send, {Down 5} ; Navigate to End User Tab
 				Sleep, 200 
 				Send, ^{tab 2}{enter}
 				Sleep, 500
