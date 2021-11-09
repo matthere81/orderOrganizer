@@ -427,9 +427,8 @@ IniRead, endUserYes, %SelectedFile%, orderInfo, endUserYes
 GuiControl,, endUserYes, %endUserYes%
 IniRead, endUserNa, %SelectedFile%, orderInfo, endUserNa
 GuiControl,, endUserNa, %endUserNa%
-GuiControl,, title, Order Organizer - SO# %soNumber%
-WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order
-; WinSetTitle, WinTitle, WinText, NewTitle [, ExcludeTitle, ExcludeText]
+; GuiControl,, title, Order Organizer - SO# %soNumber%
+; WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order
 return
 
 SaveToIni:
