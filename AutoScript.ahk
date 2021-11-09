@@ -32,7 +32,7 @@ Gui, destroy
 Gui -DPIScale
 Gui, Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
-Gui Add, Text, hWndhTxtOrderDetails23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer - SO# %soNumber%
+Gui Add, Text, hWndhTxtOrderDetails23 x15 y-2 w300 h33 +0x200 +Left vtitle, Order Organizer
 Gui, Font
 Gui, Color, 79b8d1
 Gui, Font, S9, Segoe UI Semibold
@@ -427,6 +427,9 @@ IniRead, endUserYes, %SelectedFile%, orderInfo, endUserYes
 GuiControl,, endUserYes, %endUserYes%
 IniRead, endUserNa, %SelectedFile%, orderInfo, endUserNa
 GuiControl,, endUserNa, %endUserNa%
+GuiControl,, title, Order Organizer - SO# %soNumber%
+WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order
+; WinSetTitle, WinTitle, WinText, NewTitle [, ExcludeTitle, ExcludeText]
 return
 
 SaveToIni:
