@@ -36,7 +36,7 @@ orderInfo(){
 Gui, destroy
 Gui, Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
-Gui Add, Text, hWndhTxtOrderDetails23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer ; - SO# %soNumber%
+Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer ; - SO# %soNumber%
 Gui, Font
 Gui, Color, 79b8d1
 Gui, Font, S9, Segoe UI Semibold
@@ -49,7 +49,7 @@ Gui Tab, 1
 Gui Add, Text,, CPQ:
 Gui Add, Edit, vcpq, %cpq% 
 Gui Add, Text,, PO:
-Gui Add, Edit, vpo, %po% 
+Gui Add, Edit, vpo, %po%
 Gui Add, Text,, SOT Line#
 Gui Add, Edit, vsot, %sot%
 Gui Add, Text,, Customer:
@@ -196,7 +196,7 @@ Gui, Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
 ;~ Gui, Add, Progress, w800 h25, 25
 ;******** END CHECKLIST GUI ********
 
-Gui Show,w920 h485, Order Organizer SO# %soNumber%
+Gui Show,w920 h485, Order Organizer ;SO# %soNumber%
 Gui, Submit, NoHide
 
 submitChecklist:
@@ -402,6 +402,7 @@ GuiControl,, endUserNa, %endUserNa%
 return
 
 SaveToIni:
+Gui, Submit, NoHide
 if (!cpq) || (!po)
 {
 	MsgBox, Please enter a quote and PO#.
