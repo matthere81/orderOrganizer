@@ -271,8 +271,13 @@ if ((!cpq) || (!po))
 return
 
 readtheini:
-if (cpq) || (po)
+Gui, Submit, NoHide
+if (cpq) && (po)
 	gosub, SaveToIniNoGui
+if (!cpq) || (!po)
+{
+	MsgBox, Existing data won't be saved
+}
 FileSelectFile, SelectedFile,r,%myinipath%, Open a file
 if (ErrorLevel)
 	{
