@@ -29,7 +29,6 @@ SetTitleMatchMode, 2
 orderInfo(){
     global
 Gui, destroy
-Gui -DPIScale
 Gui, Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, hWndhTxtOrderDetails23 x15 y-2 w300 h33 +0x200 +Left vtitle, Order Organizer
