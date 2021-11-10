@@ -244,10 +244,6 @@ readtheini:
 Gui, Submit, NoHide
 if (cpq) && (po)
 	gosub, SaveToIniNoGui
-if (!cpq) || (!po)
-{
-	MsgBox, Existing data won't be saved
-}
 FileSelectFile, SelectedFile,r,%myinipath%, Open a file
 if (ErrorLevel)
 	{
@@ -413,8 +409,8 @@ if (!cpq) || (!po)
 	MsgBox, Please enter a quote and PO#.
 	return
 }
-IniFilePath := myinipath . "\PO " . po . " " . customer . ".ini"
-IniFilePathWithSo := myinipath . "\PO " . po . " " . customer . " SO# " . soNumber . ".ini"
+IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
+IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 if FileExist(IniFilePath) && (soNumber)
 {
 	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
@@ -448,15 +444,21 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 return
 
 SaveToIniNoGui:
-IniFilePath := myinipath . "\PO " . po . " " . customer . ".ini"
-IniFilePathWithSo := myinipath . "\PO " . po . " " . customer . " SO# " . soNumber . ".ini"
+if (cpq = " ") || (po = " ")
+{
+	MsgBox, Existing data won't be saved
+    Return
+}
+
+IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
+IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 if FileExist(IniFilePath) && (soNumber)
 {
 	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, WriteIniVariables
 	gosub, CheckIfFolderExists
-	return
+	return  
 }
 else if FileExist(IniFilePathWithSo)
 {
