@@ -46,7 +46,7 @@ Gui Tab, 1
 Gui Add, Text,, CPQ:
 Gui Add, Edit, vcpq, %cpq% 
 Gui Add, Text,, PO:
-Gui Add, Edit, vpo, %po% 
+Gui Add, Edit, vpo, %po%
 Gui Add, Text,, SOT Line#
 Gui Add, Edit, vsot, %sot%
 Gui Add, Text,, Customer:
@@ -226,7 +226,7 @@ LV_Add(Col1, "End Use (zuse)")
 ;~ Gui Add, Text, y+5, End Use - zuse
 ;======== END KEYBOARD SHORTCUTS ========
 
-Gui Show,w920 h485, Order Organizer SO# %soNumber%
+Gui Show,w920 h485, Order Organizer ;SO# %soNumber%
 Gui, Submit, NoHide
 
 submitChecklist:
@@ -432,7 +432,7 @@ GuiControl,, endUserNa, %endUserNa%
 return
 
 SaveToIni:
-Gosub, WriteIniVariables
+Gui, Submit, NoHide
 if (!cpq) || (!po)
 {
 	MsgBox, Please enter a quote and PO#.
