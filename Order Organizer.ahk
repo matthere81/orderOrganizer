@@ -577,7 +577,6 @@ if (RegExMatch(cpq, "(?:^00*)", quoteNumberCpq))
 if FileExist(folderPath)
     return
 if !FileExist(folderPath)
-    MsgBox, %folderPath%
     FileCreateDir, %folderPath%
     Return
 return
