@@ -2,7 +2,7 @@
 ;~ #Include WatchFolder.ahk
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir, C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Documents ; Ensures a consistent starting directory.
+SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent starting directory.
 #SingleInstance Force
 
 salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch Lazaro|Tucker Lincoln|Jawad Pashmi|Julie Sawicki|Mike Hughes|Steve Boyanoski"
@@ -21,7 +21,15 @@ salesDirectors := "|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|N/A"
 salesCodes := "|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|N/A"
 
 ; Set Order Organizer Path
-myinipath := A_WorkingDir 
+if !FileExist("C:\Users\" . A_UserName . "\Order Organizer") {
+    FileCreateDir, A_WorkingDir . "\Order Organizer"
+    SetWorkingDir, A_WorkingDir . "\Order Organizer"
+}
+
+myinipath := "C:\Users\" . A_UserName . "\Order Organizer\Order Database"
+if !FileExist(myinipath) {
+    FileCreateDir, %myinipath%
+}
 
 ; Include Icon
 FileInstall, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico, A_WorkingDir, 1
@@ -557,10 +565,11 @@ return
 CheckIfFolderExists:
 if (RegExMatch(cpq, "(?:^00*)", quoteNumberCpq))
 {
-    folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - CPQ-%cpq%
+    folderPath := A_WorkingDir . "\Order Docs\PO " . po . " " . customer . " - CPQ-" . cpq
 } else if (RegExMatch(cpq, "(?:^[2].*)", quoteNumberSap))
 {
-    folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - Quote %cpq%
+    folderPath := A_WorkingDir . "\Order Docs\PO %po% %customer% - Quote %cpq%"
+
 } else if (cpq != quoteNumberCpq || cpq != quoteNumbSap)
 {
     MsgBox, Invalid Quote
@@ -568,8 +577,8 @@ if (RegExMatch(cpq, "(?:^00*)", quoteNumberCpq))
 if FileExist(folderPath)
     return
 if !FileExist(folderPath)
+    MsgBox, %folderPath%
     FileCreateDir, %folderPath%
-    run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\
     Return
 return
 
