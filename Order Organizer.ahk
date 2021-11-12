@@ -12,7 +12,7 @@ salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch La
 . "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
 . "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
 . "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
-. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|"
+. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch"
 
@@ -1971,6 +1971,8 @@ if salesPerson = Murray Fryman
 if salesPerson = Lorraine Foglio
     gosub, mcfaddenDropDown
 if salesPerson = Lauren Fischer
+    gosub, mcfaddenDropDown
+if salesPerson = Douglas McDowell
     gosub, mcfaddenDropDown
 ;========= END MCFADDEN ==============
 
