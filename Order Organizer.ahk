@@ -55,19 +55,28 @@ Gui Add, Text,, PO:
 Gui Add, Edit, vpo, %po%
 Gui Add, Text,, CPQ:
 Gui Add, Edit, vcpq, %cpq% 
-Gui Add, Text, y+18, WIN Form ---------------
-Gui Add, Text,, SOT Line#
-Gui Add, Edit, vsot, %sot%
+Gui Add, Text, y+18, DPS ----------------------
+Gui Add, Text,, WIN Form ---------------
+Gui Add, Text,, Order Notice Email ------
+Gui Add, Text,, Merge Report ------------
+; Gui Add, Text,, SOT Line#
+; Gui Add, Edit, vsot, %sot%
 Gui Add, Text, ys-13 Section Center, Attached`nSalesForce ;gsubmitChecklist vnameCheck, Check TENA Name On PO
 Gui Add, Checkbox, xs+20
 Gui Add, Checkbox, xs+20 y+44
 Gui Add, Checkbox, xs+20 y+44
-Gui Add, Text, xs+16 y+22, N/A
+Gui Add, Checkbox, xs+20 y+22
+Gui Add, Text, xs+16 y+17.5, N/A
+Gui Add, Text, xs+16 y+18, N/A
+Gui Add, Text, xs+16 y+18, N/A
 Gui Add, Text, ys Section Center, Attached`nSAP
 Gui Add, Checkbox, xs+17.5
 Gui Add, Checkbox, xs+17.5 y+44
 Gui Add, Checkbox, xs+17.5 y+44
 Gui Add, Checkbox, xs+17.5 y+22
+Gui Add, Checkbox, xs+17.5 y+17
+Gui Add, Checkbox, xs+17.5 y+17
+Gui Add, Checkbox, xs+17.5 y+17
 
 ; Gui Add, Text,, Customer:
 ; Gui Add, Edit, vcustomer, %customer% 
