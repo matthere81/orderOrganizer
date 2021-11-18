@@ -35,7 +35,7 @@ orderInfo(){
 ;/******** GUI START ********\
 Gui, destroy
 Gui +DPIScale ; May affect scaling
-Gui +Resize -MaximizeBox
+; Gui +Resize -MaximizeBox
 Gui, Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer ; - SO# %soNumber%
@@ -55,14 +55,19 @@ Gui Add, Text,, PO:
 Gui Add, Edit, vpo, %po%
 Gui Add, Text,, CPQ:
 Gui Add, Edit, vcpq, %cpq% 
+Gui Add, Text, y+18, WIN Form ---------------
 Gui Add, Text,, SOT Line#
 Gui Add, Edit, vsot, %sot%
 Gui Add, Text, ys-13 Section Center, Attached`nSalesForce ;gsubmitChecklist vnameCheck, Check TENA Name On PO
 Gui Add, Checkbox, xs+20
-Gui Add, Checkbox, xs+20
-Gui Add, Checkbox, xs+20
+Gui Add, Checkbox, xs+20 y+44
+Gui Add, Checkbox, xs+20 y+44
+Gui Add, Text, xs+16 y+22, N/A
 Gui Add, Text, ys Section Center, Attached`nSAP
 Gui Add, Checkbox, xs+17.5
+Gui Add, Checkbox, xs+17.5 y+44
+Gui Add, Checkbox, xs+17.5 y+44
+Gui Add, Checkbox, xs+17.5 y+22
 
 ; Gui Add, Text,, Customer:
 ; Gui Add, Edit, vcustomer, %customer% 
