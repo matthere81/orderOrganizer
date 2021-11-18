@@ -34,167 +34,179 @@ orderInfo(){
     global
 ;/******** GUI START ********\
 Gui, destroy
+Gui +DPIScale ; May affect scaling
+Gui +Resize -MaximizeBox
 Gui, Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer ; - SO# %soNumber%
 Gui, Font
 Gui, Color, 79b8d1
 Gui, Font, S9, Segoe UI Semibold
-Gui, Add, Button, xm+410 ym+10 w70 greadtheini, O&pen
-Gui, Add, Button, x+25 w70 gSaveToIni, &Save
-Gui, Add, Button, x+25 w150 grestartScript, &New PO or Reload
+; Gui, Add, Button, xm+410 ym+10 w70 greadtheini, O&pen
+; Gui, Add, Button, x+25 w70 gSaveToIni, &Save
+; Gui, Add, Button, x+25 w150 grestartScript, &New PO or Reload
 ; Gui Add, Edit, x+25 y22 w175 h20, Search
 Gui Add, Tab3, xm ym+30, Order Info|Checklist
 Gui Tab, 1
-Gui Add, Text,, CPQ:
-Gui Add, Edit, vcpq, %cpq% 
+Gui Add, Text, y+20 Section, SO#
+Gui Add, Edit, vsoNumber, %soNumber% 
+Gui Margin, 10, 10
 Gui Add, Text,, PO:
 Gui Add, Edit, vpo, %po%
+Gui Add, Text,, CPQ:
+Gui Add, Edit, vcpq, %cpq% 
 Gui Add, Text,, SOT Line#
 Gui Add, Edit, vsot, %sot%
-Gui Add, Text,, Customer:
-Gui Add, Edit, vcustomer, %customer% 
-Gui Add, Text,, Customer / DPS Contact:
-Gui Add, Edit, vcontact, %contact% 
-Gui Add, Text,, Customer / DPS Address:
-Gui Add, Edit, vaddress, %address% 
-Gui Add, Text,, Sold To Account:
-Gui Add, Edit, vsoldTo, %soldTo%
-Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-Gui Add, Text, x+12.5 y72, System:
-Gui Add, Edit, vsystem, %system% 
-Gui, Add, Text,, Salesperson:
-Gui, Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople
-Gui, Add, Text,, Sales Manager:
-Gui, Add, DDL, Disabled vsalesManager, % salesManagers
-Gui Add, Text,, Sales Manager Code:
-Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
-Gui, Add, Text,, Sales Director:
-Gui, Add, DropDownList, Disabled vsalesDirector, % salesDirectors
-Gui Add, Text,, Sales Director Code:
-Gui, Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
-Gui Add, CheckBox, x220 y430 vsoftware gdongle, Software?
-Gui, Add, Text, x190 y435.5 Hidden vserialNumberText, S/N:  ;x187.5 y460.5 h10, S/N: ;x187.5 y437.5
-Gui Add, Edit, x225 y430 w100 Hidden vserialNumber, ; y432.5
-Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-Gui Add, Text, x+12.5 y70, CRD:
-Gui Add, DateTime, w135 vcrd, %crd%
-Gui Add, Text,, PO Date:
-Gui Add, DateTime, w135 vpoDate, %poDate% 
-Gui Add, Text,, SAP Date:
-Gui Add, DateTime, w135 vsapDate, %sapDate%
-Gui Add, Text,, PO Value:
-Gui Add, Edit, vpoValue, %poValue%
-Gui Add, Text,, Tax:
-Gui Add, Edit, vtax, %tax%
-Gui Add, Text,, Freight Cost:
-Gui Add, Edit, vfreightCost, %freightCost% 
-Gui Add, Text,, Total:
-Gui Add, Edit, vtotalCost, %totalCost% 
-Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-Gui Add, Text, x+12.5 y95 +center, END USER INFO:
-Gui Add, Text,, End User:
-Gui Add, Edit, vendUser
-Gui Add, Text,, Phone:
-Gui Add, Edit, vphone
-Gui Add, Text,, Email:
-Gui Add, Edit, vemail
-Gui Add, Text,, End Use:
-Gui Add, Edit, w135 h78 vendUse
-Gui Add, Text,, SO#
-Gui Add, Edit, vsoNumber, %soNumber% 
-Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-Gui Add, Text, x+12.5 y70, Notes:
-Gui Add, Edit, w215 h120 vnotes, %notes%
+Gui Add, Text, ys-13 Section Center, Attached`nSalesForce ;gsubmitChecklist vnameCheck, Check TENA Name On PO
+Gui Add, Checkbox, xs+20
+Gui Add, Checkbox, xs+20
+Gui Add, Checkbox, xs+20
+Gui Add, Text, ys Section Center, Attached`nSAP
+Gui Add, Checkbox, xs+17.5
 
-;======== KEYBOARD SHORTCUTS ========
-Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
-LV_ModifyCol(1,190)
-;~ LV_ModifyCol(2, 115)
-LV_Add(Col1, "CPQ (zpq)") ;"zpq")
-;~ Gui Add, Text,, CPQ - zpq
-LV_Add(Col1, "PO# (zpo)") ;,"zpo")
-;~ Gui Add, Text, y+5, PO# - zpo
-LV_Add(Col1, "SO# (zso)") ;,"zso")
-;~ Gui Add, Text, y+5, SO# - zso
-LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
-;~ Gui Add, Text, y+5, SOT Line# - zsot
-LV_Add(Col1, "Customer (zcust)") ;,"zcust")
-;~ Gui Add, Text, y+5, Customer - zcust
-LV_Add(Col1, "PO Value (zval)") ;,"zval")
-;~ Gui Add, Text, y+5, PO Value - zval
-LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
-;~ Gui Add, Text, y+5, Salesperson - zsal
-LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
-;~ Gui Add, Text, x775 y225, Customer Contact -
-;~ Gui Add, Text, y+5, zcon
-LV_Add(Col1, "Cust Email (zem)")
-;~ Gui Add, Text, y+5, Customer Email - 
-;~ Gui Add, Text, y+5, zem
-LV_Add(Col1, "System (zsys)")
-;~ Gui Add, Text, y+5, System - zsys
-LV_Add(Col1, "End User (zenu)")
-;~ Gui Add, Text, y+5, End User - zenu
-LV_Add(Col1, "End User Phone (zph)")
-;~ Gui Add, Text, y+5, Phone - zph
-LV_Add(Col1, "End Use (zuse)")
-;~ Gui Add, Text, y+5, End Use - zuse
+; Gui Add, Text,, Customer:
+; Gui Add, Edit, vcustomer, %customer% 
+; Gui Add, Text,, Customer / DPS Contact:
+; Gui Add, Edit, vcontact, %contact% 
+; Gui Add, Text,, Customer / DPS Address:
+; Gui Add, Edit, vaddress, %address% 
+; Gui Add, Text,, Sold To Account:
+; Gui Add, Edit, vsoldTo, %soldTo%
+; Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+; Gui Add, Text, x+12.5 y72, System:
+; Gui Add, Edit, vsystem, %system% 
+; Gui, Add, Text,, Salesperson:
+; Gui, Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople
+; Gui, Add, Text,, Sales Manager:
+; Gui, Add, DDL, Disabled vsalesManager, % salesManagers
+; Gui Add, Text,, Sales Manager Code:
+; Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
+; Gui, Add, Text,, Sales Director:
+; Gui, Add, DropDownList, Disabled vsalesDirector, % salesDirectors
+; Gui Add, Text,, Sales Director Code:
+; Gui, Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
+; Gui Add, CheckBox, x220 y430 vsoftware gdongle, Software?
+; Gui, Add, Text, x190 y435.5 Hidden vserialNumberText, S/N:  ;x187.5 y460.5 h10, S/N: ;x187.5 y437.5
+; Gui Add, Edit, x225 y430 w100 Hidden vserialNumber, ; y432.5
+; Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+; Gui Add, Text, x+12.5 y70, CRD:
+; Gui Add, DateTime, w135 vcrd, %crd%
+; Gui Add, Text,, PO Date:
+; Gui Add, DateTime, w135 vpoDate, %poDate% 
+; Gui Add, Text,, SAP Date:
+; Gui Add, DateTime, w135 vsapDate, %sapDate%
+; Gui Add, Text,, PO Value:
+; Gui Add, Edit, vpoValue, %poValue%
+; Gui Add, Text,, Tax:
+; Gui Add, Edit, vtax, %tax%
+; Gui Add, Text,, Freight Cost:
+; Gui Add, Edit, vfreightCost, %freightCost% 
+; Gui Add, Text,, Total:
+; Gui Add, Edit, vtotalCost, %totalCost% 
+; Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+; Gui Add, Text, x+12.5 y95 +center, END USER INFO:
+; Gui Add, Text,, End User:
+; Gui Add, Edit, vendUser
+; Gui Add, Text,, Phone:
+; Gui Add, Edit, vphone
+; Gui Add, Text,, Email:
+; Gui Add, Edit, vemail
+; Gui Add, Text,, End Use:
+; Gui Add, Edit, w135 h78 vendUse
+; Gui Add, Text,, SO#
+; Gui Add, Edit, vsoNumber, %soNumber% 
+; Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+; Gui Add, Text, x+12.5 y70, Notes:
+; Gui Add, Edit, w215 h120 vnotes, %notes%
 
-;======== END KEYBOARD SHORTCUTS ========
+; ;======== KEYBOARD SHORTCUTS ========
+; Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
+; LV_ModifyCol(1,190)
+; ;~ LV_ModifyCol(2, 115)
+; LV_Add(Col1, "CPQ (zpq)") ;"zpq")
+; ;~ Gui Add, Text,, CPQ - zpq
+; LV_Add(Col1, "PO# (zpo)") ;,"zpo")
+; ;~ Gui Add, Text, y+5, PO# - zpo
+; LV_Add(Col1, "SO# (zso)") ;,"zso")
+; ;~ Gui Add, Text, y+5, SO# - zso
+; LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
+; ;~ Gui Add, Text, y+5, SOT Line# - zsot
+; LV_Add(Col1, "Customer (zcust)") ;,"zcust")
+; ;~ Gui Add, Text, y+5, Customer - zcust
+; LV_Add(Col1, "PO Value (zval)") ;,"zval")
+; ;~ Gui Add, Text, y+5, PO Value - zval
+; LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
+; ;~ Gui Add, Text, y+5, Salesperson - zsal
+; LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
+; ;~ Gui Add, Text, x775 y225, Customer Contact -
+; ;~ Gui Add, Text, y+5, zcon
+; LV_Add(Col1, "Cust Email (zem)")
+; ;~ Gui Add, Text, y+5, Customer Email - 
+; ;~ Gui Add, Text, y+5, zem
+; LV_Add(Col1, "System (zsys)")
+; ;~ Gui Add, Text, y+5, System - zsys
+; LV_Add(Col1, "End User (zenu)")
+; ;~ Gui Add, Text, y+5, End User - zenu
+; LV_Add(Col1, "End User Phone (zph)")
+; ;~ Gui Add, Text, y+5, Phone - zph
+; LV_Add(Col1, "End Use (zuse)")
+; ;~ Gui Add, Text, y+5, End Use - zuse
 
-;******** CHECKLIST GUI ********
-Gui, Tab, 2
+; ;======== END KEYBOARD SHORTCUTS ========
 
-;===== PRE-SAP =======
-Gui, Add, GroupBox,Section h120 w215, Pre-SAP
-Gui, Add, Checkbox, xs+10 ys+20 gsubmitChecklist vnameCheck, Check TENA Name On PO
-Gui, Add, Checkbox, gsubmitChecklist vorderNoticeSent, Order Notice Sent
-Gui, Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
-Gui, Add, Text, tcs y+10, T&&Cs?
-Gui, Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
-;===== END PRE-SAP =======
+; ;******** CHECKLIST GUI ********
+; Gui, Tab, 2
 
-;===== SAP ATTACHMENTS =======
-Gui, Add, GroupBox,Section xm+15 y+25 h130 w215, SAP Attachments:
-Gui, Add, Checkbox,xs+10 ys+25 gsubmitChecklist vpoAttached, PO
-Gui, Add, Checkbox, x+61 gsubmitChecklist vquoteAttached, Quote
-Gui, Add, Checkbox, xm+25 y+10 gsubmitChecklist vdpsAttached, DPS Report(s)
-Gui, Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
-Gui, Add, Text, xm+25 y+15, WIN Form?
-Gui, Add, Radio, x+40 gsubmitChecklist vwinYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
-Gui, Add, Text, xm+25 y+10, Merge Report?
-Gui, Add, Radio, x+24 gsubmitChecklist vmergeYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
-;===== END SAP ATTACHMENTS =======
+; ;===== PRE-SAP =======
+; Gui, Add, GroupBox,Section h120 w215, Pre-SAP
+; Gui, Add, Checkbox, xs+10 ys+20 gsubmitChecklist vnameCheck, Check TENA Name On PO
+; Gui, Add, Checkbox, gsubmitChecklist vorderNoticeSent, Order Notice Sent
+; Gui, Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
+; Gui, Add, Text, tcs y+10, T&&Cs?
+; Gui, Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
+; Gui, Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
+; ;===== END PRE-SAP =======
 
-;===== PRE ACCEPTANCE ========
-Gui, Add, GroupBox,Section xm+260 ym+63 h225 w235, Pre-Acceptance:
-Gui, Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcheckPrices, Check Prices
-Gui, Add, Text,, Add Shipping?
-Gui, Add, Radio, x+53 gsubmitChecklist vshippingYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
-Gui, Add, Text, xm+270 y+10, Higher Level Linking?
-Gui, Add, Radio, x+18 gsubmitChecklist vhigherLevelLinkingYes, Yes
-Gui, Add, Radio, x+5 vhigherLevelLinkingNa, N/A
-Gui, Add, Text,xm+270 y+10, Delivery Groups?
-Gui, Add, Radio, x+42.5 vdeliveryGroupsYes gsubmitChecklist, Yes
-Gui, Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
-Gui, Add, Checkbox, xm+270 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
-Gui, Add, Text,, Order Acceptance
-Gui, Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
-Gui, Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
-Gui, Add, Text, xm+270 y+10, Serial/Dongle Number?
-Gui, Add, Radio, x+5 gsubmitChecklist vserialYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
-Gui, Add, Text, xm+270 y+10, End User Info?
-Gui, Add, Radio, x+54 gsubmitChecklist vendUserYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
-;===== END PRE ACCEPTANCE ========
-;~ Gui, add, Text, x60 y400 , Order Progress
-;~ Gui, Add, Progress, w800 h25, 25
-;******** END CHECKLIST GUI ********
+; ;===== SAP ATTACHMENTS =======
+; Gui, Add, GroupBox,Section xm+15 y+25 h130 w215, SAP Attachments:
+; Gui, Add, Checkbox,xs+10 ys+25 gsubmitChecklist vpoAttached, PO
+; Gui, Add, Checkbox, x+61 gsubmitChecklist vquoteAttached, Quote
+; Gui, Add, Checkbox, xm+25 y+10 gsubmitChecklist vdpsAttached, DPS Report(s)
+; Gui, Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
+; Gui, Add, Text, xm+25 y+15, WIN Form?
+; Gui, Add, Radio, x+40 gsubmitChecklist vwinYes, Yes
+; Gui, Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
+; Gui, Add, Text, xm+25 y+10, Merge Report?
+; Gui, Add, Radio, x+24 gsubmitChecklist vmergeYes, Yes
+; Gui, Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
+; ;===== END SAP ATTACHMENTS =======
+
+; ;===== PRE ACCEPTANCE ========
+; Gui, Add, GroupBox,Section xm+260 ym+63 h225 w235, Pre-Acceptance:
+; Gui, Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcheckPrices, Check Prices
+; Gui, Add, Text,, Add Shipping?
+; Gui, Add, Radio, x+53 gsubmitChecklist vshippingYes, Yes
+; Gui, Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
+; Gui, Add, Text, xm+270 y+10, Higher Level Linking?
+; Gui, Add, Radio, x+18 gsubmitChecklist vhigherLevelLinkingYes, Yes
+; Gui, Add, Radio, x+5 vhigherLevelLinkingNa, N/A
+; Gui, Add, Text,xm+270 y+10, Delivery Groups?
+; Gui, Add, Radio, x+42.5 vdeliveryGroupsYes gsubmitChecklist, Yes
+; Gui, Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
+; Gui, Add, Checkbox, xm+270 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
+; Gui, Add, Text,, Order Acceptance
+; Gui, Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
+; Gui, Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
+; Gui, Add, Text, xm+270 y+10, Serial/Dongle Number?
+; Gui, Add, Radio, x+5 gsubmitChecklist vserialYes, Yes
+; Gui, Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
+; Gui, Add, Text, xm+270 y+10, End User Info?
+; Gui, Add, Radio, x+54 gsubmitChecklist vendUserYes, Yes
+; Gui, Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
+; ;===== END PRE ACCEPTANCE ========
+; ;~ Gui, add, Text, x60 y400 , Order Progress
+; ;~ Gui, Add, Progress, w800 h25, 25
+; ;******** END CHECKLIST GUI ********
 
 Gui Show,w920 h485, Order Organizer ;SO# %soNumber%
 Gui, Submit, NoHide
