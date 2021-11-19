@@ -1,5 +1,6 @@
 ﻿#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
 ;~ #Include WatchFolder.ahk
+#Include ../GridGUI-master/GridGUI.ahk
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs ; Ensures a consistent starting directory.
@@ -30,6 +31,46 @@ Menu, FileMenu, Add
 
 SetTitleMatchMode, 2
 
+myGui := new GridGUI("Order Organizer", Options := "resize")
+; myGui.Margin(x := "100", y := "100")
+myGui.GuiClose := GridGUI.ExitApp
+
+; myGui.Add(1,"1-5", "Progress", , , 2.3, 1, 2.3, 1).GuiControl("+Background777777", "")
+; myGui.GetNewestCellGroup().borderX := 0
+; myGui.GetNewestCellGroup().borderY := 0
+
+; myGui.Add(row := 1, column := 1, type := "Button", options := "", text := "A Button")
+; Add(x,y,type,options,text,exW,exH,fillW,fillH,justify)
+
+myGui.Font("s11")
+; myGui.Add(1, 1, "Button", {justify:"CNW",	text:"NW",	exW:1, exH:1})
+myGui.Add(1, 1, "Text", {justify:"CNW",	text:"SOT Line:", exW:1, exH:1}) ;, "SOT Line:", , , , , "W")
+myGui.Add(1, 2, "Edit", {justify:"CNW",	, ,})
+; myGui.Add("2-5", 1, "Edit",,"Profile 1", , , 1)
+; myGui.Add(1, "2-5", "Edit", exW := 1, , , , 1)
+
+; myGui.Add(1,	1,		"Button", , "A Longer Button")
+; myGui.Add(1,	2,		"Button", , "A Button", , , fillW := 1, fillH := 0)
+; myGui.Add(1,	3,		"Button", , "A Button", , , fillW := 1, fillH := 0)
+; myGui.Add(2,	"1-3",	"Button", , "An Expanding Button", exW := 1, exH := 0, fillW := 1, fillH := 1)
+
+
+; Gui Add, Text, xs+10 ys+17.5, SOT Line#
+; Gui Add, Edit, w55 vsot, %sot%
+; Gui Add, Text, xs+90 ys+17.5, Date PO Received
+; Gui Add, Edit, w100
+
+; myGui.Add(row := 1, column := 1, type := "Button", options := "", text := "A Button")
+; myGui.Add(1, 1, "Button", , "A Button", exW := 1, exH := 1)
+
+myGui.AutoSize()
+myGui.Show() ;("w1393 h613")
+myGui.MinSize()
+
+Return
+/*
+
+
 orderInfo(){
     global
 ;/******** GUI START ********\
@@ -46,37 +87,48 @@ Gui, Font, S9, Segoe UI Semibold
 ; Gui, Add, Button, x+25 w70 gSaveToIni, &Save
 ; Gui, Add, Button, x+25 w150 grestartScript, &New PO or Reload
 ; Gui Add, Edit, x+25 y22 w175 h20, Search
-Gui Add, Tab3, xm ym+30, Order Info|Checklist
-Gui Tab, 1
-Gui Add, Text, y+20 Section, SO#
+; Gui Add, Tab3, xm ym+30, Order Info|Checklist
+; Gui Tab, 1
+Gui Margin, 15, 10
+
+Gui Add, GroupBox, Section w200 R2.3
+Gui Add, Text, xs+10 ys+17.5, SOT Line#
+Gui Add, Edit, w55 vsot, %sot%
+Gui Add, Text, xs+90 ys+17.5, Date PO Received
+Gui Add, Edit, w100
+
+Gui, Add, GroupBox, xp+109 ys Section w50 R2.3
+
+; Gui, Add, GroupBox, xp+109 ys Section w200 R2.3
+; Gui Margin, 25, 10
+Gui Add, Text,, SO#
 Gui Add, Edit, vsoNumber, %soNumber% 
-Gui Margin, 10, 10
-Gui Add, Text,, PO:
-Gui Add, Edit, vpo, %po%
-Gui Add, Text,, CPQ:
-Gui Add, Edit, vcpq, %cpq% 
-Gui Add, Text, y+18, DPS ----------------------
-Gui Add, Text,, WIN Form ---------------
-Gui Add, Text,, Order Notice Email ------
-Gui Add, Text,, Merge Report ------------
-; Gui Add, Text,, SOT Line#
-; Gui Add, Edit, vsot, %sot%
-Gui Add, Text, ys-13 Section Center, Attached`nSalesForce ;gsubmitChecklist vnameCheck, Check TENA Name On PO
-Gui Add, Checkbox, xs+20
-Gui Add, Checkbox, xs+20 y+44
-Gui Add, Checkbox, xs+20 y+44
-Gui Add, Checkbox, xs+20 y+22
-Gui Add, Text, xs+16 y+17.5, N/A
-Gui Add, Text, xs+16 y+18, N/A
-Gui Add, Text, xs+16 y+18, N/A
-Gui Add, Text, ys Section Center, Attached`nSAP
-Gui Add, Checkbox, xs+17.5
-Gui Add, Checkbox, xs+17.5 y+44
-Gui Add, Checkbox, xs+17.5 y+44
-Gui Add, Checkbox, xs+17.5 y+22
-Gui Add, Checkbox, xs+17.5 y+17
-Gui Add, Checkbox, xs+17.5 y+17
-Gui Add, Checkbox, xs+17.5 y+17
+; Gui Margin, 10, 10
+; Gui Add, Text,, PO:
+; Gui Add, Edit, vpo, %po%
+; Gui Add, Text,, CPQ:
+; Gui Add, Edit, vcpq, %cpq% 
+; Gui Add, Text, y+18, DPS ----------------------
+; Gui Add, Text,, WIN Form ---------------
+; Gui Add, Text,, Order Notice Email ------
+; Gui Add, Text,, Merge Report ------------
+
+; Gui Add, Text, ys-13 Section Center, Attached`nSalesForce ;gsubmitChecklist vnameCheck, Check TENA Name On PO
+; Gui Add, Checkbox, xs+20
+; Gui Add, Checkbox, xs+20 y+44
+; Gui Add, Checkbox, xs+20 y+44
+; Gui Add, Checkbox, xs+20 y+22
+; Gui Add, Text, xs+16 y+17.5, N/A
+; Gui Add, Text, xs+16 y+18, N/A
+; Gui Add, Text, xs+16 y+18, N/A
+; Gui Add, Text, ys Section Center, Attached`nSAP
+; Gui Add, Checkbox, xs+17.5
+; Gui Add, Checkbox, xs+17.5 y+44
+; Gui Add, Checkbox, xs+17.5 y+44
+; Gui Add, Checkbox, xs+17.5 y+22
+; Gui Add, Checkbox, xs+17.5 y+17
+; Gui Add, Checkbox, xs+17.5 y+17
+; Gui Add, Checkbox, xs+17.5 y+17
 
 ; Gui Add, Text,, Customer:
 ; Gui Add, Edit, vcustomer, %customer% 
