@@ -31,8 +31,8 @@ Menu, FileMenu, Add
 
 SetTitleMatchMode, 2
 
-myGui := new GridGUI("Order Organizer", Options := "resize")
-; myGui.Margin(x := "100", y := "100")
+myGui := new GridGUI("Order Organizer", Options := "resize", showGrid := false)
+myGui.Margin(x := "5", y := "5")
 myGui.GuiClose := GridGUI.ExitApp
 
 ; myGui.Add(1,"1-5", "Progress", , , 2.3, 1, 2.3, 1).GuiControl("+Background777777", "")
@@ -44,32 +44,49 @@ myGui.GuiClose := GridGUI.ExitApp
 
 myGui.Font("s11")
 ; myGui.Add(1, 1, "Button", {justify:"CNW",	text:"NW",	exW:1, exH:1})
-myGui.Add(1, 1, "Text", {justify:"CNW",	text:"SOT Line:", exW:1, exH:1}) ;, "SOT Line:", , , , , "W")
-myGui.Add(1, 2, "Edit", {justify:"CNW",	, ,})
-; myGui.Add("2-5", 1, "Edit",,"Profile 1", , , 1)
-; myGui.Add(1, "2-5", "Edit", exW := 1, , , , 1)
+; myGui.Add(1, 1, "Text", {justify:"CW", text:"SOT Line:" , exW:0, exH:1})
+
+myGui.Add(1,1,"Text","w65 h20", "SOT Line:",,,,1,"CW")
+myGui.Add(2,1,"Edit","w40 h20",,,,1,"CW") 
+myGui.Add(3,1,"Text","w125 h20","Date PO Received:",,,,1,"CW")
+myGui.Add(4,1,"Edit","w65 h20",,,,1,"CW")  
+myGui.Add(5,1,"Text","w30 h20","SO#",,,,1,"CE") 
+myGui.Add(6,1,"Edit","w80 h20",,,,,"CW")
+myGui.Add(5,2,"Text","w30 h20","PO#",,,,1,"CE") 
+myGui.Add(6,2,"Edit","w80 h20",,,,,"CW")
+myGui.Add(5,3,"Text","w50 h20","Quote#",,,,1,"CE") 
+myGui.Add(6,3,"Edit","w80 h20",,,,1,"CW")
+myGui.Add("1-3",3,"Text","w115 h20","Customer Name:",,,,1,"CW") 
+myGui.Add("2-3",3,"Edit","w80 h20",,,,1,"CW")
+myGui.Add(1,4,"Text","w115 h20","Salesperson:",,,,1,"CW")
+myGui.Add("2-3",4,"ComboBox","+Sort vsalesPerson","Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch Lazaro"
+. "|Tucker Lincoln|Jawad Pashmi|Julie Sawicki|Mike Hughes|Steve Boyanoski|Bob Riggs|Chuck Costanza|Navette Shirakawa"
+. "|Stephanie Koczur|Mark Krigbaum|Jon Needels|Bill Balsanek|Brent Boyle|Andrew Clark|Kevin Clodfelter|Gabriel Mendez"
+. "|Karl Kastner|Michael Burnett|Jerry Pappas|Nick Duczak|Steven Danielson|Nick Hubbard|Samantha Stikeleather|Drew Smillie|Jeff Weller|Jerry Holycross"
+. "|Theresa Borio|Dan Ciminelli|Cynthia Spittler|Gwyn Trojan|Joel Stradtner|Don Rathbauer|Hillary Tennant|Melissa Chandler|Douglas Sears|Rashila Patel|Brian Thompson"
+. "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
+. "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
+. "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
+. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|"
+,,,,1,"CW") ;"One|Two",,,,1,"CW")  ; "+Sort vsalesPerson" % salesPeople" 
+
+
 
 ; myGui.Add(1,	1,		"Button", , "A Longer Button")
 ; myGui.Add(1,	2,		"Button", , "A Button", , , fillW := 1, fillH := 0)
 ; myGui.Add(1,	3,		"Button", , "A Button", , , fillW := 1, fillH := 0)
-; myGui.Add(2,	"1-3",	"Button", , "An Expanding Button", exW := 1, exH := 0, fillW := 1, fillH := 1)
+; my1,Gui.Add(2,	"1-3",	"Button", , "An Expanding Button", exW := 1, exH := 0, fillW := 1, fillH := 1)
 
-
-; Gui Add, Text, xs+10 ys+17.5, SOT Line#
-; Gui Add, Edit, w55 vsot, %sot%
-; Gui Add, Text, xs+90 ys+17.5, Date PO Received
-; Gui Add, Edit, w100
 
 ; myGui.Add(row := 1, column := 1, type := "Button", options := "", text := "A Button")
 ; myGui.Add(1, 1, "Button", , "A Button", exW := 1, exH := 1)
 
 myGui.AutoSize()
 myGui.Show() ;("w1393 h613")
-myGui.MinSize()
+; myGui.MinSize()
 
 Return
 /*
-
 
 orderInfo(){
     global
