@@ -31,7 +31,7 @@ Menu, FileMenu, Add
 
 SetTitleMatchMode, 2
 
-myGui := new GridGUI("Order Organizer", Options := "resize", showGrid := true)
+myGui := new GridGUI("Order Organizer", Options := "resize", showGrid := false)
 myGui.Margin(x := "5", y := "5")
 myGui.GuiClose := GridGUI.ExitApp
 
@@ -46,36 +46,41 @@ myGui.Font("s11")
 ; myGui.Add(1, 1, "Button", {justify:"CNW",	text:"NW",	exW:1, exH:1})
 ; myGui.Add(1, 1, "Text", {justify:"CW", text:"SOT Line:" , exW:0, exH:1})
 
-myGui.Add(1,1,"Text","", "", exW := 1, exH := 0, fillW := 1, fillH := 1) ; Place holder for title line
+myGui.Add("1-6",1,"Progress","h10", "", exW := 1, exH := 1, fillW := 1, fillH := 1).GuiControl("+Background5cc3ff", "") ; Place holder for title line
 myGui.Add(1,2,"Text","w65 h20", "SOT Line:",,,,1,"CW")
 myGui.Add(2,2,"Edit","w40 h20",,,,1,"CW") 
 myGui.Add(3,2,"Text","w125 h20","Date PO Received:",,,,1,"CW")
 myGui.Add(4,2,"Edit","w65 h20",,,,1,"CW")  
-myGui.Add(5,2,"Text","w30 h20","SO#",,,,1,"CE") 
-myGui.Add(6,2,"Edit","w80 h20",,,,,"CW")
-myGui.Add(5,3,"Text","w30 h20","PO#",,,,1,"CE") 
-myGui.Add(6,3,"Edit","w80 h20",,,,,"CW")
-myGui.Add(5,4,"Text","w50 h20","Quote#",,,,1,"CE") 
-myGui.Add(6,4,"Edit","w80 h20",,,,1,"CW")
-myGui.Add(1,4,"Text","w115 h20","Customer Name:",,,,1,"CW") 
-myGui.Add("2-4",4,"Edit","w80 h20",,,,1,"CW")
-myGui.Add(1,5,"Text","w115 h20","Salesperson:",,,,1,"CW")
-myGui.Add(2,5,"ComboBox","+Sort vsalesPerson","Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch Lazaro"
-. "|Tucker Lincoln|Jawad Pashmi|Julie Sawicki|Mike Hughes|Steve Boyanoski|Bob Riggs|Chuck Costanza|Navette Shirakawa"
-. "|Stephanie Koczur|Mark Krigbaum|Jon Needels|Bill Balsanek|Brent Boyle|Andrew Clark|Kevin Clodfelter|Gabriel Mendez"
-. "|Karl Kastner|Michael Burnett|Jerry Pappas|Nick Duczak|Steven Danielson|Nick Hubbard|Samantha Stikeleather|Drew Smillie|Jeff Weller|Jerry Holycross"
-. "|Theresa Borio|Dan Ciminelli|Cynthia Spittler|Gwyn Trojan|Joel Stradtner|Don Rathbauer|Hillary Tennant|Melissa Chandler|Douglas Sears|Rashila Patel|Brian Thompson"
-. "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
-. "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
-. "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
-. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|"
-,,,,1,"CW")
-myGui.Add(3,5,"Text","h20","Code#",,,,1,"CW")
-myGui.Add(4,5,"Edit","w80 h20",,,,1,"CW")
-myGui.Add(1,6,"Text","w115 h20","Sales Manager:",,,,1,"CW")
-myGui.Add(2,6,"ComboBox",,,,,"CW")
-myGui.Add(3,6,"Text",,"Code#",,,,,"CW")
-myGui.Add(4,6,"Edit","w80",,,,,"CW")
+; myGui.Add(5,2,"Text","w30 h20","SO#",,,,1,"CE") 
+; myGui.Add(6,2,"Edit","w80 h20",,,,,"CW")
+; myGui.Add(5,3,"Text","w30 h20","PO#",,,,1,"CE") 
+; myGui.Add(6,3,"Edit","w80 h20",,,,,"CW")
+; myGui.Add(5,4,"Text","w50 h20","Quote#",,,,1,"CE") 
+; myGui.Add(6,4,"Edit","w80 h20",,,,1,"CW")
+; myGui.Add(1,4,"Text","w115 h20","Customer Name:",,,,1,"CW") 
+; myGui.Add("2-4",4,"Edit","w80 h20",,,,1,"CW")
+; myGui.Add(1,5,"Text","w115 h20","Salesperson:",,,,1,"CW")
+; myGui.Add(2,5,"ComboBox","+Sort vsalesPerson","Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch Lazaro"
+; . "|Tucker Lincoln|Jawad Pashmi|Julie Sawicki|Mike Hughes|Steve Boyanoski|Bob Riggs|Chuck Costanza|Navette Shirakawa"
+; . "|Stephanie Koczur|Mark Krigbaum|Jon Needels|Bill Balsanek|Brent Boyle|Andrew Clark|Kevin Clodfelter|Gabriel Mendez"
+; . "|Karl Kastner|Michael Burnett|Jerry Pappas|Nick Duczak|Steven Danielson|Nick Hubbard|Samantha Stikeleather|Drew Smillie|Jeff Weller|Jerry Holycross"
+; . "|Theresa Borio|Dan Ciminelli|Cynthia Spittler|Gwyn Trojan|Joel Stradtner|Don Rathbauer|Hillary Tennant|Melissa Chandler|Douglas Sears|Rashila Patel|Brian Thompson"
+; . "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
+; . "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
+; . "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
+; . "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|"
+; ,,,,1,"CW")
+; myGui.Add(3,5,"Text","h20","Code#",,,,1,"CW")
+; myGui.Add(4,5,"Edit","w80 h20",,,,1,"CW")
+; myGui.Add(1,6,"Text","w115 h20","Sales Manager:",,,,1,"CW")
+; myGui.Add(2,6,"ComboBox",,,,,"CW")
+; myGui.Add(3,6,"Text",,"Code#",,,,,"CW")
+; myGui.Add(4,6,"Edit","w80",,,,,"CW")
+; myGui.Add(5,5,"Text","w30 h20","Sold to:",,,1,1,"CE") 
+; myGui.Add(6,5,"Edit","w80 h20",,,,,"CW")
+; myGui.Add(5,6,"Text","w30 h20","Ship to:",,,1,1,"CE") 
+; myGui.Add(6,6,"Edit","w80 h20",,,,1,"CW")
+; myGui.Add(5,4,"Text","w50 h20","Quote#",,,,1,"CE") 
 
 
 ; myGui.Add(1,	1,		"Button", , "A Longer Button")
