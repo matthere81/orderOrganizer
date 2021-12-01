@@ -740,8 +740,7 @@ return
 return
 
 !2:: ; Forward SW Licenses
-    gosub, ForwardEmail
-    Send, {tab 4}Hi%firstname%`nPlease find the license attached for SO{#}{Space}%soNumber%.`n`nThanks{pgup}
+    Send, Hi%firstname%`nPlease find the license attached for SO{#}{Space}%soNumber%.`n`nThanks{pgup}
 return
 
 ^!c:: ; Import Clip
