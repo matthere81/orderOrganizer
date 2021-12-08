@@ -12,7 +12,7 @@ salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch La
 . "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
 . "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
 . "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
-. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|"
+. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch"
 
@@ -697,6 +697,14 @@ return
 Send WIN Form - CPQ-%cpq%
 return
 ::ejim::10246281
+:O:gsod::
+Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs"
+Send ^v{Down}{enter}
+Return
+:O:pftl::
+Send Hi ,`nPlease find the license attached for SO{#} %soNumber%. The customer is %customer%.`n`nThank you^{home}{end}{left}
+Return
+!#p::Pause
 ;----- End Order keyboard shortcuts -----
 
 ::emlinv::E-MAIL INVOICES TO:{space}
@@ -1280,7 +1288,12 @@ return
     Sleep, 1000
 return
 
-!x::Send +{F10},F,C ; Find related email in Outlook
+#IfWinNotActive, Insert Hyperlink
+{
+    !x::
+    Send +{F10},F,C ; Find related email in Outlook
+    Return
+}
 return
 
 ^2:: ; Add'l Attachment
@@ -1295,7 +1308,7 @@ return
     Clipboard:= ""
     Sleep, 500
     Send, ^c ; copies selected text
-    ClipWait
+    ClipWait, 1
     StringUpper Clipboard, Clipboard
 return
 
@@ -1336,8 +1349,8 @@ return
 OpenSAPWindow:
     SetTitleMatchMode, 2
     if WinExist("Change Standard Order") {
-        WinActivate, Change Standard Order,
-        WinWaitActive, Change Standard Order,
+        WinActivate, Change Standard Order, Organizer
+        WinWaitActive, Change Standard Order,, Organizer
         Send, {F3}{BackSpace}
         Sleep, 500
         Send, %soNumber%
@@ -1345,18 +1358,17 @@ OpenSAPWindow:
         Send, {Enter}
         Sleep, 500
         Send, {Tab}{Enter}
-        IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-            WinWaitActive, Change Standard Order,
+        WinActivate, Change Standard Order, Organizer
+        WinWaitActive, Change Standard Order,, Organizer
     } else if WinExist("Change Sales Order") {
-        WinActivate, Change Sales Order,
-        WinWaitActive, Change Sales Order,
+        WinActivate, Change Sales Order, Organizer
+        WinWaitActive, Change Sales Order,, Organizer
         Sleep, 200
         Send, {end}+{Home}{BackSpace}%soNumber%{Enter}
         Sleep, 500
         Send, {Tab}{Enter}
-        IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-            WinWaitActive, Change Standard Order,
-        WinActivate ; use the window found above
+        WinActivate, Change Standard Order, Organizer
+        WinWaitActive, Change Standard Order,, Organizer
     } else if WinExist("SAP Easy Access") {
         IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
             WinWaitActive, SAP Easy Access,
@@ -1364,11 +1376,10 @@ OpenSAPWindow:
         MouseClick, left, 90, 66
         Send, va02{enter}
         WinWait, SAP Easy Access, 
-        WinWaitActive, Change Sales Order,
+        WinWaitActive, Change Sales Order,, Organizer
         Send, %soNumber%{enter}
-        IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-            WinWaitActive, Change Standard Order,
-        WinActivate ; use the window found above
+        WinActivate, Change Standard Order, Organizer
+        WinWaitActive, Change Standard Order,, Organizer
     }
 return
 
@@ -1501,7 +1512,9 @@ Send, %customer%
 KeyWait, F14, d
 Send, {tab 2}{down}
 Send, {tab 2}{down}{Tab}
-Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%so%{Tab}%type%{Tab}n{tab}{Down}{Tab}NET30{tab 3}
+Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%soNumber%{Tab}c{Tab}n{tab}n{Tab}NET30{tab 3}
+FormatTime, TimeString, %crd%, MM/dd/yyyy
+Send, %TimeString%{tab}%contact% - %email%
 return
 
 !1:: ; CRD Date
@@ -1595,93 +1608,170 @@ Send, ^{PGUP}
 return
 
 !+d:: ; GET DPS REPORTS
-MsgBox,,Tab check, Is CPQ on the Attachments tab?
+SetDefaultMouseSpeed, 7
+dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq
+run, https://thermofisher.integrationpoint.net/gtm/aspx?href=%2FGV%2FfxdScoreCard.aspx%3FGUID%3DE9E9B54D-5B2A-4866-BA65-0E6C8E73B289
 WinWait, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-IfWinNotActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window, WinActivate, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-    WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+Sleep 200
+Loop, 
+{
+    CoordMode, Pixel, Window
+    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, *3 C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211207083807.png
+    If (ErrorLevel = 0)
+    {
+        break
+    }
+}
 MouseClick, left, 291, 190
-Send, TENA-CPQ-%cpq%
-Sleep, 100
 MouseClick, left, 537, 250
-Sleep, 100
 WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-IfWinNotActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window, WinActivate, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-    WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 MouseClick, left, 1210, 377
-Sleep, 200
+Sleep, 100
 Send, TENA-CPQ-%cpq%
-Sleep, 500
 MouseClick, left, 310, 494
+Sleep, 100
 Send, %customer%
-Sleep, 500
 MouseClick, left, 541, 527
+Sleep, 100
 Send, %address%
-Sleep, 500
 WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-IfWinNotActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window, WinActivate, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-    WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-MouseClick, left, 1789, 279
-KeyWait, ', d
-Send, {Enter}
-Sleep, 4000 ; Wait for report
-Send, {tab 9}{Enter}
-Sleep, 4000 ; Wait for print dialog
-Send, {Enter}
-KeyWait, Left, d
-Send, ^a!nDPS - %customer%!s
-Sleep, 1000
-Send, ^w
-Sleep, 4000
-Send, {tab 5}{BackSpace}+{Tab}{BackSpace}%contact%+{tab 7}{enter}
-;Generate Report
-KeyWait, ', d
-Send, {Enter}
-Sleep, 4000
-Send, {tab 9}{Enter}
-Sleep, 4000
-Send, {Enter}
-Sleep, 3000
-Send, !nDPS - %contact%!s
-Sleep, 1000									
-Send, ^w
-Sleep, 200
-Send, ^w
+; MouseClick, left, 1789, 279
+Send, +{tab 6}{Enter}
+WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 
-; ---- Add to SalesForce
-;~ Sleep, 500
-;~ Send, {TAB}{ENTER}
-;~ Sleep, 1500
-;~ IfWinNotActive, "Open", , WinActivate, "Open", 
-;~ else 
-;~ IfWinNotActive, Import file, , WinActivate, Import file, 
-;~ Send, {SHIFTDOWN}{TAB 3}{SHIFTUP}{PGUP 2}{ENTER}{ALTDOWN}n{ALTUP}
-;~ Sleep, 500
-;~ Send, so{space}docs
-;~ Sleep, 1000
-;~ Send, {down}{enter}
-;~ Sleep, 200
-;~ Send, po{space}%po%
-;~ Sleep, 200
-;~ Send, {down}{enter}
-;~ Sleep, 200
-;~ Send, d
-;~ Sleep, 200
-;~ Send, {down}{enter}
-;~ WinWait, Salesforce, 
-;~ IfWinNotActive, Salesforce, , WinActivate, Salesforce, 
-;~ WinWaitActive, Salesforce, 
-;~ Send, {tab}{enter}
-;~ Sleep, 1000
-;~ Send, d
-;~ Sleep, 500
-;~ Send, {DOWN 2}
-;~ Sleep, 200
-;~ Send, {ENTER}
+Gosub, DPSResults
+Gosub, ReportGenerate
+Gosub, PrintDPS
+
+; Contact DPS Report
+WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+Send, {tab 5}{BackSpace}+{Tab}{BackSpace}%contact%+{tab 7}{enter}
+WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+
+Gosub, DPSResults
+Gosub, ReportGenerate
+Gosub, PrintDPS
+Send, ^w
 return
 
-SetTitleMatchMode, 2
-WinActivate, Change Standard Order
-WinMenuSelectItem, Change Standard Order,, 3& ;Header, Sales
+ReportGenerate:
+Loop
+{
+    CoordMode, Pixel, Client
+    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203140835.png
+    If ErrorLevel = 0
+    {
+        CoordMode, Pixel, Client
+        ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
+        if ErrorLevel = 0
+        {
+            Send {tab 7}{Enter}
+        }
+        CoordMode, Pixel, Client
+        ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
+        if ErrorLevel = 0
+        {
+            Send {tab 8}{Enter}
+        }
+        Break
+    }
+    CoordMode, Pixel, Client
+    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211207112110.png
+    If ErrorLevel = 0
+    {
+        CoordMode, Pixel, Client
+        ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
+        if ErrorLevel = 0
+        {
+            Send {tab 7}{Enter}
+        }
+        CoordMode, Pixel, Client
+        ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
+        if ErrorLevel = 0
+        {
+            Send {tab 8}{Enter}
+        }
+        Break
+    }
+}
+Return
+
+PrintDPS:
+WinWaitActive, DTSSearchResults
+Sleep 500
+Send ^p
+Sleep, 750
+Send {enter}
+WinWaitActive, Save As
+; Clipboard := dpsPath 
+dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq . "\"
+if FileExist(dpsPath . "DPS - " . customer . ".pdf")
+{
+    Clipboard := dpsPath . "DPS - " . contact
+} else 
+{
+    Clipboard := dpsPath . "DPS - " . customer
+}
+Sleep, 200
+Send ^v
+Sleep, 500
+Send {Enter}
+WinWaitActive, DTSSearchResults
+Send ^w
+return
+
+DPSResults:
+Loop
+{   
+    ; No records found
+    CoordMode, Pixel, Screen
+    ImageSearch, FoundX, FoundY, 2214, 215, 2866, 380, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203080204.png
+    If ErrorLevel = 0
+    {
+    	Sleep, 200
+        Send, {tab 2}{enter}
+        Break
+    }
+    
+    ; Blocked
+    CoordMode, Pixel, Window
+        ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203090941.png
+    If ErrorLevel = 0
+    {
+        MsgBox, 4,,Records WERE Found`nContinue?
+        If MsgBox No
+        {
+            Break
+        }
+        Else
+        {
+            WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+            MouseClick, Left, 899, 257,1,, D ; reset tab position to middle of screen
+            Send {tab 2}{enter}
+            Sleep 200
+            Send +{tab}{down 5}{enter}
+            Sleep 200
+            Send {tab 3}{Enter}
+            Break
+        }
+    }
+
+    ; Overridden
+    CoordMode, Pixel, Client
+    ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206102506.png
+    If ErrorLevel = 0
+    {
+    	Sleep, 200
+        Send, {tab 2}{enter}
+        Break
+    }
+}
+Return
+
+Return
+*/
+
 
 ^6:: ;End User Info
     endUserInfo = END USER: %endUser%`nPHONE: %phone%`nEMAIL: %email%`n`nEND USE: %endUse%`n`nCPQ-%cpq%
@@ -1956,6 +2046,8 @@ if salesPerson = Katianna Pihakari
     gosub, secondDropDown
 if salesPerson = Timothy Johnson
     gosub, secondDropDown
+if salesPerson =  Dante Bencivengo 
+    gosub, secondDropDown
 ;========= END SECOND ==============
 
 ;========= MCFADDEN ==============
@@ -1972,6 +2064,8 @@ if salesPerson = Lorraine Foglio
 if salesPerson = Lauren Fischer
     gosub, mcfaddenDropDown
 if salesPerson = Douglas McDowell
+    gosub, mcfaddenDropDown
+if salesPerson = Dana Stradtner
     gosub, mcfaddenDropDown
 ;========= END MCFADDEN ==============
 
