@@ -1310,6 +1310,11 @@ return
     Send, ^c ; copies selected text
     ClipWait, 1
     StringUpper Clipboard, Clipboard
+    Send {Insert}
+    Sleep 400
+    Send ^v
+    Sleep 400
+    Send {Insert}
 return
 
 !o:: ;Navigate to Order Notice
@@ -1349,8 +1354,8 @@ return
 OpenSAPWindow:
     SetTitleMatchMode, 2
     if WinExist("Change Standard Order") {
-        WinActivate, Change Standard Order, Organizer
-        WinWaitActive, Change Standard Order,, Organizer
+        WinActivate, Change Standard Order, Organizer ClipAngel
+        WinWaitActive, Change Standard Order,, Organizer ClipAngel
         Send, {F3}{BackSpace}
         Sleep, 500
         Send, %soNumber%
@@ -1358,17 +1363,17 @@ OpenSAPWindow:
         Send, {Enter}
         Sleep, 500
         Send, {Tab}{Enter}
-        WinActivate, Change Standard Order, Organizer
-        WinWaitActive, Change Standard Order,, Organizer
+        WinActivate, Change Standard Order, Organizer ClipAngel
+        WinWaitActive, Change Standard Order,, Organizer ClipAngel
     } else if WinExist("Change Sales Order") {
-        WinActivate, Change Sales Order, Organizer
-        WinWaitActive, Change Sales Order,, Organizer
+        WinActivate, Change Sales Order, Organizer ClipAngel
+        WinWaitActive, Change Sales Order,, Organizer ClipAngel
         Sleep, 200
         Send, {end}+{Home}{BackSpace}%soNumber%{Enter}
         Sleep, 500
         Send, {Tab}{Enter}
-        WinActivate, Change Standard Order, Organizer
-        WinWaitActive, Change Standard Order,, Organizer
+        WinActivate, Change Standard Order, Organizer ClipAngel
+        WinWaitActive, Change Standard Order,, Organizer ClipAngel
     } else if WinExist("SAP Easy Access") {
         IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
             WinWaitActive, SAP Easy Access,
@@ -1376,10 +1381,10 @@ OpenSAPWindow:
         MouseClick, left, 90, 66
         Send, va02{enter}
         WinWait, SAP Easy Access, 
-        WinWaitActive, Change Sales Order,, Organizer
+        WinWaitActive, Change Sales Order,, Organizer ClipAngel
         Send, %soNumber%{enter}
-        WinActivate, Change Standard Order, Organizer
-        WinWaitActive, Change Standard Order,, Organizer
+        WinActivate, Change Standard Order, Organizer ClipAngel
+        WinWaitActive, Change Standard Order,, Organizer ClipAngel
     }
 return
 
@@ -1652,6 +1657,7 @@ WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legac
 Gosub, DPSResults
 Gosub, ReportGenerate
 Gosub, PrintDPS
+WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 Send, ^w
 return
 
@@ -1662,6 +1668,10 @@ Loop
     ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203140835.png
     If ErrorLevel = 0
     {
+        ; Override success screen
+        ;   Tab generate
+        ;   Click results
+
         CoordMode, Pixel, Client
         ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
         if ErrorLevel = 0
@@ -1727,6 +1737,16 @@ Loop
     ; No records found
     CoordMode, Pixel, Screen
     ImageSearch, FoundX, FoundY, 2214, 215, 2866, 380, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203080204.png
+    If ErrorLevel = 0
+    {
+    	Sleep, 200
+        Send, {tab 2}{enter}
+        Break
+    }
+
+    ; No records found / Clear
+    CoordMode, Pixel, Screen
+    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206121523.png
     If ErrorLevel = 0
     {
     	Sleep, 200
