@@ -12,7 +12,7 @@ salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch La
 . "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
 . "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
 . "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
-. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|"
+. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|Justin Chang|Kate Lincoln"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch"
 
@@ -1759,7 +1759,13 @@ Loop
         ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203090941.png
     If ErrorLevel = 0
     {
-        MsgBox, 4,,Records WERE Found`nContinue?
+        MsgBox, 4, Found Records,Records WERE Found`nContinue?
+        Sleep, 200
+        If WinExist("Found Records")
+        {
+            MouseGetPos, x, y
+            WinMove, Found Records,,%x%,%y%
+        }
         If MsgBox No
         {
             Break
@@ -2068,6 +2074,8 @@ if salesPerson = Timothy Johnson
     gosub, secondDropDown
 if salesPerson =  Dante Bencivengo 
     gosub, secondDropDown
+if salesPerson =  Justin Chang 
+    gosub, secondDropDown
 ;========= END SECOND ==============
 
 ;========= MCFADDEN ==============
@@ -2118,6 +2126,8 @@ if salesPerson = Joe Bernholz
 if salesPerson = Yuriy Dunayevskiy
     gosub, kleinDropDown
 if salesPerson = Nelson Huang
+    gosub, kleinDropDown
+if salesPerson = Kate Lincoln
     gosub, kleinDropDown
 ;=========== END KLEIN ==========
 
