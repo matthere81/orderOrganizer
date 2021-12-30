@@ -1615,7 +1615,7 @@ return
 !+d:: ; GET DPS REPORTS
 SetDefaultMouseSpeed, 7
 dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq
-run, https://thermofisher.integrationpoint.net/gtm/aspx?href=%2FGV%2FfxdScoreCard.aspx%3FGUID%3DE9E9B54D-5B2A-4866-BA65-0E6C8E73B289
+run, https://thermofisher.integrationpoint.net/gtm/aspx?href=%2FDTS%2FfxdDPSQuery.aspx
 WinWait, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 Sleep 200
@@ -1662,6 +1662,7 @@ Send, ^w
 return
 
 ReportGenerate:
+generateReport := 0
 Loop
 {
     CoordMode, Pixel, Client
@@ -1704,6 +1705,8 @@ Loop
         }
         Break
     }
+    generateReport += 1
+    ToolTip, %generateReport%
 }
 Return
 
