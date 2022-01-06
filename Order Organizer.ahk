@@ -1615,7 +1615,7 @@ return
 !+d:: ; GET DPS REPORTS
 SetDefaultMouseSpeed, 7
 dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq
-run, https://thermofisher.integrationpoint.net/gtm/aspx?href=%2FDTS%2FfxdDPSQuery.aspx
+run, https://hub.thermofisher.com/ip
 WinWait, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 Sleep 200
