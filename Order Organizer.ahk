@@ -714,9 +714,34 @@ Return
 Send, !e2as{Enter}{down 10}{BackSpace 2}
 return
 
-:O:etid::everytime2Die{!} ; O at the beginning removes trailing space
+:O:etid::everytime3Die{!} ; O at the beginning removes trailing space
 :O:igans::I'vegotanewshirt1996{!} ; O at the beginning removes trailing space
 ::mttf::matthew.terbeek@thermofisher.com
+
+
+;/******** SEARCH FUNCTION ********/
+Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
+{
+    needle := "cpq"
+    Loop, read, %A_LoopFileName%
+    InStr(%A_LoopFileName%, needle,false)
+    If InStr(A_LoopFileName, needle)
+    {
+        MsgBox, supposedly found,`n%A_LoopFileName%`n%needle%
+        MsgBox, 4,, The string was found.`n%A_LoopFileName%`n%needle%
+            IfMsgBox No
+            return
+    }   Else 
+    {
+        MsgBox, 4,, The string was not found.`n%A_LoopFileName%`n%needle%
+            IfMsgBox No
+                return	; or: exit
+    }
+}
+MsgBox, here
+return
+
+;/******** END OF SEARCH FUNCTION ********/
 
 ::shrug::¯\_(ツ)_/¯ 
 ::winf::
