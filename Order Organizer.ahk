@@ -720,9 +720,10 @@ return
 
 
 ;/******** SEARCH FUNCTION ********/
+InputBox, userSearch, Search, Enter SO/PO/CPQ/Customer Name,,250,130,,,,,
 Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
 {
-    needle := "cpq"
+    needle := userSearch
     Loop, read, %A_LoopFileName%
     InStr(%A_LoopFileName%, needle,false)
     If InStr(A_LoopFileName, needle)
