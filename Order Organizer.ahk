@@ -33,17 +33,26 @@ SetTitleMatchMode, 2
 orderInfo(){
     global
 ;/******** GUI START ********\
-Gui, destroy
-Gui, Font
+Gui destroy
+Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer ; - SO# %soNumber%
-Gui, Font
-Gui, Color, 79b8d1
-Gui, Font, S9, Segoe UI Semibold
-Gui, Add, Button, xm+410 ym+10 w70 greadtheini, O&pen
-Gui, Add, Button, x+25 w70 gSaveToIni, &Save
-Gui, Add, Button, x+25 w150 grestartScript, &New PO or Reload
-; Gui Add, Edit, x+25 y22 w175 h20, Search
+Gui Font
+Gui Color, 79b8d1
+Gui Font, S9, Segoe UI Semibold
+LVArray := []
+Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ;Search
+Gui Add, ListView, grid r20 w400 vLV gMyListView, FileName
+GuiControl, hide, LV
+Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
+{
+   LV_Add("", A_LoopFileName)
+   LVArray.Push(A_LoopFileName)
+}
+LV_ModifyCol()
+Gui Add, Button, xm+475 ym+10 w70 greadtheini, O&pen
+Gui Add, Button, x+25 w70 gSaveToIni, &Save
+Gui Add, Button, x+25 w150 grestartScript, &New PO or Reload
 Gui Add, Tab3, xm ym+30, Order Info|Checklist
 Gui Tab, 1
 Gui Add, Text,, CPQ:
@@ -60,23 +69,23 @@ Gui Add, Text,, Customer / DPS Address:
 Gui Add, Edit, vaddress, %address% 
 Gui Add, Text,, Sold To Account:
 Gui Add, Edit, vsoldTo, %soldTo%
-Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
 Gui Add, Text, x+12.5 y72, System:
 Gui Add, Edit, vsystem, %system% 
-Gui, Add, Text,, Salesperson:
-Gui, Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople
-Gui, Add, Text,, Sales Manager:
-Gui, Add, DDL, Disabled vsalesManager, % salesManagers
+gui Add, Text,, Salesperson:
+Gui Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople
+Gui Add, Text,, Sales Manager:
+Gui Add, DDL, Disabled vsalesManager, % salesManagers
 Gui Add, Text,, Sales Manager Code:
 Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
-Gui, Add, Text,, Sales Director:
-Gui, Add, DropDownList, Disabled vsalesDirector, % salesDirectors
+Gui Add, Text,, Sales Director:
+Gui Add, DropDownList, Disabled vsalesDirector, % salesDirectors
 Gui Add, Text,, Sales Director Code:
-Gui, Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
+Gui Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
 Gui Add, CheckBox, x220 y430 vsoftware gdongle, Software?
-Gui, Add, Text, x190 y435.5 Hidden vserialNumberText, S/N:  ;x187.5 y460.5 h10, S/N: ;x187.5 y437.5
+Gui Add, Text, x190 y435.5 Hidden vserialNumberText, S/N:  ;x187.5 y460.5 h10, S/N: ;x187.5 y437.5
 Gui Add, Edit, x225 y430 w100 Hidden vserialNumber, ; y432.5
-Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+Gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
 Gui Add, Text, x+12.5 y70, CRD:
 Gui Add, DateTime, w135 vcrd, %crd%
 Gui Add, Text,, PO Date:
@@ -91,7 +100,7 @@ Gui Add, Text,, Freight Cost:
 Gui Add, Edit, vfreightCost, %freightCost% 
 Gui Add, Text,, Total:
 Gui Add, Edit, vtotalCost, %totalCost% 
-Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+Gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
 Gui Add, Text, x+12.5 y95 +center, END USER INFO:
 Gui Add, Text,, End User:
 Gui Add, Edit, vendUser
@@ -103,113 +112,112 @@ Gui Add, Text,, End Use:
 Gui Add, Edit, w135 h78 vendUse
 Gui Add, Text,, SO#
 Gui Add, Edit, vsoNumber, %soNumber% 
-Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+Gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
 Gui Add, Text, x+12.5 y70, Notes:
 Gui Add, Edit, w215 h120 vnotes, %notes%
 
 ;======== KEYBOARD SHORTCUTS ========
-Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
-LV_ModifyCol(1,190)
-;~ LV_ModifyCol(2, 115)
-LV_Add(Col1, "CPQ (zpq)") ;"zpq")
-;~ Gui Add, Text,, CPQ - zpq
-LV_Add(Col1, "PO# (zpo)") ;,"zpo")
-;~ Gui Add, Text, y+5, PO# - zpo
-LV_Add(Col1, "SO# (zso)") ;,"zso")
-;~ Gui Add, Text, y+5, SO# - zso
-LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
-;~ Gui Add, Text, y+5, SOT Line# - zsot
-LV_Add(Col1, "Customer (zcust)") ;,"zcust")
-;~ Gui Add, Text, y+5, Customer - zcust
-LV_Add(Col1, "PO Value (zval)") ;,"zval")
-;~ Gui Add, Text, y+5, PO Value - zval
-LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
-;~ Gui Add, Text, y+5, Salesperson - zsal
-LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
-;~ Gui Add, Text, x775 y225, Customer Contact -
-;~ Gui Add, Text, y+5, zcon
-LV_Add(Col1, "Cust Email (zem)")
-;~ Gui Add, Text, y+5, Customer Email - 
-;~ Gui Add, Text, y+5, zem
-LV_Add(Col1, "System (zsys)")
-;~ Gui Add, Text, y+5, System - zsys
-LV_Add(Col1, "End User (zenu)")
-;~ Gui Add, Text, y+5, End User - zenu
-LV_Add(Col1, "End User Phone (zph)")
-;~ Gui Add, Text, y+5, Phone - zph
-LV_Add(Col1, "End Use (zuse)")
-;~ Gui Add, Text, y+5, End Use - zuse
+; Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
+; LV_ModifyCol(1,190)
+; ;~ LV_ModifyCol(2, 115)
+; LV_Add(Col1, "CPQ (zpq)") ;"zpq")
+; ;~ Gui Add, Text,, CPQ - zpq
+; LV_Add(Col1, "PO# (zpo)") ;,"zpo")
+; ;~ Gui Add, Text, y+5, PO# - zpo
+; LV_Add(Col1, "SO# (zso)") ;,"zso")
+; ;~ Gui Add, Text, y+5, SO# - zso
+; LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
+; ;~ Gui Add, Text, y+5, SOT Line# - zsot
+; LV_Add(Col1, "Customer (zcust)") ;,"zcust")
+; ;~ Gui Add, Text, y+5, Customer - zcust
+; LV_Add(Col1, "PO Value (zval)") ;,"zval")
+; ;~ Gui Add, Text, y+5, PO Value - zval
+; LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
+; ;~ Gui Add, Text, y+5, Salesperson - zsal
+; LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
+; ;~ Gui Add, Text, x775 y225, Customer Contact -
+; ;~ Gui Add, Text, y+5, zcon
+; LV_Add(Col1, "Cust Email (zem)")
+; ;~ Gui Add, Text, y+5, Customer Email - 
+; ;~ Gui Add, Text, y+5, zem
+; LV_Add(Col1, "System (zsys)")
+; ;~ Gui Add, Text, y+5, System - zsys
+; LV_Add(Col1, "End User (zenu)")
+; ;~ Gui Add, Text, y+5, End User - zenu
+; LV_Add(Col1, "End User Phone (zph)")
+; ;~ Gui Add, Text, y+5, Phone - zph
+; LV_Add(Col1, "End Use (zuse)")
+; ;~ Gui Add, Text, y+5, End Use - zuse
 
 ;======== END KEYBOARD SHORTCUTS ========
 
 ;******** CHECKLIST GUI ********
-Gui, Tab, 2
+ Gui Tab, 2
 
 ;===== PRE-SAP =======
-Gui, Add, GroupBox,Section h120 w215, Pre-SAP
-Gui, Add, Checkbox, xs+10 ys+20 gsubmitChecklist vnameCheck, Check TENA Name On PO
-Gui, Add, Checkbox, gsubmitChecklist vorderNoticeSent, Order Notice Sent
-Gui, Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
-Gui, Add, Text, tcs y+10, T&&Cs?
-Gui, Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
+Gui Add, GroupBox,Section h120 w215, Pre-SAP
+Gui Add, Checkbox, xs+10 ys+20 gsubmitChecklist vnameCheck, Check TENA Name On PO
+Gui Add, Checkbox, gsubmitChecklist vorderNoticeSent, Order Notice Sent
+Gui Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
+Gui Add, Text, tcs y+10, T&&Cs?
+Gui Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
 ;===== END PRE-SAP =======
 
 ;===== SAP ATTACHMENTS =======
-Gui, Add, GroupBox,Section xm+15 y+25 h130 w215, SAP Attachments:
-Gui, Add, Checkbox,xs+10 ys+25 gsubmitChecklist vpoAttached, PO
-Gui, Add, Checkbox, x+61 gsubmitChecklist vquoteAttached, Quote
-Gui, Add, Checkbox, xm+25 y+10 gsubmitChecklist vdpsAttached, DPS Report(s)
-Gui, Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
-Gui, Add, Text, xm+25 y+15, WIN Form?
-Gui, Add, Radio, x+40 gsubmitChecklist vwinYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
-Gui, Add, Text, xm+25 y+10, Merge Report?
-Gui, Add, Radio, x+24 gsubmitChecklist vmergeYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
+Gui Add, GroupBox,Section xm+15 y+25 h130 w215, SAP Attachments:
+Gui Add, Checkbox,xs+10 ys+25 gsubmitChecklist vpoAttached, PO
+Gui Add, Checkbox, x+61 gsubmitChecklist vquoteAttached, Quote
+Gui Add, Checkbox, xm+25 y+10 gsubmitChecklist vdpsAttached, DPS Report(s)
+Gui Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
+Gui Add, Text, xm+25 y+15, WIN Form?
+Gui Add, Radio, x+40 gsubmitChecklist vwinYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
+Gui Add, Text, xm+25 y+10, Merge Report?
+Gui Add, Radio, x+24 gsubmitChecklist vmergeYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
 ;===== END SAP ATTACHMENTS =======
 
 ;===== PRE ACCEPTANCE ========
-Gui, Add, GroupBox,Section xm+260 ym+63 h225 w235, Pre-Acceptance:
-Gui, Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcheckPrices, Check Prices
-Gui, Add, Text,, Add Shipping?
-Gui, Add, Radio, x+53 gsubmitChecklist vshippingYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
-Gui, Add, Text, xm+270 y+10, Higher Level Linking?
-Gui, Add, Radio, x+18 gsubmitChecklist vhigherLevelLinkingYes, Yes
-Gui, Add, Radio, x+5 vhigherLevelLinkingNa, N/A
-Gui, Add, Text,xm+270 y+10, Delivery Groups?
-Gui, Add, Radio, x+42.5 vdeliveryGroupsYes gsubmitChecklist, Yes
-Gui, Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
-Gui, Add, Checkbox, xm+270 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
-Gui, Add, Text,, Order Acceptance
-Gui, Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
-Gui, Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
-Gui, Add, Text, xm+270 y+10, Serial/Dongle Number?
-Gui, Add, Radio, x+5 gsubmitChecklist vserialYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
-Gui, Add, Text, xm+270 y+10, End User Info?
-Gui, Add, Radio, x+54 gsubmitChecklist vendUserYes, Yes
-Gui, Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
+Gui Add, GroupBox,Section xm+260 ym+63 h225 w235, Pre-Acceptance:
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcheckPrices, Check Prices
+Gui Add, Text,, Add Shipping?
+Gui Add, Radio, x+53 gsubmitChecklist vshippingYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
+Gui Add, Text, xm+270 y+10, Higher Level Linking?
+Gui Add, Radio, x+18 gsubmitChecklist vhigherLevelLinkingYes, Yes
+Gui Add, Radio, x+5 vhigherLevelLinkingNa, N/A
+Gui Add, Text,xm+270 y+10, Delivery Groups?
+Gui Add, Radio, x+42.5 vdeliveryGroupsYes gsubmitChecklist, Yes
+Gui Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
+Gui Add, Checkbox, xm+270 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
+Gui Add, Text,, Order Acceptance
+Gui Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
+Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
+Gui Add, Text, xm+270 y+10, Serial/Dongle Number?
+Gui Add, Radio, x+5 gsubmitChecklist vserialYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
+Gui Add, Text, xm+270 y+10, End User Info?
+Gui Add, Radio, x+54 gsubmitChecklist vendUserYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
 ;===== END PRE ACCEPTANCE ========
-;~ Gui, add, Text, x60 y400 , Order Progress
-;~ Gui, Add, Progress, w800 h25, 25
+;~ Gui Add, Text, x60 y400 , Order Progress
+;~ Gui Add, Progress, w800 h25, 25
 ;******** END CHECKLIST GUI ********
-
 Gui Show,w920 h485, Order Organizer ;SO# %soNumber%
-Gui, Submit, NoHide
+Gui Submit, NoHide
 
 submitChecklist:
-Gui, Submit, Nohide
+Gui Submit, Nohide
 return
 
 submitSales:
-Gui, Submit, NoHide
+Gui Submit, NoHide
 gosub, findSales
 return
 
 dongle:
-Gui, Submit, NoHide
+Gui Submit, NoHide
 if (software == 0)
     {
         GuiControl, Hide, serialNumber
@@ -225,7 +233,43 @@ if (software == 1)
 return
 
 GuiClose:
-Gui, destroy
+Gui destroy
+Return
+
+
+
+; TotalItems := LVArray.Length()
+LV_ModifyCol()
+; Gui, Add, StatusBar, , % "   " . TotalItems . " of " . TotalItems . " Items"
+; Gui 2:Show
+
+
+Search:
+Gui tab, 1
+GuiControlGet, SearchTerm
+If SearchTerm =
+    GuiControl, Hide, LV
+GuiControl, -Redraw, LV
+LV_Delete()
+For Each, FileName In LVArray
+{
+   If (SearchTerm != "")
+   {
+        GuiControl, Show, LV
+        If InStr(FileName, SearchTerm) ; for overall matching
+        LV_Add("", FileName)
+   }
+   Else
+        LV_Add("", FileName)
+}
+GuiControl, +Redraw, LV
+Return
+
+MyListView:
+; MsgBox, %SearchTerm%
+; If SearchTerm = ""
+;     MsgBox, i should be hidden
+;     GuiControl, Hide, LV
 Return
 
 restartScript:
@@ -241,7 +285,7 @@ if ((!cpq) || (!po))
 return
 
 readtheini:
-Gui, Submit, NoHide
+Gui Submit, NoHide
 if (cpq) && (po)
     gosub, SaveToIniNoGui
 FileSelectFile, SelectedFile,r,%myinipath%, Open a file
@@ -403,7 +447,7 @@ GuiControl,, endUserNa, %endUserNa%
 return
 
 SaveToIni:
-Gui, Submit, NoHide
+Gui Submit, NoHide
 if (!cpq) || (!po)
 {
     MsgBox, Please enter a quote and PO#.
@@ -487,7 +531,7 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 return
 
 WriteIniVariables:
-gui, submit, NoHide
+Gui submit, NoHide
 IniWrite, %cpq%, %IniFilePath%, orderInfo, cpq
 IniWrite, %po%, %IniFilePath%, orderInfo, po
 IniWrite, %sot%, %IniFilePath%, orderInfo, sot
@@ -580,14 +624,14 @@ WinGetPos x, y, Width, Height, Order Organizer
     x += 350
     y += 50
 myRange:=90
-Gui, 2: -Caption
-Gui, 2:+AlwaysOnTop
-Gui, 2: Color, default
-Gui, 2: Font, S8 cBlack, Segoe UI Semibold
-Gui, 2: Add, Text, x0 y1 w208 h16 +Center, Saving
-Gui, 2: Add,Progress, x10 y20 w190 h20 cblue vPro1 Range0-%myRange%,0
-;~ Gui,1: Add, Button, x10 w150 h30 glooping, Loop over list
-Gui, 2: Show, w210 h50 x847 y313
+Gui 2: -Caption
+Gui 2:+AlwaysOnTop
+Gui 2: Color, default
+Gui 2: Font, S8 cBlack, Segoe UI Semibold
+Gui 2: Add, Text, x0 y1 w208 h16 +Center, Saving
+Gui 2: Add,Progress, x10 y20 w190 h20 cblue vPro1 Range0-%myRange%,0
+;~ Gui 1: Add, Button, x10 w150 h30 glooping, Loop over list
+Gui 2: Show, w210 h50 x847 y313
 Gosub, Looping
 Return
 
@@ -603,7 +647,7 @@ Loop, 20
         GuiControl,2:,Pro1,% Pro1
         sleep, 20
     }
-Gui, 2: Destroy
+Gui 2: Destroy
 Return
 }
 
@@ -718,32 +762,6 @@ return
 :O:igans::I'vegotanewshirt1996{!} ; O at the beginning removes trailing space
 ::mttf::matthew.terbeek@thermofisher.com
 
-
-;/******** SEARCH FUNCTION ********/
-InputBox, userSearch, Search, Enter SO/PO/CPQ/Customer Name,,250,130,,,,,
-Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
-{
-    needle := userSearch
-    Loop, read, %A_LoopFileName%
-    InStr(%A_LoopFileName%, needle,false)
-    If InStr(A_LoopFileName, needle)
-    {
-        MsgBox, supposedly found,`n%A_LoopFileName%`n%needle%
-        MsgBox, 4,, The string was found.`n%A_LoopFileName%`n%needle%
-            IfMsgBox No
-            return
-    }   Else 
-    {
-        MsgBox, 4,, The string was not found.`n%A_LoopFileName%`n%needle%
-            IfMsgBox No
-                return	; or: exit
-    }
-}
-MsgBox, here
-return
-
-;/******** END OF SEARCH FUNCTION ********/
-
 ::shrug::¯\_(ツ)_/¯ 
 ::winf::
 Send, Hi %salesPerson%^+{left}{delete}{BackSpace},`nGreat order{!} Thanks for filling out the WIN form.`n`nRegards{up 3}{left}
@@ -787,13 +805,12 @@ return
 
 ^!v:: ; Show/Hide Order Info GUI
     DetectHiddenWindows, on
-    if !WinActive(Order Organizer "ahk_class AutoHotkeyGUI")
+    if !WinActive(Order Organizer, "Order Organizer")
     {
-        WinActivate, Order Organizer ahk_class AutoHotkeyGUI, 
-        ;~ WinWaitActive, Order Info ahk_class AutoHotkeyGUI,
+        WinActivate, Order Organizer, Order Organizer
         return
     }
-    else if WinActive(Order Organizer "ahk_class AutoHotkeyGUI")
+    else if WinActive(Order Organizer, "Order Organizer")
     {
         WinMinimize
         return
@@ -950,7 +967,7 @@ CoordMode, Mouse, Screen
 MouseGetPos, MX, MY
 If (MX > A_ScreenWidth)
     X += A_ScreenWidth
-Gui, Show, x%X% y%Y% w300 h300
+Gui Show, x%X% y%Y% w300 h300
 return
 
 ; ------------------------------------------
@@ -986,6 +1003,7 @@ return
 ; ***** END FUNCTIONS ***** | ***** END FUNCTIONS ***** | ***** END FUNCTIONS***** | ***** END FUNCTIONS ***** 
 
 ; ***** LABELS ***** | ***** LABELS ***** | ***** LABELS ***** | ***** LABELS ***** 
+
 
 WaitSpin:
     Loop, ;Wait for mouse to not spin
@@ -1873,100 +1891,100 @@ return
 kellerDropDown:
     GuiControl, Choose, salesManager, Anjou Keller
     GuiControl, ChooseString, managerCode, 202375
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, N/A
     GuiControl, ChooseString, directorCode, N/A
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 mccormackDropDown:
     GuiControl, Choose, salesManager, Doug McCormack
     GuiControl, ChooseString, managerCode, 1261
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, N/A
     GuiControl, ChooseString, directorCode, N/A
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 hewittDropDown:
     GuiControl, Choose, salesManager, Joe Hewitt
     GuiControl, ChooseString, managerCode, 98866
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, N/A
     GuiControl, ChooseString, directorCode, N/A
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 foelsDropDown:
     GuiControl, Choose, salesManager, Natalie Foels
     GuiControl, ChooseString, managerCode, 96715
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, N/A
     GuiControl, ChooseString, directorCode, N/A
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 secondDropDown:
     GuiControl, Choose, salesManager, Tonya Second
     GuiControl, ChooseString, managerCode, 95410
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, Maroun El Khoury
     GuiControl, ChooseString, directorCode, 1076
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 mcfaddenDropDown:
     GuiControl, Choose, salesManager, Joe McFadden
     GuiControl, ChooseString, managerCode, 202610
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, N/A
     GuiControl, ChooseString, directorCode, N/A
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 butlerDropDown:
     GuiControl, Choose, salesManager, John Butler
     GuiControl, ChooseString, managerCode, 1026
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, Maroun El Khoury
     GuiControl, ChooseString, directorCode, 1076
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 kleinDropDown:
     GuiControl, Choose, salesManager, Richard Klein
     GuiControl, ChooseString, managerCode, 1042
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, Maroun El Khoury
     GuiControl, ChooseString, directorCode, 1076
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 nadjieDropDown:
     GuiControl, Choose, salesManager, Zee Nadjie
     GuiControl, ChooseString, managerCode, 96695
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, N/A
     GuiControl, ChooseString, directorCode, N/A
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 chenDropDown:
     GuiControl, Choose, salesManager, Ray Chen
     GuiControl, ChooseString, managerCode, 202756
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, Jimmy Yuk
     GuiControl, ChooseString, directorCode, 202611
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 porchDropDown:
     GuiControl, Choose, salesManager, Randy Porch
     GuiControl, ChooseString, managerCode, 1041
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, Maroun El Khoury
     GuiControl, ChooseString, directorCode, 1076
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 return
 
 findSales:
@@ -2186,10 +2204,10 @@ if salesPerson =
 {
     GuiControl, Choose, salesManager, |1 
     GuiControl, Choose, managerCode, |1
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
     GuiControl, Choose, salesDirector, |1
     GuiControl, Choose, directorCode, |1
-    Gui, Submit, NoHide
+    Gui Submit, NoHide
 }
 return
 
