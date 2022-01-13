@@ -28,6 +28,37 @@ IfExist, %I_Icon%
 
 Menu, FileMenu, Add
 
+; Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
+; {
+; 	Haystack := A_LoopFileName
+; 	Needle := "CPQ"
+; 	If !InStr(Haystack, Needle, true)
+; 	{
+; 		foundPos := (RegExMatch(Haystack, "\s((?:.*))\s", poCheck))
+; 		; if (RegExMatch(Haystack, "(?:\W(.*)\W[A-Z])", poCheck));[, UnquotedOutputVar = "", StartingPos = 1])
+; 			MsgBox, 4, , %Haystack%`n%poCheck%
+; 			IfMsgBox No
+; 	return
+; 		; if (RegExMatch(cpq, "(?:^00*)", quoteNumberCpq))
+; 	}
+; 	MsgBox, 4, , Delete %A_LoopFileName%? (Press YES or NO)
+; 		IfMsgBox Yes
+; 		{
+; 			MsgBox, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\%A_LoopFileName%
+; 			; FileDelete, A_LoopFileName
+; 		}
+; 		IfMsgBox No
+; 	return
+; 	; Else
+; 	; {
+; 	; 	MsgBox, 4, , Not found`n%A_LoopFileName%
+; 	; 		IfMsgBox No
+; 	; return
+; 	; }
+; }
+
+; Return
+
 SetTitleMatchMode, 2
 
 orderInfo(){
@@ -263,10 +294,10 @@ MyListView:
 if (A_GuiEvent = "DoubleClick")
 {
 	LV_GetText(RowText, A_EventInfo)  ; Get the text from the row's first field.
-	; systemFile := RegExMatch(RowText, "\W(.*)\W")
-	systemFile := myinipath . "\" . RowText
-	; MsgBox, %systemFile%
-	Run %systemFile%
+	SelectedFile := myinipath . "\" . RowText
+	Send +{tab}{BackSpace}
+	Gosub, readtheini
+
 }
 Return
 
