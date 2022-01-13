@@ -24,14 +24,14 @@ myinipath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documen
 
 I_Icon = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico
 IfExist, %I_Icon%
-    Menu, Tray, Icon, %I_Icon%
+	Menu, Tray, Icon, %I_Icon%
 
 Menu, FileMenu, Add
 
 SetTitleMatchMode, 2
 
 orderInfo(){
-    global
+	global
 ;/******** GUI START ********\
 Gui destroy
 Gui Font
@@ -219,88 +219,86 @@ return
 dongle:
 Gui Submit, NoHide
 if (software == 0)
-    {
-        GuiControl, Hide, serialNumber
-        GuiControl, Hide, serialNumberText
-        GuiControl, Move, software, y368
-    }
+	{
+		GuiControl, Hide, serialNumber
+		GuiControl, Hide, serialNumberText
+		GuiControl, Move, software, y368
+	}
 if (software == 1)
-    {
-        GuiControl, Move, software, y345
-        GuiControl, Show, serialNumber
-        GuiControl, Show, serialNumberText
-    }
+	{
+		GuiControl, Move, software, y345
+		GuiControl, Show, serialNumber
+		GuiControl, Show, serialNumberText
+	}
 return
 
 GuiClose:
 Gui destroy
 Return
 
-
-
-; TotalItems := LVArray.Length()
-LV_ModifyCol()
-; Gui, Add, StatusBar, , % "   " . TotalItems . " of " . TotalItems . " Items"
-; Gui 2:Show
-
-
 Search:
-Gui tab, 1
 GuiControlGet, SearchTerm
 If SearchTerm =
-    GuiControl, Hide, LV
+	GuiControl, Hide, LV
 GuiControl, -Redraw, LV
 LV_Delete()
 For Each, FileName In LVArray
 {
    If (SearchTerm != "")
    {
-        GuiControl, Show, LV
-        If InStr(FileName, SearchTerm) ; for overall matching
-        LV_Add("", FileName)
-   }
-   Else
-        LV_Add("", FileName)
+		GuiControl, Show, LV
+		If InStr(FileName, SearchTerm) ; for overall matching
+	   	LV_Add("", FileName)
+   } Else
+   		LV_Add("", FileName)
 }
 GuiControl, +Redraw, LV
 Return
 
 MyListView:
-; MsgBox, %SearchTerm%
-; If SearchTerm = ""
-;     MsgBox, i should be hidden
-;     GuiControl, Hide, LV
+; If A_DefaultListView = LV
+; {
+; 	MsgBox, You double-clicked row number %A_EventInfo%. Text: "%RowText%"`n`n%A_DefaultListView%
+; }
+if (A_GuiEvent = "DoubleClick")
+{
+	LV_GetText(RowText, A_EventInfo)  ; Get the text from the row's first field.
+	; systemFile := RegExMatch(RowText, "\W(.*)\W")
+	systemFile := myinipath . "\" . RowText
+	; MsgBox, %systemFile%
+	Run %systemFile%
+}
 Return
 
 restartScript:
 Gosub, WriteIniVariables
 if ((!cpq) || (!po))
 {
-    Reload
+	Reload
 } Else
 {
-    Gosub, SaveToIni
-    Reload
+	Gosub, SaveToIni
+	Reload
 } 
 return
 
 readtheini:
 Gui Submit, NoHide
 if (cpq) && (po)
-    gosub, SaveToIniNoGui
-FileSelectFile, SelectedFile,r,%myinipath%, Open a file
+	gosub, SaveToIniNoGui
+; FileSelectFile, SelectedFile,r,%myinipath%, Open a file ;______ Needs to go back
 if (ErrorLevel)
-    {
-        gosub, restartScript
-        return
-    }
+	{
+		gosub, restartScript
+		return
+	}
 IniRead, cpq, %SelectedFile%, orderInfo, cpq
 GuiControl,, cpq, %cpq%
 IniRead, po, %SelectedFile%, orderInfo, po
 GuiControl,, po, %po%
 IniRead, sot, %SelectedFile%, orderInfo, sot
 if % sot == "ERROR"
-    sot := 
+	sot := 
 GuiControl,, sot, %sot%
 IniRead, customer, %SelectedFile%, orderInfo, customer
 GuiControl,, customer, %customer%
@@ -356,59 +354,59 @@ IniRead, notesEscaped, %SelectedFile%, orderInfo, notes
 StringReplace, notesDeescaped, notesEscaped, ``n, `n, All
 StringReplace, notesDeescaped, notesDeescaped, ``r, `r, All
 if % notes == "ERROR"
-    notes := 
+	notes := 
 GuiControl,, notes, %notesDeescaped%
 
 IniRead, software, %SelectedFile%, orderInfo, software
 GuiControl,, software, %software%
 IniRead, serialNumber, %myinipath%\PO %po%.ini, orderInfo, serialNumber
 if (!serialNumber) || (serialNumber == "ERROR")
-    GuiControl, Hide, serialNumber
+	GuiControl, Hide, serialNumber
 if (serialNumber)
-    GuiControl,, serialNumber, %serialNumber%
+	GuiControl,, serialNumber, %serialNumber%
 IniRead, nameCheck, %SelectedFile%, orderInfo, nameCheck
 if % nameCheck == "ERROR"
-    nameCheck := "Check TENA Name On PO"
+	nameCheck := "Check TENA Name On PO"
 GuiControl,, nameCheck, %nameCheck%
 IniRead, orderNoticeSent, %SelectedFile%, orderInfo, orderNoticeSent
 if % orderNoticeSent == "ERROR"
-    orderNoticeSent := "Order Notice Sent"
+	orderNoticeSent := "Order Notice Sent"
 GuiControl,, orderNoticeSent, %orderNoticeSent%
 IniRead, enteredSot, %SelectedFile%, orderInfo, enteredSot
 if % enteredSot == "ERROR"
-    enteredSot := "Entered In SOT"
+	enteredSot := "Entered In SOT"
 GuiControl,, enteredSot, %enteredSot%
 IniRead, tandcYes, %SelectedFile%, orderInfo, tandcYes
 if % tandcYes == "ERROR"
-    tandcYes := "Yes"
+	tandcYes := "Yes"
 GuiControl,, tandcYes, %tandcYes%
 IniRead, tandcNa, %SelectedFile%, orderInfo, tandcNa
 if % tandcNa == "ERROR"
-    tandcNa := "N/A"
+	tandcNa := "N/A"
 GuiControl,, tandcNa, %tandcNa%
 IniRead, poAttached, %SelectedFile%, orderInfo, poAttached
 if % poAttached == "ERROR"
-    poAttached := "PO"
+	poAttached := "PO"
 GuiControl,, poAttached, %poAttached%
 IniRead, quoteAttached, %SelectedFile%, orderInfo, quoteAttached
 if % quoteAttached == "ERROR"
-    quoteAttached := "Quote"
+	quoteAttached := "Quote"
 GuiControl,, quoteAttached, %quoteAttached%
 IniRead, dpsAttached, %SelectedFile%, orderInfo, dpsAttached
 if % dpsAttached == "ERROR"
-    dpsAttached := "DPS Report(s)"
+	dpsAttached := "DPS Report(s)"
 GuiControl,, dpsAttached, %dpsAttached%
 IniRead, orderNoticeAttached, %SelectedFile%, orderInfo, orderNoticeAttached
 if % orderNoticeAttached == "ERROR"
-    orderNoticeAttached := "Order Notice"
+	orderNoticeAttached := "Order Notice"
 GuiControl,, orderNoticeAttached, %orderNoticeAttached%
 IniRead, winYes, %SelectedFile%, orderInfo, winYes
 if % winYes == "ERROR"
-    winYes := "Yes"
+	winYes := "Yes"
 GuiControl,, winYes, %winYes%
 IniRead, winNa, %SelectedFile%, orderInfo, winNa
 if % winNa == "ERROR"
-    winNa := "N/A"
+	winNa := "N/A"
 GuiControl,, winNa, %winNa%
 IniRead, mergeYes, %SelectedFile%, orderInfo, mergeYes
 GuiControl,, mergeYes, %mergeYes%
@@ -450,46 +448,46 @@ SaveToIni:
 Gui Submit, NoHide
 if (!cpq) || (!po)
 {
-    MsgBox, Please enter a quote and PO#.
-    return
+	MsgBox, Please enter a quote and PO#.
+	return
 }
 IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 if FileExist(IniFilePath) && (soNumber)
 {
-    gosub, WriteIniVariables
-    FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
-    IniFilePath = %IniFilePathWithSO% 
-    Gosub, SaveBar
-    gosub, CheckIfFolderExists
-    return  
+	gosub, WriteIniVariables
+	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
+	IniFilePath = %IniFilePathWithSO% 
+	Gosub, SaveBar
+	gosub, CheckIfFolderExists
+	return  
 }
 else if FileExist(IniFilePathWithSo)
 {
-    IniFilePath = %IniFilePathWithSO% 
-    Gosub, SaveBar
-    gosub, WriteIniVariables
-    return
+	IniFilePath = %IniFilePathWithSO% 
+	Gosub, SaveBar
+	gosub, WriteIniVariables
+	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
 {
-    gosub, WriteIniVariables
-    Gosub, SaveBar
-    gosub, CheckIfFolderExists
-    return
+	gosub, WriteIniVariables
+	Gosub, SaveBar
+	gosub, CheckIfFolderExists
+	return
 }
 else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 {
-    if(soNumber)
-    {
-        IniFilePath = %IniFilePathWithSo%
-    } else {
-        IniFilePath = %IniFilePath%
-    }
-    gosub, WriteIniVariables
-    Gosub, SaveBar
-    gosub, CheckIfFolderExists
-    return
+	if(soNumber)
+	{
+		IniFilePath = %IniFilePathWithSo%
+	} else {
+		IniFilePath = %IniFilePath%
+	}
+	gosub, WriteIniVariables
+	Gosub, SaveBar
+	gosub, CheckIfFolderExists
+	return
 }
 return
 
@@ -498,35 +496,35 @@ IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 if FileExist(IniFilePath) && (soNumber)
 {
-    gosub, WriteIniVariables
-    FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
-    IniFilePath = %IniFilePathWithSO% 
-    gosub, CheckIfFolderExists
-    return  
+	gosub, WriteIniVariables
+	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
+	IniFilePath = %IniFilePathWithSO% 
+	gosub, CheckIfFolderExists
+	return  
 }
 else if FileExist(IniFilePathWithSo)
 {
-    IniFilePath = %IniFilePathWithSO% 
-    gosub, WriteIniVariables
-    return
+	IniFilePath = %IniFilePathWithSO% 
+	gosub, WriteIniVariables
+	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
 {
-    gosub, WriteIniVariables
-    gosub, CheckIfFolderExists
-    return
+	gosub, WriteIniVariables
+	gosub, CheckIfFolderExists
+	return
 }
 else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 {
-    if(soNumber)
-    {
-        IniFilePath = %IniFilePathWithSo%
-    } else {
-        IniFilePath = %IniFilePath%
-    }
-    gosub, WriteIniVariables
-    gosub, CheckIfFolderExists
-    return
+	if(soNumber)
+	{
+		IniFilePath = %IniFilePathWithSo%
+	} else {
+		IniFilePath = %IniFilePath%
+	}
+	gosub, WriteIniVariables
+	gosub, CheckIfFolderExists
+	return
 }
 return
 
@@ -557,20 +555,20 @@ IniWrite, %endUser%, %IniFilePath%, orderInfo, endUser
 IniWrite, %phone%, %IniFilePath%, orderInfo, phone
 IniWrite, %email%, %IniFilePath%, orderInfo, email
 
-    ; Escape all newlines before writing it to ini file.
-    StringReplace, endUseEscaped, endUse, `n, ``n, All
-    StringReplace, endUseEscaped, endUseEscaped, `r, ``r, All
-    IniWrite, %endUseEscaped%, %IniFilePath%, orderInfo, endUse
+	; Escape all newlines before writing it to ini file.
+	StringReplace, endUseEscaped, endUse, `n, ``n, All
+	StringReplace, endUseEscaped, endUseEscaped, `r, ``r, All
+	IniWrite, %endUseEscaped%, %IniFilePath%, orderInfo, endUse
 
-    ; Escape all newlines before writing it to ini file.
-    StringReplace, notesEscaped, notes, `n, ``n, All
-    StringReplace, notesEscaped, notesEscaped, `r, ``r, All
-    IniWrite, %notesEscaped%, %IniFilePath%, orderInfo, notes
+	; Escape all newlines before writing it to ini file.
+	StringReplace, notesEscaped, notes, `n, ``n, All
+	StringReplace, notesEscaped, notesEscaped, `r, ``r, All
+	IniWrite, %notesEscaped%, %IniFilePath%, orderInfo, notes
 
 IniWrite, %software%, %IniFilePath%, orderInfo, software
 IniWrite, %serialNumber%, %IniFilePath%, orderInfo, serialNumber
 if (software == 0)
-    IniDelete, %IniFilePath%, orderInfo, serialNumber
+	IniDelete, %IniFilePath%, orderInfo, serialNumber
 IniWrite, %nameCheck%, %IniFilePath%, orderInfo, nameCheck
 IniWrite, %orderNoticeSent%, %IniFilePath%, orderInfo, orderNoticeSent
 IniWrite, %enteredSot%, %IniFilePath%, orderInfo, enteredSot
@@ -603,26 +601,26 @@ return
 CheckIfFolderExists:
 if (RegExMatch(cpq, "(?:^00*)", quoteNumberCpq))
 {
-    folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - CPQ-%cpq%
+	folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - CPQ-%cpq%
 } else if (RegExMatch(cpq, "(?:^[2].*)", quoteNumberSap))
 {
-    folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - Quote %cpq%
+	folderPath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO %po% %customer% - Quote %cpq%
 } else if (cpq != quoteNumberCpq || cpq != quoteNumbSap)
 {
-    MsgBox, Invalid Quote
+	MsgBox, Invalid Quote
 }
 if FileExist(folderPath)
-    return
+	return
 if !FileExist(folderPath)
-    FileCreateDir, %folderPath%
-    run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\
-    Return
+	FileCreateDir, %folderPath%
+	run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\
+	Return
 return
 
 SaveBar:
 WinGetPos x, y, Width, Height, Order Organizer
-    x += 350
-    y += 50
+	x += 350
+	y += 50
 myRange:=90
 Gui 2: -Caption
 Gui 2:+AlwaysOnTop
@@ -641,12 +639,12 @@ Pro1:=0
 GuiControl,2:,Pro1,% Pro1
 Temp:=""
 Loop, 20
-    {
-        Temp.=List1[A_Index]
-        Pro1 +=10
-        GuiControl,2:,Pro1,% Pro1
-        sleep, 20
-    }
+	{
+		Temp.=List1[A_Index]
+		Pro1 +=10
+		GuiControl,2:,Pro1,% Pro1
+		sleep, 20
+	}
 Gui 2: Destroy
 Return
 }
@@ -678,7 +676,7 @@ orderInfo()
 ; If ( A_LoopFileTimeModified >= Time )
 ; 	Time := A_LoopFileTimeModified, attachedFile := A_LoopFileName
 ; 	Run %nitroPath% "%myPath%\%attachedFile%"
-    
+	
 ; 	KeyWait, F14, d
 ; 	FileDelete, %myPath%\%attachedFile%
 ; return
@@ -777,176 +775,176 @@ return
 ;******** END HOTSTRINGS (TEXT EXPANSION) ********
 
 ToAttachments:
-    gosub,ToDisplaySap
-    Send, ^+{Tab}!{down}
+	gosub,ToDisplaySap
+	Send, ^+{Tab}!{down}
 Return
 
 ^\:: ;To main attachments Button in SAP
-    Gosub, ToAttachments
+	Gosub, ToAttachments
 return
 
 #F3:: ; Search SOT by line#
-    Send, ^g
-    Sleep, 750
-    Send, ^a{BackSpace}a%sot%{Enter}
+	Send, ^g
+	Sleep, 750
+	Send, ^a{BackSpace}a%sot%{Enter}
 return
 
 !2:: ; Forward SW Licenses
-    Send, Hi%firstname%`nPlease find the license attached for SO{#}{Space}%soNumber%.`n`nThanks{pgup}
+	Send, Hi%firstname%`nPlease find the license attached for SO{#}{Space}%soNumber%.`n`nThanks{pgup}
 return
 
 ^!c:: ; Import Clip
-    gosub, ImportClip
+	gosub, ImportClip
 return
 
 ^#c:: ; Save Clip
-    gosub, SaveClip
+	gosub, SaveClip
 return
 
 ^!v:: ; Show/Hide Order Info GUI
-    DetectHiddenWindows, on
-    if !WinActive(Order Organizer, "Order Organizer")
-    {
-        WinActivate, Order Organizer, Order Organizer
-        return
-    }
-    else if WinActive(Order Organizer, "Order Organizer")
-    {
-        WinMinimize
-        return
-    }
+	DetectHiddenWindows, on
+	if !WinActive(Order Organizer, "Order Organizer")
+	{
+		WinActivate, Order Organizer, Order Organizer
+		return
+	}
+	else if WinActive(Order Organizer, "Order Organizer")
+	{
+		WinMinimize
+		return
+	}
 return
 
 !#t:: ; Search Outlook Tasks
-    Send, ^e
-    KeyWait, enter, down
-    Send, !js2f
+	Send, ^e
+	KeyWait, enter, down
+	Send, !js2f
 return
 
 ^!s:: ;Save to SO Docs
-    gosub, SaveToSoDocs
+	gosub, SaveToSoDocs
 return
 
 #5:: ; -------- Navigate to Exped Def 5 Day ---------
-    Send, fah{left 12}
+	Send, fah{left 12}
 return
 
 !':: ; Seach SAP By PO#
-    Send, {down 6}
-    Send, {Tab}{Enter}
+	Send, {down 6}
+	Send, {Tab}{Enter}
 return
 
 !#u:: ; Update Order Status
-    SetTitleMatchMode, 2
-    Send, !ghs
-    WinWait, Header Data, 
-    IfWinNotActive, Header Data, , WinActivate, Header Data, 
-        WinWaitActive, Header Data,
-    Send, ^{tab 4}{enter}
-    WinWait, Change Status, 
-    IfWinNotActive, Change Status, , WinActivate, Change Status, 
-        WinWaitActive, Change Status,
-    Send, ^{tab 4}{Down}{Space}
+	SetTitleMatchMode, 2
+	Send, !ghs
+	WinWait, Header Data, 
+	IfWinNotActive, Header Data, , WinActivate, Header Data, 
+		WinWaitActive, Header Data,
+	Send, ^{tab 4}{enter}
+	WinWait, Change Status, 
+	IfWinNotActive, Change Status, , WinActivate, Change Status, 
+		WinWaitActive, Change Status,
+	Send, ^{tab 4}{Down}{Space}
 return
 
 ^#h:: ;hhbr
-    gosub WaitInbox
-    gosub, GetSubjectFromOutlook
-    ClipWait, 1
-    RegExMatch(Clipboard, "(\d{7})", cshSoNumber)
-    SendMode, Event
-    SetKeyDelay, 70
-    Sleep, 500
-    gosub, OpenSAPWindowForCsh
-    WinActivate, Order %cshSoNumber%,,ClipAngel,
-    Send, !ghd
-    WinWait, Change Standard Order %cshSoNumber%: Header Data,,ClipAngel,
-    Send, ^c
-    ClipWait, 1
-    cshPo := Clipboard
-    Send, {F3}
-    gosub, WaitCshSO
-    gosub WaitInbox
-    Send, ^!s
-    gosub WaitSaveAs
-    Send, PO %cshPo%{Down}{Enter}CSH Removal Email
-    gosub WaitSaveAs
-    Send, !s
-    gosub WaitCshSO
-    Send, ^{tab 3}!{Down}
-    Sleep, 500
-    Send, {Down 2}{Enter}
-    gosub WinWaitAttachmentList
-    SendMode, Input
-    Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}{tab 6}{Space}{Tab}{Down}{Enter}
-    KeyWait F14, d ; Navigate to CSH Removal Email
-    gosub WinWaitAttachmentList
-    Send, ^{Tab}{Enter}
-    gosub WaitCshSO
-    Sleep, 1000
-    Send, ^{tab 4}{down}{tab}{Delete}{Enter}
-    gosub, WaitCshSO
-    Send, ^{tab 3}!{Down}{c 2}{Enter}
-    Sleep, 2000
-    gosub, WaitInbox
-    Send, ^+r
-    gosub, GetSenderOrToFieldFromOutlook
-    Send, Hi%firstname%,`nThe hold has been removed.`n`nThanks ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
+	gosub WaitInbox
+	gosub, GetSubjectFromOutlook
+	ClipWait, 1
+	RegExMatch(Clipboard, "(\d{7})", cshSoNumber)
+	SendMode, Event
+	SetKeyDelay, 70
+	Sleep, 500
+	gosub, OpenSAPWindowForCsh
+	WinActivate, Order %cshSoNumber%,,ClipAngel,
+	Send, !ghd
+	WinWait, Change Standard Order %cshSoNumber%: Header Data,,ClipAngel,
+	Send, ^c
+	ClipWait, 1
+	cshPo := Clipboard
+	Send, {F3}
+	gosub, WaitCshSO
+	gosub WaitInbox
+	Send, ^!s
+	gosub WaitSaveAs
+	Send, PO %cshPo%{Down}{Enter}CSH Removal Email
+	gosub WaitSaveAs
+	Send, !s
+	gosub WaitCshSO
+	Send, ^{tab 3}!{Down}
+	Sleep, 500
+	Send, {Down 2}{Enter}
+	gosub WinWaitAttachmentList
+	SendMode, Input
+	Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}{tab 6}{Space}{Tab}{Down}{Enter}
+	KeyWait F14, d ; Navigate to CSH Removal Email
+	gosub WinWaitAttachmentList
+	Send, ^{Tab}{Enter}
+	gosub WaitCshSO
+	Sleep, 1000
+	Send, ^{tab 4}{down}{tab}{Delete}{Enter}
+	gosub, WaitCshSO
+	Send, ^{tab 3}!{Down}{c 2}{Enter}
+	Sleep, 2000
+	gosub, WaitInbox
+	Send, ^+r
+	gosub, GetSenderOrToFieldFromOutlook
+	Send, Hi%firstname%,`nThe hold has been removed.`n`nThanks ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
 return
 
 ; Save OA Checklist
 !#k::
-    Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist - TEMPLATE.docx
-    Sleep, 200
-    Send, {f12}
-    WinWait, Save As, 
-    IfWinNotActive, Save As, , WinActivate, Save As, 
-        WinWaitActive, Save As,
-    Sleep, 1000
-    Send, +{tab 3}{Home}{down 2}
-    Send, {Enter}
-    Send, {tab}{space}
-    Send, {Enter}
-    Send, {tab 2}{End}^{Left}{Left}^+{Left}
-    SendRaw, SO#
-    Send, {Space}
+	Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist - TEMPLATE.docx
+	Sleep, 200
+	Send, {f12}
+	WinWait, Save As, 
+	IfWinNotActive, Save As, , WinActivate, Save As, 
+		WinWaitActive, Save As,
+	Sleep, 1000
+	Send, +{tab 3}{Home}{down 2}
+	Send, {Enter}
+	Send, {tab}{space}
+	Send, {Enter}
+	Send, {tab 2}{End}^{Left}{Left}^+{Left}
+	SendRaw, SO#
+	Send, {Space}
 return
 
 ^Numpad4::
-    gosub, CopySOFromSubjectInOutlook
+	gosub, CopySOFromSubjectInOutlook
 return
 
 !#w:: ; Save from Word to SO Docs
-    Send, {f12}
-    WinWait, Save As, 
-    IfWinNotActive, Save As, , WinActivate, Save As, 
-        WinWaitActive, Save As,
-    Sleep, 1000
-    Send, +{tab 3}{Home}{down 2}
-    Send, {Enter}
-    Sleep, 500
-    Send, {tab}{space}
+	Send, {f12}
+	WinWait, Save As, 
+	IfWinNotActive, Save As, , WinActivate, Save As, 
+		WinWaitActive, Save As,
+	Sleep, 1000
+	Send, +{tab 3}{Home}{down 2}
+	Send, {Enter}
+	Sleep, 500
+	Send, {tab}{space}
 return
 
 WaitSaveAs:
-    WinWait, Save As, 
-    IfWinNotActive, Save As, , WinActivate, Save As, 
-        WinWaitActive, Save As,
+	WinWait, Save As, 
+	IfWinNotActive, Save As, , WinActivate, Save As, 
+		WinWaitActive, Save As,
 return
 
 ;~ JS / Chrome Test
 ;~ WinActivate, ahk_exe chrome.exe
 
 OpenEmailAttachments:
-    Emails := ComObjActive("Outlook.Application").ActiveExplorer.Selection
-    for Email in Emails
-        for Attachment in Email.Attachments
-        if !(Attachment.FileName ~= "^image\d+") ; exlude image files often created by embedded images in email signatures
-    {
-        Attachment.SaveAsFile(A_Temp "\" Attachment.FileName)
-        Run, % A_Temp "\" Attachment.FileName
-    }
-    WinWaitActive, % Attachment.Filename
+	Emails := ComObjActive("Outlook.Application").ActiveExplorer.Selection
+	for Email in Emails
+		for Attachment in Email.Attachments
+		if !(Attachment.FileName ~= "^image\d+") ; exlude image files often created by embedded images in email signatures
+	{
+		Attachment.SaveAsFile(A_Temp "\" Attachment.FileName)
+		Run, % A_Temp "\" Attachment.FileName
+	}
+	WinWaitActive, % Attachment.Filename
 return
 
 ;/******** MONTIOR COUNT ********/
@@ -956,47 +954,47 @@ SysGet, MonitorPrimary, MonitorPrimary
 MsgBox, Monitor Count:`t%MonitorCount%`nPrimary Monitor:`t%MonitorPrimary%
 Loop, %MonitorCount%
 {
-    SysGet, MonitorName, MonitorName, %A_Index%
-    SysGet, Monitor, Monitor, %A_Index%
-    SysGet, MonitorWorkArea, MonitorWorkArea, %A_Index%
-    MsgBox, Monitor:`t#%A_Index%`nName:`t%MonitorName%`nLeft:`t%MonitorLeft% (%MonitorWorkAreaLeft% work)`nTop:`t%MonitorTop% (%MonitorWorkAreaTop% work)`nRight:`t%MonitorRight% (%MonitorWorkAreaRight% work)`nBottom:`t%MonitorBottom% (%MonitorWorkAreaBottom% work)
+	SysGet, MonitorName, MonitorName, %A_Index%
+	SysGet, Monitor, Monitor, %A_Index%
+	SysGet, MonitorWorkArea, MonitorWorkArea, %A_Index%
+	MsgBox, Monitor:`t#%A_Index%`nName:`t%MonitorName%`nLeft:`t%MonitorLeft% (%MonitorWorkAreaLeft% work)`nTop:`t%MonitorTop% (%MonitorWorkAreaTop% work)`nRight:`t%MonitorRight% (%MonitorWorkAreaRight% work)`nBottom:`t%MonitorBottom% (%MonitorWorkAreaBottom% work)
 }
 
 X := 250, Y := 250 ; Starting position for the Gui on your main monitor
 CoordMode, Mouse, Screen
 MouseGetPos, MX, MY
 If (MX > A_ScreenWidth)
-    X += A_ScreenWidth
+	X += A_ScreenWidth
 Gui Show, x%X% y%Y% w300 h300
 return
 
 ; ------------------------------------------
 
 !+a:: ; Attach last file inside
-    Send, !e2af{Enter}
+	Send, !e2af{Enter}
 return
 
 !#a:: ; Attach last file pop out
-    Send, !haf{Enter}
+	Send, !haf{Enter}
 return
 
 ; ***** FUNCTIONS ***** | ***** FUNCTIONS ***** | ***** FUNCTIONS***** | ***** FUNCTIONS ***** 
 orderFocus() ; Display documents button on SAP Standard Order Page
 {
-    ControlFocus, Button1, Change Standard Order %soNumber%,
+	ControlFocus, Button1, Change Standard Order %soNumber%,
 }
 return
 
 toMiddle() ; To the middle section of SAP Standard Order Page
 {
-    orderWindowActivate()
-    Send, ^{Tab 3}
+	orderWindowActivate()
+	Send, ^{Tab 3}
 }
 return
 
 orderWindowActivate() ; Activate SAP Change Order Window
 {
-    WinActivate, Change Standard Order %soNumber%, 
+	WinActivate, Change Standard Order %soNumber%, 
 }
 return
 
@@ -1006,208 +1004,208 @@ return
 
 
 WaitSpin:
-    Loop, ;Wait for mouse to not spin
-    {
-        if (A_Cursor = "AppStarting")
-        {
-            Loop, 
-            {
-                ; MsgBox, In the loop
-                if !(A_Cursor = "AppStarting")
-                    Break
-            }
-        }
-    }
+	Loop, ;Wait for mouse to not spin
+	{
+		if (A_Cursor = "AppStarting")
+		{
+			Loop, 
+			{
+				; MsgBox, In the loop
+				if !(A_Cursor = "AppStarting")
+					Break
+			}
+		}
+	}
 Return
 
 WaitArrow:
-    Loop, ;Wait for mouse to be arrow
-    {
-        Sleep, 500
-        if (A_Cursor = "Arrow")
-            Break
-    }
+	Loop, ;Wait for mouse to be arrow
+	{
+		Sleep, 500
+		if (A_Cursor = "Arrow")
+			Break
+	}
 return
 
 OrderFocus:
-    ControlFocus, Button1, Change Standard Order %soNumber%,
+	ControlFocus, Button1, Change Standard Order %soNumber%,
 return
 
 toMiddle:
-    gosub, OrderWindowActivate
-    Send, ^{Tab 3}
+	gosub, OrderWindowActivate
+	Send, ^{Tab 3}
 return
 
 OrderWindowActivate:
-    WinActivate, Change Standard Order %soNumber%, 
+	WinActivate, Change Standard Order %soNumber%, 
 return
 
 ToDisplaySap:
-    ControlFocus, Button1, Standard Order
+	ControlFocus, Button1, Standard Order
 return
 
 ImportClip:
-    DetectHiddenWindows, On
-    WinActivate, ClipAngel
-    SendMode, event
-    SetKeyDelay, 40
-    Send, {AltDown}{AltUp}{AltDown}{AltUp}
-    Send, {Right 2}{up 3}{Enter}
+	DetectHiddenWindows, On
+	WinActivate, ClipAngel
+	SendMode, event
+	SetKeyDelay, 40
+	Send, {AltDown}{AltUp}{AltDown}{AltUp}
+	Send, {Right 2}{up 3}{Enter}
 return
 
 SaveClip:
-    DetectHiddenWindows, On
-    WinActivate, ClipAngel
-    SendMode, event
-    SetKeyDelay, 40
-    Send, ^a{AltDown}{AltUp}{AltDown}{AltUp}
-    Send, {Right 2}{up 4}{Enter}
+	DetectHiddenWindows, On
+	WinActivate, ClipAngel
+	SendMode, event
+	SetKeyDelay, 40
+	Send, ^a{AltDown}{AltUp}{AltDown}{AltUp}
+	Send, {Right 2}{up 4}{Enter}
 return
 
 CopySOFromSubjectInOutlook:
-    gosub, GetSubjectFromOutlook
-    ClipWait, 1
-    RegExMatch(Clipboard, "(\d{7})", soFromOutlook)
-    Clipboard := soFromOutlook
+	gosub, GetSubjectFromOutlook
+	ClipWait, 1
+	RegExMatch(Clipboard, "(\d{7})", soFromOutlook)
+	Clipboard := soFromOutlook
 return
 
 ForwardEmail:
-    WinActivate, Outlook
-    olApp := ComObjCreate("Outlook.Application")
-    olForward := olApp.ActiveExplorer.Selection.Item(1)
-    olForward := olForward.Forward
-    olForward.Display ; Remove to work in background
+	WinActivate, Outlook
+	olApp := ComObjCreate("Outlook.Application")
+	olForward := olApp.ActiveExplorer.Selection.Item(1)
+	olForward := olForward.Forward
+	olForward.Display ; Remove to work in background
 return
 
 SaveToSoDocs: ; Go to SO Docs
-    Send, {f12}
-    WinWaitActive, Save As,
-    Send, !d+{tab 10}{Home}{down 2}{ENTER}{Tab 3}
+	Send, {f12}
+	WinWaitActive, Save As,
+	Send, !d+{tab 10}{Home}{down 2}{ENTER}{Tab 3}
 return
 
 GetSubjectFromOutlook:
-    ; Get the subject of the active item in Outlook. Works in both the main window and
-    ; if the email is open in its own window.
-    olApp := ComObjActive("Outlook.Application")
-    olNamespace := olApp.GetNamespace("MAPI")
-    ; Get the active window so we can determine if an Explorer or Inspector window is active.
-    Window := olApp.ActiveWindow 
-    if (Window.Class = 34) { ; 34 = An Explorer object. (The Outlook main window)
-        Selection := Window.Selection
-        if (Selection.Count > 0)
-            Clipboard := Selection.Item(1).Subject
-        return
-    }
-    else
-        return
+	; Get the subject of the active item in Outlook. Works in both the main window and
+	; if the email is open in its own window.
+	olApp := ComObjActive("Outlook.Application")
+	olNamespace := olApp.GetNamespace("MAPI")
+	; Get the active window so we can determine if an Explorer or Inspector window is active.
+	Window := olApp.ActiveWindow 
+	if (Window.Class = 34) { ; 34 = An Explorer object. (The Outlook main window)
+		Selection := Window.Selection
+		if (Selection.Count > 0)
+			Clipboard := Selection.Item(1).Subject
+		return
+	}
+	else
+		return
 
 GetSenderOrToFieldFromOutlook:
-    Clipboard := % COMObjActive("Outlook.Application").ActiveExplorer.Selection.Item(1).SenderName
-    RegExMatch(Clipboard, "\s([a-zA-Z]*)", firstName)
+	Clipboard := % COMObjActive("Outlook.Application").ActiveExplorer.Selection.Item(1).SenderName
+	RegExMatch(Clipboard, "\s([a-zA-Z]*)", firstName)
 return
 
 ; Find order by PO# in SAP
 !#f::
-    send, {tab 7}{enter}
+	send, {tab 7}{enter}
 return
 
 WaitOrderSO:
-    SetTitleMatchMode, 2
-    WinActivate, Order %soNumber%,,ClipAngel,
-    WinWaitActive, Order %soNumber%,,ClipAngel,
+	SetTitleMatchMode, 2
+	WinActivate, Order %soNumber%,,ClipAngel,
+	WinWaitActive, Order %soNumber%,,ClipAngel,
 return
 
 WaitCshSO:
-    WinActivate, Order %cshSoNumber%,,ClipAngel,
-    WinWaitActive, Order %cshSoNumber%,,ClipAngel,
+	WinActivate, Order %cshSoNumber%,,ClipAngel,
+	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
 Return
 
 WaitHeaderData:
-    SetTitleMatchMode, 2
-    WinWait, Change Standard Order %soNumber%: Header Data,,ClipAngel,
-    IfWinNotActive, Change Standard Order %soNumberso%: Header Data,,ClipAngel, WinActivate, Change Standard Order %soNumber%: Header Data, 
-        WinWaitActive, Change Standard Order %soNumber%: Header Data,,ClipAngel,
+	SetTitleMatchMode, 2
+	WinWait, Change Standard Order %soNumber%: Header Data,,ClipAngel,
+	IfWinNotActive, Change Standard Order %soNumberso%: Header Data,,ClipAngel, WinActivate, Change Standard Order %soNumber%: Header Data, 
+		WinWaitActive, Change Standard Order %soNumber%: Header Data,,ClipAngel,
 return
 
 WaitStandardOrder:
-    SetTitleMatchMode, 2
-    WinWait, Change Standard Order %soNumber%: Overview, 
-    IfWinNotActive, Change Standard Order %soNumber%: Overview, , WinActivate,Change Standard Order %soNumber%: Overview, 
-        WinWaitActive, Change Standard Order %soNumber%: Overview,
+	SetTitleMatchMode, 2
+	WinWait, Change Standard Order %soNumber%: Overview, 
+	IfWinNotActive, Change Standard Order %soNumber%: Overview, , WinActivate,Change Standard Order %soNumber%: Overview, 
+		WinWaitActive, Change Standard Order %soNumber%: Overview,
 return
 
 addAttachment: ; Add Attachment
-    Send, !{down}
-    Sleep, 1000
-    Send, a
-    Sleep, 2000
-    Send, ^+{tab 3}{left 14}{enter}{down}{enter}
-    Sleep, 500
-    Send ^4
-    Sleep, 500
-    Send, !#s
+	Send, !{down}
+	Sleep, 1000
+	Send, a
+	Sleep, 2000
+	Send, ^+{tab 3}{left 14}{enter}{down}{enter}
+	Sleep, 500
+	Send ^4
+	Sleep, 500
+	Send, !#s
 return
 
 WaitInbox:
-    WinWait, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
-    IfWinNotActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, , WinActivate, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
-        WinWaitActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
+	WinWait, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
+	IfWinNotActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, , WinActivate, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
+		WinWaitActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
 return
 
 ; ***** END LABELS ***** | ***** END LABELS ***** | ***** END LABELS ***** | ***** END LABELS ***** 
 
 ^1:: ; Create Attachment
-    Gosub, OpenSAPWindow
-    Gosub, ToAttachments
-    Sleep, 500
-    Send, c{Enter}
-    Gosub, WinWaitImportFile
-    Gosub, ToSoDocAttachments
-    Send, !n
-    Send, po{Space}%po%
-    Sleep, 500
-    Send, {Down}{Enter}
-    Sleep, 1000
-    Send, po
-    Sleep, 500
-    Send, {Down}{Enter}
-    Sleep, 1000 
-    Send, ^{tab 3}
-    Sleep, 1500
-    Send, !{Down}
-    Sleep, 500
-    Send, {down}a
-    gosub, WinWaitAttachmentList
-    Send, ^+{tab 3}{left 14}{enter}{down}{enter}
-    WinWaitActive, Import file
-    Send, !n
-    gosub, WinWaitImportFile
-    Send, cpq{Down}{enter}
-    Sleep, 2000
-    Send, ^+{tab}{left 14}{enter}{down}{enter}
-    gosub, WinWaitImportFile
-    Send, !n
-    Send, d
-    Sleep, 200
-    Send, {down}{enter}
-    Sleep, 2000
-    Send, ^+{tab}{left 14}{enter}
-    Sleep, 200
-    Send, {down}{enter}
-    gosub, WinWaitImportFile
-    Send, !n
-    Send, d
-    Sleep, 200
-    Send, {down 2}{enter}
+	Gosub, OpenSAPWindow
+	Gosub, ToAttachments
+	Sleep, 500
+	Send, c{Enter}
+	Gosub, WinWaitImportFile
+	Gosub, ToSoDocAttachments
+	Send, !n
+	Send, po{Space}%po%
+	Sleep, 500
+	Send, {Down}{Enter}
+	Sleep, 1000
+	Send, po
+	Sleep, 500
+	Send, {Down}{Enter}
+	Sleep, 1000 
+	Send, ^{tab 3}
+	Sleep, 1500
+	Send, !{Down}
+	Sleep, 500
+	Send, {down}a
+	gosub, WinWaitAttachmentList
+	Send, ^+{tab 3}{left 14}{enter}{down}{enter}
+	WinWaitActive, Import file
+	Send, !n
+	gosub, WinWaitImportFile
+	Send, cpq{Down}{enter}
+	Sleep, 2000
+	Send, ^+{tab}{left 14}{enter}{down}{enter}
+	gosub, WinWaitImportFile
+	Send, !n
+	Send, d
+	Sleep, 200
+	Send, {down}{enter}
+	Sleep, 2000
+	Send, ^+{tab}{left 14}{enter}
+	Sleep, 200
+	Send, {down}{enter}
+	gosub, WinWaitImportFile
+	Send, !n
+	Send, d
+	Sleep, 200
+	Send, {down 2}{enter}
 Return
 
 ToSoDocAttachments:
-    WinWaitActive, Import file
-    ControlFocus, ToolbarWindow322, Import file
-    Send {space}
-    Sleep 1000
-    Send {tab}so{Enter}
-    Sleep, 500
+	WinWaitActive, Import file
+	ControlFocus, ToolbarWindow322, Import file
+	Send {space}
+	Sleep 1000
+	Send {tab}so{Enter}
+	Sleep, 500
 Return
 
 ; Send, {tab 6}+{Space}
@@ -1253,48 +1251,48 @@ Return
 return
 
 WinWaitImportFile:
-    WinWait, Import file, 
-    WinActivate, Import file, 
-    WinWaitActive, Import file,
+	WinWait, Import file, 
+	WinActivate, Import file, 
+	WinWaitActive, Import file,
 return
 
 WinWaitAttachmentList:
-    WinWait, Service: Attachment list, 
-    IfWinNotActive, Service: Attachment list, , WinActivate, Service: Attachment list, 
-        WinWaitActive, Service: Attachment list, 
+	WinWait, Service: Attachment list, 
+	IfWinNotActive, Service: Attachment list, , WinActivate, Service: Attachment list, 
+		WinWaitActive, Service: Attachment list, 
 return
 
 GetSOFromSubject:
-    gosub, GetSubjectFromOutlook
-    ClipWait, 1
-    RegExMatch(Clipboard, "(\d{7})", so)
+	gosub, GetSubjectFromOutlook
+	ClipWait, 1
+	RegExMatch(Clipboard, "(\d{7})", so)
 return
 
 !#i:: ; Get Invoice - Not finished
 WinWait, Change Billing Document, 
 IfWinNotActive, Change Billing Document, , WinActivate, Change Billing Document, 
-    WinWaitActive, Change Billing Document, 
+	WinWaitActive, Change Billing Document, 
 Sleep, 100
 Send, {ALTDOWN}{ALTUP}u
 WinWait, Output output, 
 IfWinNotActive, Output output, , WinActivate, Output output, 
-    WinWaitActive, Output output, 
+	WinWaitActive, Output output, 
 Send, {DOWN}{SHIFTDOWN}{SPACE}{SHIFTUP}{TAB 4}{ENTER}
 WinWait, Print:, 
 IfWinNotActive, Print:, , WinActivate, Print:, 
-    WinWaitActive, Print:, 
+	WinWaitActive, Print:, 
 Send, {CTRLDOWN}{SHIFTDOWN}{TAB}{SHIFTUP}{CTRLUP}{TAB}{ENTER}
 WinWait, Print Preview, 
 IfWinNotActive, Print Preview, , WinActivate, Print Preview, 
-    WinWaitActive, Print Preview,
+	WinWaitActive, Print Preview,
 MouseClick, left, 1807, 170
 WinWait,, Nitro Pro, 
 IfWinNotActive,, Nitro Pro, WinActivate,,Nitro Pro,
-    WinWaitActive,, Nitro Pro, 
+	WinWaitActive,, Nitro Pro, 
 Send, ^s
 WinWait, Save As, 
 IfWinNotActive, Save As, , WinActivate, Save As, 
-        WinWaitActive, Save As, 
+		WinWaitActive, Save As, 
 return
 
 ^l::
@@ -1302,75 +1300,75 @@ gosub, WaitInbox
 Send, ^n
 WinWait, Untitled, 
 IfWinNotActive, Untitled, , WinActivate, Untitled, 
-    WinWaitActive, Untitled, 
+	WinWaitActive, Untitled, 
 Send, chmielowski{enter}{tab}{tab}SO{#}{space}%soNumber%
 Send, {space}Level 2 Approval{tab}Hi Ellen, `nPlease review SO{#}{space}
 SendRaw, %soNumber% for level 2 approval.`n`nThanks
-    Send, !h
+	Send, !h
 Sleep, 500
 Send, af{Enter}
 return
 
 F15:: ; Copy / Paste - Plant Coding
-    Sleep, 200
-    Send, +{Home}+{Backspace}
-    Send, ^v
-    Send, {Down} 
-    Send, {esc}{down}
+	Sleep, 200
+	Send, +{Home}+{Backspace}
+	Send, ^v
+	Send, {Down} 
+	Send, {esc}{down}
 return
 
 +F15:: ; Delete coding
-    Send, {End}+{Home}{backspace}{Esc}{Down}
+	Send, {End}+{Home}{backspace}{Esc}{Down}
 return
 
 !#s:: ;CPQ
-    Send, !n
-    sleep, 1000
-    Send, cpq-{Down}{enter}
-    Sleep, 2000
-    Send, !d
-    Sleep, 1000
+	Send, !n
+	sleep, 1000
+	Send, cpq-{Down}{enter}
+	Sleep, 2000
+	Send, !d
+	Sleep, 1000
 return
 
 #IfWinNotActive, Insert Hyperlink
 {
-    !x::
-    Send +{F10},F,C ; Find related email in Outlook
-    Return
+	!x::
+	Send +{F10},F,C ; Find related email in Outlook
+	Return
 }
 return
 
 ^2:: ; Add'l Attachment
-    Send, ^+{tab}{Home}{enter}{down}{enter}
-    WinWait, Import file, 
-    IfWinNotActive, Import file, , WinActivate, Import file, 
-        WinWaitActive, Import file, 
-    Send, !n
+	Send, ^+{tab}{Home}{enter}{down}{enter}
+	WinWait, Import file, 
+	IfWinNotActive, Import file, , WinActivate, Import file, 
+		WinWaitActive, Import file, 
+	Send, !n
 return
 
 ^+u:: ;---- To UPPERCASE ----
-    Clipboard:= ""
-    Sleep, 500
-    Send, ^c ; copies selected text
-    ClipWait, 1
-    StringUpper Clipboard, Clipboard
-    Send {Insert}
-    Sleep 400
-    Send ^v
-    Sleep 400
-    Send {Insert}
+	Clipboard:= ""
+	Sleep, 500
+	Send, ^c ; copies selected text
+	ClipWait, 1
+	StringUpper Clipboard, Clipboard
+	Send {Insert}
+	Sleep 400
+	Send ^v
+	Sleep 400
+	Send {Insert}
 return
 
 !o:: ;Navigate to Order Notice
-    Send, !n
-    sleep, 500
-    Send, Ord{Down}{enter}
+	Send, !n
+	sleep, 500
+	Send, Ord{Down}{enter}
 return
 
 !+g:: ;---- Delete GSA Price --------
-    Send, {tab}{tab}{del}{enter}
-    Sleep, 500
-    Send, +{F7}
+	Send, {tab}{tab}{del}{enter}
+	Sleep, 500
+	Send, +{F7}
 return
 
 ;;;; Remapping Keys & Shortcuts ;;;;
@@ -1396,92 +1394,92 @@ return
 ; return
 
 OpenSAPWindow:
-    SetTitleMatchMode, 2
-    if WinExist("Change Standard Order") {
-        WinActivate, Change Standard Order, Organizer ClipAngel
-        WinWaitActive, Change Standard Order,, Organizer ClipAngel
-        Send, {F3}{BackSpace}
-        Sleep, 500
-        Send, %soNumber%
-        Sleep, 500
-        Send, {Enter}
-        Sleep, 500
-        Send, {Tab}{Enter}
-        WinActivate, Change Standard Order, Organizer ClipAngel
-        WinWaitActive, Change Standard Order,, Organizer ClipAngel
-    } else if WinExist("Change Sales Order") {
-        WinActivate, Change Sales Order, Organizer ClipAngel
-        WinWaitActive, Change Sales Order,, Organizer ClipAngel
-        Sleep, 200
-        Send, {end}+{Home}{BackSpace}%soNumber%{Enter}
-        Sleep, 500
-        Send, {Tab}{Enter}
-        WinActivate, Change Standard Order, Organizer ClipAngel
-        WinWaitActive, Change Standard Order,, Organizer ClipAngel
-    } else if WinExist("SAP Easy Access") {
-        IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-            WinWaitActive, SAP Easy Access,
-        WinActivate
-        MouseClick, left, 90, 66
-        Send, va02{enter}
-        WinWait, SAP Easy Access, 
-        WinWaitActive, Change Sales Order,, Organizer ClipAngel
-        Send, %soNumber%{enter}
-        WinActivate, Change Standard Order, Organizer ClipAngel
-        WinWaitActive, Change Standard Order,, Organizer ClipAngel
-    }
+	SetTitleMatchMode, 2
+	if WinExist("Change Standard Order") {
+		WinActivate, Change Standard Order, Organizer ClipAngel
+		WinWaitActive, Change Standard Order,, Organizer ClipAngel
+		Send, {F3}{BackSpace}
+		Sleep, 500
+		Send, %soNumber%
+		Sleep, 500
+		Send, {Enter}
+		Sleep, 500
+		Send, {Tab}{Enter}
+		WinActivate, Change Standard Order, Organizer ClipAngel
+		WinWaitActive, Change Standard Order,, Organizer ClipAngel
+	} else if WinExist("Change Sales Order") {
+		WinActivate, Change Sales Order, Organizer ClipAngel
+		WinWaitActive, Change Sales Order,, Organizer ClipAngel
+		Sleep, 200
+		Send, {end}+{Home}{BackSpace}%soNumber%{Enter}
+		Sleep, 500
+		Send, {Tab}{Enter}
+		WinActivate, Change Standard Order, Organizer ClipAngel
+		WinWaitActive, Change Standard Order,, Organizer ClipAngel
+	} else if WinExist("SAP Easy Access") {
+		IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
+			WinWaitActive, SAP Easy Access,
+		WinActivate
+		MouseClick, left, 90, 66
+		Send, va02{enter}
+		WinWait, SAP Easy Access, 
+		WinWaitActive, Change Sales Order,, Organizer ClipAngel
+		Send, %soNumber%{enter}
+		WinActivate, Change Standard Order, Organizer ClipAngel
+		WinWaitActive, Change Standard Order,, Organizer ClipAngel
+	}
 return
 
 OpenSAPWindowForCsh:
 if WinExist("Change Standard Order") {
-    WinActivate, Change Standard Order,
-    WinWaitActive, Change Standard Order,
-    Send, {F3}{BackSpace}
-    Sleep, 500
-    Send, %cshSoNumber%
-    Sleep, 500
-    Send, {Enter}
-    Sleep, 500
-    Send, {Tab}{Enter}
-    IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-        WinWaitActive, Change Standard Order,
+	WinActivate, Change Standard Order,
+	WinWaitActive, Change Standard Order,
+	Send, {F3}{BackSpace}
+	Sleep, 500
+	Send, %cshSoNumber%
+	Sleep, 500
+	Send, {Enter}
+	Sleep, 500
+	Send, {Tab}{Enter}
+	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
+		WinWaitActive, Change Standard Order,
 } else if WinExist("Change Sales Order") {
-    WinActivate, Change Sales Order,
-    WinWaitActive, Change Sales Order,
-    Sleep, 200
-    Send, {end}+{Home}{BackSpace}%cshSoNumber%{Enter}
-    Sleep, 500
-    Send, {Tab}{Enter}
-    IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-        WinWaitActive, Change Standard Order,
-    WinActivate ; use the window found above
+	WinActivate, Change Sales Order,
+	WinWaitActive, Change Sales Order,
+	Sleep, 200
+	Send, {end}+{Home}{BackSpace}%cshSoNumber%{Enter}
+	Sleep, 500
+	Send, {Tab}{Enter}
+	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
+		WinWaitActive, Change Standard Order,
+	WinActivate ; use the window found above
 } else if WinExist("SAP Easy Access") {
-    IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-        WinWaitActive, SAP Easy Access,
-    WinActivate
-    MouseClick, left, 90, 66
-    Send, va02{enter}
-    WinWait, SAP Easy Access, 
-    IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access, 
-        WinWaitActive, SAP Easy Access, 
-    Send, %cshSoNumber%{enter}
-    IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-        WinWaitActive, Change Standard Order,
-    WinActivate ; use the window found above
+	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
+		WinWaitActive, SAP Easy Access,
+	WinActivate
+	MouseClick, left, 90, 66
+	Send, va02{enter}
+	WinWait, SAP Easy Access, 
+	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access, 
+		WinWaitActive, SAP Easy Access, 
+	Send, %cshSoNumber%{enter}
+	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
+		WinWaitActive, Change Standard Order,
+	WinActivate ; use the window found above
 }
 return
 
 WaitSAPEasyAccess:
 ifWinExist, SAP Easy Access
 {
-    IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-        WinWaitActive, SAP Easy Access,
-    WinActivate
-    return
+	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
+		WinWaitActive, SAP Easy Access,
+	WinActivate
+	return
 } else
 {
-    MsgBox, Win Doesn't Exist
-    return
+	MsgBox, Win Doesn't Exist
+	return
 }
 return
 
@@ -1574,16 +1572,16 @@ Send, {tab}%TimeString%{Enter}
 Sleep, 1000
 Loop, 10
 {
-    CoordMode, Pixel, Window
-    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211013092931.png
-    If (ErrorLevel = 0)
-    {
-        Send, {Enter}
-        WinWaitActive, Information
-        WinWaitNotActive, Information
-        break
-    }
-    Sleep, 500
+	CoordMode, Pixel, Window
+	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211013092931.png
+	If (ErrorLevel = 0)
+	{
+		Send, {Enter}
+		WinWaitActive, Information
+		WinWaitNotActive, Information
+		break
+	}
+	Sleep, 500
 }
 WinWaitNotActive, Information
 Sleep, 2000
@@ -1643,14 +1641,14 @@ Send, +{tab}
 
 if (directorCode = "N/A")
 {
-    Send, s{right 11}{Tab}
-    Send, %managerCode%{enter}
+	Send, s{right 11}{Tab}
+	Send, %managerCode%{enter}
 }
 else 
 {
-    Send, s{right 10}{Tab}%directorCode%{down}+{Tab}
-    Send, s{right 11}{Tab}
-    Send, %managerCode%{enter}
+	Send, s{right 10}{Tab}%directorCode%{down}+{Tab}
+	Send, s{right 11}{Tab}
+	Send, %managerCode%{enter}
 }
 Sleep, 1000
 Send, ^{PGUP}
@@ -1665,12 +1663,12 @@ WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Le
 Sleep 200
 Loop, 
 {
-    CoordMode, Pixel, Window
-    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, *3 C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211207083807.png
-    If (ErrorLevel = 0)
-    {
-        break
-    }
+	CoordMode, Pixel, Window
+	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, *3 C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211207083807.png
+	If (ErrorLevel = 0)
+	{
+		break
+	}
 }
 MouseClick, left, 291, 190
 MouseClick, left, 537, 250
@@ -1709,48 +1707,48 @@ ReportGenerate:
 generateReport := 0
 Loop
 {
-    CoordMode, Pixel, Client
-    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203140835.png
-    If ErrorLevel = 0
-    {
-        ; Override success screen
-        ;   Tab generate
-        ;   Click results
+	CoordMode, Pixel, Client
+	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203140835.png
+	If ErrorLevel = 0
+	{
+		; Override success screen
+		;   Tab generate
+		;   Click results
 
-        CoordMode, Pixel, Client
-        ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
-        if ErrorLevel = 0
-        {
-            Send {tab 7}{Enter}
-        }
-        CoordMode, Pixel, Client
-        ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
-        if ErrorLevel = 0
-        {
-            Send {tab 8}{Enter}
-        }
-        Break
-    }
-    CoordMode, Pixel, Client
-    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211207112110.png
-    If ErrorLevel = 0
-    {
-        CoordMode, Pixel, Client
-        ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
-        if ErrorLevel = 0
-        {
-            Send {tab 7}{Enter}
-        }
-        CoordMode, Pixel, Client
-        ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
-        if ErrorLevel = 0
-        {
-            Send {tab 8}{Enter}
-        }
-        Break
-    }
-    generateReport += 1
-    ToolTip, %generateReport%
+		CoordMode, Pixel, Client
+		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
+		if ErrorLevel = 0
+		{
+			Send {tab 7}{Enter}
+		}
+		CoordMode, Pixel, Client
+		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
+		if ErrorLevel = 0
+		{
+			Send {tab 8}{Enter}
+		}
+		Break
+	}
+	CoordMode, Pixel, Client
+	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211207112110.png
+	If ErrorLevel = 0
+	{
+		CoordMode, Pixel, Client
+		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
+		if ErrorLevel = 0
+		{
+			Send {tab 7}{Enter}
+		}
+		CoordMode, Pixel, Client
+		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
+		if ErrorLevel = 0
+		{
+			Send {tab 8}{Enter}
+		}
+		Break
+	}
+	generateReport += 1
+	ToolTip, %generateReport%
 }
 ToolTip, 
 Return
@@ -1766,10 +1764,10 @@ WinWaitActive, Save As
 dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq . "\"
 if FileExist(dpsPath . "DPS - " . customer . ".pdf")
 {
-    Clipboard := dpsPath . "DPS - " . contact
+	Clipboard := dpsPath . "DPS - " . contact
 } else 
 {
-    Clipboard := dpsPath . "DPS - " . customer
+	Clipboard := dpsPath . "DPS - " . customer
 }
 Sleep, 200
 Send ^v
@@ -1782,64 +1780,64 @@ return
 DPSResults:
 Loop
 {   
-    ; No records found
-    CoordMode, Pixel, Screen
-    ImageSearch, FoundX, FoundY, 2214, 215, 2866, 380, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203080204.png
-    If ErrorLevel = 0
-    {
-    	Sleep, 200
-        Send, {tab 2}{enter}
-        Break
-    }
+	; No records found
+	CoordMode, Pixel, Screen
+	ImageSearch, FoundX, FoundY, 2214, 215, 2866, 380, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203080204.png
+	If ErrorLevel = 0
+	{
+		Sleep, 200
+		Send, {tab 2}{enter}
+		Break
+	}
 
-    ; No records found / Clear
-    CoordMode, Pixel, Screen
-    ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206121523.png
-    If ErrorLevel = 0
-    {
-    	Sleep, 200
-        Send, {tab 2}{enter}
-        Break
-    }
-    
-    ; Blocked
-    CoordMode, Pixel, Window
-        ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203090941.png
-    If ErrorLevel = 0
-    {
-        MsgBox, 4, Found Records,Records WERE Found`nContinue?
-        Sleep, 200
-        If WinExist("Found Records")
-        {
-            MouseGetPos, x, y
-            WinMove, Found Records,,%x%,%y%
-        }
-        If MsgBox No
-        {
-            Break
-        }
-        Else
-        {
-            WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-            MouseClick, Left, 899, 257,1,, D ; reset tab position to middle of screen
-            Send {tab 2}{enter}
-            Sleep 200
-            Send +{tab}{down 5}{enter}
-            Sleep 200
-            Send {tab 3}{Enter}
-            Break
-        }
-    }
+	; No records found / Clear
+	CoordMode, Pixel, Screen
+	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206121523.png
+	If ErrorLevel = 0
+	{
+		Sleep, 200
+		Send, {tab 2}{enter}
+		Break
+	}
+	
+	; Blocked
+	CoordMode, Pixel, Window
+		ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203090941.png
+	If ErrorLevel = 0
+	{
+		MsgBox, 4, Found Records,Records WERE Found`nContinue?
+		Sleep, 200
+		If WinExist("Found Records")
+		{
+			MouseGetPos, x, y
+			WinMove, Found Records,,%x%,%y%
+		}
+		If MsgBox No
+		{
+			Break
+		}
+		Else
+		{
+			WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+			MouseClick, Left, 899, 257,1,, D ; reset tab position to middle of screen
+			Send {tab 2}{enter}
+			Sleep 200
+			Send +{tab}{down 5}{enter}
+			Sleep 200
+			Send {tab 3}{Enter}
+			Break
+		}
+	}
 
-    ; Overridden
-    CoordMode, Pixel, Client
-    ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206102506.png
-    If ErrorLevel = 0
-    {
-    	Sleep, 200
-        Send, {tab 2}{enter}
-        Break
-    }
+	; Overridden
+	CoordMode, Pixel, Client
+	ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206102506.png
+	If ErrorLevel = 0
+	{
+		Sleep, 200
+		Send, {tab 2}{enter}
+		Break
+	}
 }
 Return
 
@@ -1848,366 +1846,366 @@ Return
 
 
 ^6:: ;End User Info
-    endUserInfo = END USER: %endUser%`nPHONE: %phone%`nEMAIL: %email%`n`nEND USE: %endUse%`n`nCPQ-%cpq%
-    StringUpper, endUserInfo, endUserInfo
-    Clipboard := % endUserInfo
-    gosub, WaitHeaderData
-    Send, ^+{tab 3}{Right}{Enter} ; Navigate to texts tab
-    Sleep, 1000
-    MouseClick, left, 90,320
-    Sleep, 1000
-    Send, {PGDN}
-    Sleep, 200
-    Send, {Down 3} ; Navigate to End User Tab
-    Sleep, 200 
-    Send, ^{tab 2}{enter}
-    Sleep, 500
-    Send, %endUserInfo% ; Navigate to Entry textbox and paste
-    Sleep, 200
-    Send, {Up 4}{End}+{PGUP 3}^c
-    ClipWait, 1
-    Send, {F3}
-    gosub, WaitStandardOrder
-    Send, !g
-    Sleep, 200
-    Send, hp ; back to the partners tab
-    gosub, WaitHeaderData
-    Send, ^{end} ; back to end user
-    Sleep, 500
-    Send, {F2}
-    Sleep, 200
-    Send, {tab 3}{Enter}
-    Sleep, 500
-    Send, {tab 2}^v{Enter}
-    Sleep, 500
-    Send, ^{PGUP}
+	endUserInfo = END USER: %endUser%`nPHONE: %phone%`nEMAIL: %email%`n`nEND USE: %endUse%`n`nCPQ-%cpq%
+	StringUpper, endUserInfo, endUserInfo
+	Clipboard := % endUserInfo
+	gosub, WaitHeaderData
+	Send, ^+{tab 3}{Right}{Enter} ; Navigate to texts tab
+	Sleep, 1000
+	MouseClick, left, 90,320
+	Sleep, 1000
+	Send, {PGDN}
+	Sleep, 200
+	Send, {Down 3} ; Navigate to End User Tab
+	Sleep, 200 
+	Send, ^{tab 2}{enter}
+	Sleep, 500
+	Send, %endUserInfo% ; Navigate to Entry textbox and paste
+	Sleep, 200
+	Send, {Up 4}{End}+{PGUP 3}^c
+	ClipWait, 1
+	Send, {F3}
+	gosub, WaitStandardOrder
+	Send, !g
+	Sleep, 200
+	Send, hp ; back to the partners tab
+	gosub, WaitHeaderData
+	Send, ^{end} ; back to end user
+	Sleep, 500
+	Send, {F2}
+	Sleep, 200
+	Send, {tab 3}{Enter}
+	Sleep, 500
+	Send, {tab 2}^v{Enter}
+	Sleep, 500
+	Send, ^{PGUP}
 return
 
 ^!z::
-    Send, ^s
-    reload
+	Send, ^s
+	reload
 return
 
 kellerDropDown:
-    GuiControl, Choose, salesManager, Anjou Keller
-    GuiControl, ChooseString, managerCode, 202375
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, N/A
-    GuiControl, ChooseString, directorCode, N/A
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Anjou Keller
+	GuiControl, ChooseString, managerCode, 202375
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, N/A
+	GuiControl, ChooseString, directorCode, N/A
+	Gui Submit, NoHide
 return
 
 mccormackDropDown:
-    GuiControl, Choose, salesManager, Doug McCormack
-    GuiControl, ChooseString, managerCode, 1261
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, N/A
-    GuiControl, ChooseString, directorCode, N/A
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Doug McCormack
+	GuiControl, ChooseString, managerCode, 1261
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, N/A
+	GuiControl, ChooseString, directorCode, N/A
+	Gui Submit, NoHide
 return
 
 hewittDropDown:
-    GuiControl, Choose, salesManager, Joe Hewitt
-    GuiControl, ChooseString, managerCode, 98866
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, N/A
-    GuiControl, ChooseString, directorCode, N/A
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Joe Hewitt
+	GuiControl, ChooseString, managerCode, 98866
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, N/A
+	GuiControl, ChooseString, directorCode, N/A
+	Gui Submit, NoHide
 return
 
 foelsDropDown:
-    GuiControl, Choose, salesManager, Natalie Foels
-    GuiControl, ChooseString, managerCode, 96715
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, N/A
-    GuiControl, ChooseString, directorCode, N/A
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Natalie Foels
+	GuiControl, ChooseString, managerCode, 96715
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, N/A
+	GuiControl, ChooseString, directorCode, N/A
+	Gui Submit, NoHide
 return
 
 secondDropDown:
-    GuiControl, Choose, salesManager, Tonya Second
-    GuiControl, ChooseString, managerCode, 95410
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, Maroun El Khoury
-    GuiControl, ChooseString, directorCode, 1076
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Tonya Second
+	GuiControl, ChooseString, managerCode, 95410
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Maroun El Khoury
+	GuiControl, ChooseString, directorCode, 1076
+	Gui Submit, NoHide
 return
 
 mcfaddenDropDown:
-    GuiControl, Choose, salesManager, Joe McFadden
-    GuiControl, ChooseString, managerCode, 202610
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, N/A
-    GuiControl, ChooseString, directorCode, N/A
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Joe McFadden
+	GuiControl, ChooseString, managerCode, 202610
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, N/A
+	GuiControl, ChooseString, directorCode, N/A
+	Gui Submit, NoHide
 return
 
 butlerDropDown:
-    GuiControl, Choose, salesManager, John Butler
-    GuiControl, ChooseString, managerCode, 1026
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, Maroun El Khoury
-    GuiControl, ChooseString, directorCode, 1076
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, John Butler
+	GuiControl, ChooseString, managerCode, 1026
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Maroun El Khoury
+	GuiControl, ChooseString, directorCode, 1076
+	Gui Submit, NoHide
 return
 
 kleinDropDown:
-    GuiControl, Choose, salesManager, Richard Klein
-    GuiControl, ChooseString, managerCode, 1042
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, Maroun El Khoury
-    GuiControl, ChooseString, directorCode, 1076
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Richard Klein
+	GuiControl, ChooseString, managerCode, 1042
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Maroun El Khoury
+	GuiControl, ChooseString, directorCode, 1076
+	Gui Submit, NoHide
 return
 
 nadjieDropDown:
-    GuiControl, Choose, salesManager, Zee Nadjie
-    GuiControl, ChooseString, managerCode, 96695
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, N/A
-    GuiControl, ChooseString, directorCode, N/A
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Zee Nadjie
+	GuiControl, ChooseString, managerCode, 96695
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, N/A
+	GuiControl, ChooseString, directorCode, N/A
+	Gui Submit, NoHide
 return
 
 chenDropDown:
-    GuiControl, Choose, salesManager, Ray Chen
-    GuiControl, ChooseString, managerCode, 202756
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, Jimmy Yuk
-    GuiControl, ChooseString, directorCode, 202611
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Ray Chen
+	GuiControl, ChooseString, managerCode, 202756
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Jimmy Yuk
+	GuiControl, ChooseString, directorCode, 202611
+	Gui Submit, NoHide
 return
 
 porchDropDown:
-    GuiControl, Choose, salesManager, Randy Porch
-    GuiControl, ChooseString, managerCode, 1041
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, Maroun El Khoury
-    GuiControl, ChooseString, directorCode, 1076
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, Randy Porch
+	GuiControl, ChooseString, managerCode, 1041
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Maroun El Khoury
+	GuiControl, ChooseString, directorCode, 1076
+	Gui Submit, NoHide
 return
 
 findSales:
 ;=============== KELLER ===================
 if salesPerson = Julie Sawicki
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Justin Carder 
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Brent Boyle
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Luke Marty
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Aeron Avakian 
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Jon Needels
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Brian Dowe
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Lisa Kasper
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = John Bailey
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Aeron Avakian
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Luke Marty
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 if salesPerson = Brandon Markle
-    gosub, kellerDropDown
+	gosub, kellerDropDown
 ;=============== END KELLER ===================
 
 ;============ NADJIE ================
 if salesPerson = Jawad Pashmi
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Navette Shirakawa
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Alicia Arias
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Gabriel Mendez
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Rhonda Oesterle
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Alexander James
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Shijun Sheng
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Brian Luckenbill
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Amy Allgower
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 if salesPerson = Michael Burnett
-    gosub, nadjieDropDown
+	gosub, nadjieDropDown
 ;============ END NADJIE ================
 
 ;========== DOUG MCCORMACK =================
 if salesPerson = Mark Krigbaum
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Samantha Stikeleather
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Jeff Weller
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Jerry Holycross
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Dan Ciminelli
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Theresa Borio
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Cynthia Spittler
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Fred Simpson
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Gwyn Trojan
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Nick Hubbard
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 if salesPerson = Kristen Luttner
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 ;========== END DOUG MCCORMACK =================
 
 ;=========== HEWITT ============
 if salesPerson = Douglas Sears
-    gosub, hewittDropDown
+	gosub, hewittDropDown
 if salesPerson = Melissa Chandler
-    gosub, hewittDropDown
+	gosub, hewittDropDown
 if salesPerson = Hillary Tennant
-    gosub, hewittDropDown
+	gosub, hewittDropDown
 if salesPerson = Don Rathbauer
-    gosub, hewittDropDown
+	gosub, hewittDropDown
 if salesPerson = Tucker Lincoln
-    gosub, hewittDropDown
+	gosub, hewittDropDown
 if salesPerson = Joel Stradtner
-    gosub, hewittDropDown
+	gosub, hewittDropDown
 if salesPerson = Stephanie Koczur
-    gosub, hewittDropDown
+	gosub, hewittDropDown
 if salesPerson = Mike Hughes
-    gosub, hewittDropDown
+	gosub, hewittDropDown
 ;=========== END HEWITT ============
 
 ;============ FOELS ================
 if salesPerson = Larry Bellan
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Kevin Clodfelter
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Brian Thompson
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Rashila Patel
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Bill Balsanek
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Chuck Costanza
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Karl Kastner
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Bob Riggs
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Drew Smillie
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 if salesPerson = Crystal Flowers
-    gosub, foelsDropDown
+	gosub, foelsDropDown
 ;============ END FOELS ================
 
 ;========= SECOND ==============
 if salesPerson = Helen Sun
-    gosub, secondDropDown
+	gosub, secondDropDown
 if salesPerson = Steven Danielson
-    gosub, secondDropDown
+	gosub, secondDropDown
 if salesPerson = Dominique Figueroa
-    gosub, secondDropDown
+	gosub, secondDropDown
 if salesPerson = Jonathan McNally
-    gosub, secondDropDown
+	gosub, secondDropDown
 if salesPerson = Yan Chen
-    gosub, secondDropDown
+	gosub, secondDropDown
 if salesPerson = Katianna Pihakari
-    gosub, secondDropDown
+	gosub, secondDropDown
 if salesPerson = Timothy Johnson
-    gosub, secondDropDown
+	gosub, secondDropDown
 if salesPerson =  Dante Bencivengo 
-    gosub, secondDropDown
+	gosub, secondDropDown
 if salesPerson =  Justin Chang 
-    gosub, secondDropDown
+	gosub, secondDropDown
 ;========= END SECOND ==============
 
 ;========= MCFADDEN ==============
 if salesPerson = May Chou
-    gosub, mcfaddenDropDown
+	gosub, mcfaddenDropDown
 if salesPerson = Steve Boyanoski
-    gosub, mcfaddenDropDown
+	gosub, mcfaddenDropDown
 if salesPerson = Mark Woodworth
-    gosub, mcfaddenDropDown
+	gosub, mcfaddenDropDown
 if salesPerson = Murray Fryman
-    gosub, mcfaddenDropDown
+	gosub, mcfaddenDropDown
 if salesPerson = Lorraine Foglio
-    gosub, mcfaddenDropDown
+	gosub, mcfaddenDropDown
 if salesPerson = Lauren Fischer
-    gosub, mcfaddenDropDown
+	gosub, mcfaddenDropDown
 if salesPerson = Douglas McDowell
-    gosub, mcfaddenDropDown
+	gosub, mcfaddenDropDown
 if salesPerson = Dana Stradtner
-    gosub, mcfaddenDropDown
+	gosub, mcfaddenDropDown
 ;========= END MCFADDEN ==============
 
 ;=========== BUTLER ==========
 if salesPerson = Andrew Clark
-    gosub, butlerDropDown
+	gosub, butlerDropDown
 if salesPerson = Giovanni Pallante
-    gosub, butlerDropDown
+	gosub, butlerDropDown
 if salesPerson = David Kage
-    gosub, butlerDropDown
+	gosub, butlerDropDown
 if salesPerson = David Scott
-    gosub, butlerDropDown
+	gosub, butlerDropDown
 if salesPerson = Susan Gelman
-    gosub, butlerDropDown
+	gosub, butlerDropDown
 if salesPerson = Cari Randles
-    gosub, butlerDropDown
+	gosub, butlerDropDown
 if salesPerson = Sean Bennett
-    gosub, butlerDropDown
+	gosub, butlerDropDown
 ;=========== END BUTLER ==========
 
 ;=========== KLEIN ==========
 if salesPerson = Susan Bird
-    gosub, kleinDropDown
+	gosub, kleinDropDown
 if salesPerson = Jerry Pappas
-    gosub, kleinDropDown
+	gosub, kleinDropDown
 if salesPerson = Jie Qian
-    gosub, kleinDropDown
+	gosub, kleinDropDown
 if salesPerson = Joe Bernholz
-    gosub, kleinDropDown
+	gosub, kleinDropDown
 if salesPerson = Yuriy Dunayevskiy
-    gosub, kleinDropDown
+	gosub, kleinDropDown
 if salesPerson = Nelson Huang
-    gosub, kleinDropDown
+	gosub, kleinDropDown
 if salesPerson = Kate Lincoln
-    gosub, kleinDropDown
+	gosub, kleinDropDown
 ;=========== END KLEIN ==========
 
 ;=========== CHEN ==========
 if salesPerson = Haris Dzaferbegovic
-    gosub, chenDropDown
+	gosub, chenDropDown
 if salesPerson = Donna Zwirner
-    gosub, mccormackDropDown
+	gosub, mccormackDropDown
 ;=========== END CHEN ==========
 
 ;=========== PORCH ==========
 if salesPerson = Todd Stoner
-    gosub, porchDropDown
+	gosub, porchDropDown
 if salesPerson = Jonathan Ferguson
-    gosub, porchDropDown
+	gosub, porchDropDown
 if salesPerson = Nick Duczak
-    gosub, porchDropDown
+	gosub, porchDropDown
 if salesPerson = Gerald Koncar
-    gosub, porchDropDown
+	gosub, porchDropDown
 if salesPerson = Angelito Nepomuceno
-    gosub, porchDropDown
+	gosub, porchDropDown
 ;=========== END PORCH ==========
 
 ;======== BLANKS =======
 if salesPerson =
 {
-    GuiControl, Choose, salesManager, |1 
-    GuiControl, Choose, managerCode, |1
-    Gui Submit, NoHide
-    GuiControl, Choose, salesDirector, |1
-    GuiControl, Choose, directorCode, |1
-    Gui Submit, NoHide
+	GuiControl, Choose, salesManager, |1 
+	GuiControl, Choose, managerCode, |1
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, |1
+	GuiControl, Choose, directorCode, |1
+	Gui Submit, NoHide
 }
 return
 
