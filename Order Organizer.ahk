@@ -73,7 +73,7 @@ Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
 LVArray := []
 Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ;Search
-Gui Add, ListView, grid r20 w400 vLV gMyListView, FileName
+Gui Add, ListView, grid r20 w400 y50 x250 vLV gMyListView, ORDERS:
 GuiControl, hide, LV
 Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
 {
@@ -287,17 +287,12 @@ GuiControl, +Redraw, LV
 Return
 
 MyListView:
-; If A_DefaultListView = LV
-; {
-; 	MsgBox, You double-clicked row number %A_EventInfo%. Text: "%RowText%"`n`n%A_DefaultListView%
-; }
 if (A_GuiEvent = "DoubleClick")
 {
 	LV_GetText(RowText, A_EventInfo)  ; Get the text from the row's first field.
 	SelectedFile := myinipath . "\" . RowText
 	Send +{tab}{BackSpace}
 	Gosub, readtheini
-
 }
 Return
 
