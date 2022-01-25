@@ -12,13 +12,13 @@ salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch La
 . "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
 . "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
 . "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
-. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|Justin Chang|Kate Lincoln|Angelito Nepomuceno|"
+. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|Justin Chang|Kate Lincoln|Angelito Nepomuceno|Patrick Bohman"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch"
 
-salesDirectors := "|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|N/A"
+salesDirectors := "|Denise Schwartz|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|N/A"
 
-salesCodes := "|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|N/A"
+salesCodes := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|N/A"
 
 myinipath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB
 
@@ -72,15 +72,28 @@ Gui Font
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
 LVArray := []
-Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ;Search
+
+Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
 Gui Add, ListView, grid r20 w400 y50 x250 vLV gMyListView, ORDERS:
-GuiControl, hide, LV
+
+; Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch2, ; DDL Search
+
+
 Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
 {
    LV_Add("", A_LoopFileName)
    LVArray.Push(A_LoopFileName)
 }
 LV_ModifyCol()
+; Loop, % LVArray.MaxIndex()
+	; DDLString .= "|" LVArray[A_Index]
+; Gui Add, DDL, x+20 y19 w125 h27.5 vSearchTerm gSearch2, %DDLString%
+; Gui Add, DropDownList, vLV h250 w400 y50 x250 gMyListView, %DDLString% 
+GuiControl, hide, LV
+
+; Gui Add, DDL, w400 y50 x250 vLV gMyListView, ORDERS:
+; Loop, % LVArray.MaxIndex()
+; 	DDLString .= "|" LVArray[A_Index]
 Gui Add, Button, xm+475 ym+10 w70 greadtheini, O&pen
 Gui Add, Button, x+25 w70 gSaveToIni, &Save
 Gui Add, Button, x+25 w150 grestartScript, &New PO or Reload
@@ -268,6 +281,8 @@ Gui destroy
 Return
 
 Search:
+; Loop, % LVArray.MaxIndex()
+; 	DDLString .= "|" LVArray[A_Index]
 GuiControlGet, SearchTerm
 If SearchTerm =
 	GuiControl, Hide, LV
@@ -277,13 +292,24 @@ For Each, FileName In LVArray
 {
    If (SearchTerm != "")
    {
-		GuiControl, Show, LV
+	   	GuiControl, Show, LV
 		If InStr(FileName, SearchTerm) ; for overall matching
 	   	LV_Add("", FileName)
+		; DDLString .= "|" LVArray[A_Index]
    } Else
    		LV_Add("", FileName)
 }
 GuiControl, +Redraw, LV
+Return
+
+Search2:
+; Loop, Read, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
+; {
+; 	LVArray.Push(A_LoopFileName)
+; }
+; MsgBox, %LVArray%
+; Gui Add, DropDownList, vLV h250 w400 y50 x250 gMyListView, %DDLString% 
+Gui Submit, NoHide
 Return
 
 MyListView:
@@ -1916,8 +1942,8 @@ kellerDropDown:
 	GuiControl, Choose, salesManager, Anjou Keller
 	GuiControl, ChooseString, managerCode, 202375
 	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, N/A
-	GuiControl, ChooseString, directorCode, N/A
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 201020
 	Gui Submit, NoHide
 return
 
@@ -1925,8 +1951,8 @@ mccormackDropDown:
 	GuiControl, Choose, salesManager, Doug McCormack
 	GuiControl, ChooseString, managerCode, 1261
 	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, N/A
-	GuiControl, ChooseString, directorCode, N/A
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 201020
 	Gui Submit, NoHide
 return
 
@@ -1934,8 +1960,8 @@ hewittDropDown:
 	GuiControl, Choose, salesManager, Joe Hewitt
 	GuiControl, ChooseString, managerCode, 98866
 	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, N/A
-	GuiControl, ChooseString, directorCode, N/A
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 201020
 	Gui Submit, NoHide
 return
 
@@ -1943,8 +1969,8 @@ foelsDropDown:
 	GuiControl, Choose, salesManager, Natalie Foels
 	GuiControl, ChooseString, managerCode, 96715
 	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, N/A
-	GuiControl, ChooseString, directorCode, N/A
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 201020
 	Gui Submit, NoHide
 return
 
@@ -1988,8 +2014,8 @@ nadjieDropDown:
 	GuiControl, Choose, salesManager, Zee Nadjie
 	GuiControl, ChooseString, managerCode, 96695
 	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, N/A
-	GuiControl, ChooseString, directorCode, N/A
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 201020
 	Gui Submit, NoHide
 return
 
@@ -2084,6 +2110,8 @@ if salesPerson = Gwyn Trojan
 if salesPerson = Nick Hubbard
 	gosub, mccormackDropDown
 if salesPerson = Kristen Luttner
+	gosub, mccormackDropDown
+if salesPerson = Patrick Bohman
 	gosub, mccormackDropDown
 ;========== END DOUG MCCORMACK =================
 
