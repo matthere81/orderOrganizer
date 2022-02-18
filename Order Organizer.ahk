@@ -74,7 +74,7 @@ Gui Font, S9, Segoe UI Semibold
 LVArray := []
 
 Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
-Gui Add, ListView, grid r20 w400 y50 x250 vLV gMyListView, ORDERS:
+Gui Add, ListView, grid r5 w400 y50 x250 vLV gMyListView, ORDERS:
 
 ; Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch2, ; DDL Search
 
@@ -507,6 +507,7 @@ IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 if FileExist(IniFilePath) && (soNumber)
 {
+	MsgBox %IniFilePath%`n`n%IniFilePathWithSo%
 	gosub, WriteIniVariables
 	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
 	IniFilePath = %IniFilePathWithSO% 
@@ -516,6 +517,7 @@ if FileExist(IniFilePath) && (soNumber)
 }
 else if FileExist(IniFilePathWithSo)
 {
+	MsgBox %IniFilePath%`n`n%IniFilePathWithSo%
 	IniFilePath = %IniFilePathWithSO% 
 	Gosub, SaveBar
 	gosub, WriteIniVariables
@@ -523,6 +525,7 @@ else if FileExist(IniFilePathWithSo)
 }
 else if FileExist(IniFilePath) && (!soNumber)
 {
+	MsgBox %IniFilePath%`n`n%IniFilePathWithSo%
 	gosub, WriteIniVariables
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
@@ -532,6 +535,7 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 {
 	if(soNumber)
 	{
+		MsgBox %IniFilePath%`n`n%IniFilePathWithSo%
 		IniFilePath = %IniFilePathWithSo%
 	} else {
 		IniFilePath = %IniFilePath%
@@ -1823,7 +1827,7 @@ if FileExist(dpsPath . "DPS - " . customer . ".pdf")
 }
 Sleep, 200
 Send ^v
-Sleep, 500
+KeyWait, F14, D
 Send {Enter}
 WinWaitActive, DTSSearchResults
 Send ^w
