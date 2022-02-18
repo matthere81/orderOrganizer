@@ -318,7 +318,6 @@ if (A_GuiEvent = "DoubleClick")
 	LV_GetText(RowText, A_EventInfo)  ; Get the text from the row's first field.
 	SelectedFile := myinipath . "\" . RowText
 	Send +{tab}{BackSpace}
-	MsgBox, %SelectedFile%
 	Gosub, readtheini
 }
 Return
@@ -338,12 +337,10 @@ return
 readtheini:
 Gui Submit, NoHide
 if (cpq) && (po)
-	MsgBox, Going to save file - %cpq% & %po% from readtheini
 	gosub, SaveToIniNoGui
 ; FileSelectFile, SelectedFile,r,%myinipath%, Open a file ;______ Needs to go back
 if (ErrorLevel)
 	{
-		MsgBox, Why would we be here?
 		gosub, restartScript
 		return
 	}
