@@ -494,6 +494,7 @@ IniRead, endUserNa, %SelectedFile%, orderInfo, endUserNa
 GuiControl,, endUserNa, %endUserNa%
 ; GuiControl,, title, Order Organizer - SO# %soNumber%
 ; WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order
+WinSetTitle, SO# %soNumber% PO# %po% %cpq%
 return
 
 SaveToIni:
@@ -741,6 +742,11 @@ orderInfo()
 #c::run calc.exe ; Run calculator
 F13::Send, +{F7} ; Next line in item Conditions SAP SOs
 ;----- Order keyboard shortcuts -----
+^Numpad7::
+SetTitleMatchMode, 2
+Winactivate, Training | Microsoft Teams
+Send ^+m
+Return
 ::zpo::
 Send, %po%
 return
