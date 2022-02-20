@@ -77,12 +77,10 @@ Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
 Gui Add, ListView, grid r5 w400 y50 x250 vLV gMyListView, ORDERS:
 
 ; Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch2, ; DDL Search
-
-
 Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
 {
-   LV_Add("", A_LoopFileName)
-   LVArray.Push(A_LoopFileName)
+LV_Add("", A_LoopFileName)
+LVArray.Push(A_LoopFileName)
 }
 LV_ModifyCol()
 ; Loop, % LVArray.MaxIndex()
@@ -90,6 +88,7 @@ LV_ModifyCol()
 ; Gui Add, DDL, x+20 y19 w125 h27.5 vSearchTerm gSearch2, %DDLString%
 ; Gui Add, DropDownList, vLV h250 w400 y50 x250 gMyListView, %DDLString% 
 GuiControl, hide, LV
+
 
 ; Gui Add, DDL, w400 y50 x250 vLV gMyListView, ORDERS:
 ; Loop, % LVArray.MaxIndex()
@@ -345,14 +344,6 @@ if (ErrorLevel)
 		return
 	}
 IniRead, result, %SelectedFile%, id, ID
-MsgBox, %result% from the initial read
-if (result = "") || (result = "ERROR")
-{
-	Gosub, iniId
-	IniWrite, %result%, %SelectedFile%, id, ID
-} else
-IniRead, result, %SelectedFile%, id, ID
-MsgBox, %result% from after read
 IniRead, cpq, %SelectedFile%, orderInfo, cpq
 GuiControl,, cpq, %cpq%
 IniRead, po, %SelectedFile%, orderInfo, po
@@ -414,8 +405,8 @@ IniRead, notesEscaped, %SelectedFile%, orderInfo, notes
 ; Get back newline separated list.
 StringReplace, notesDeescaped, notesEscaped, ``n, `n, All
 StringReplace, notesDeescaped, notesDeescaped, ``r, `r, All
-if % notes == "ERROR"
-	notes := 
+if % notesDeescaped == "ERROR"
+	notesDeescaped :=
 GuiControl,, notes, %notesDeescaped%
 
 IniRead, software, %SelectedFile%, orderInfo, software
@@ -502,7 +493,8 @@ GuiControl,, endUserYes, %endUserYes%
 IniRead, endUserNa, %SelectedFile%, orderInfo, endUserNa
 GuiControl,, endUserNa, %endUserNa%
 ; GuiControl,, title, Order Organizer - SO# %soNumber%
-; WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order 
+WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order 
+
 return
 
 SaveToIni:
@@ -514,6 +506,19 @@ if (!cpq) || (!po)
 }
 IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
+IniFilePathWithNoCPQ := myinipath . "\PO " . po . " " . customer . " SO# " . soNumber . ".ini"
+If FileExist(IniFilePathWithNoCPQ)
+{
+	If FileExist(IniFilePathWithNoCPQ) && (IniFilePathWithSo)
+	{
+		MsgBox, %IniFilePathWithNoCPQ%`n%IniFilePathWithSo%
+		MsgBox, 4,, Do you want to delete %IniFilePathWithNoCPQ%?
+			ifMsgBox, Yes
+				FileDelete, %IniFilePathWithNoCPQ%
+			IfMsgBox, No
+			Return
+	}
+}
 if FileExist(IniFilePath) && (soNumber)
 {
 	gosub, WriteIniVariables
@@ -521,6 +526,7 @@ if FileExist(IniFilePath) && (soNumber)
 	IniFilePath = %IniFilePathWithSO% 
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
+	Gosub, Search
 	return  
 }
 else if FileExist(IniFilePathWithSo)
@@ -528,6 +534,7 @@ else if FileExist(IniFilePathWithSo)
 	IniFilePath = %IniFilePathWithSO% 
 	Gosub, SaveBar
 	gosub, WriteIniVariables
+	Gosub, Search
 	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
@@ -535,6 +542,7 @@ else if FileExist(IniFilePath) && (!soNumber)
 	gosub, WriteIniVariables
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
+	Gosub, Search
 	return
 }
 else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
@@ -548,32 +556,50 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 	gosub, WriteIniVariables
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
+	Gosub, Search
 	return
 }
 return
 
 SaveToIniNoGui:
+; Gosub, RefreshArray
 MsgBox, %result% from save nogui
 IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
+IniFilePathWithNoCPQ := myinipath . "\PO " . po . " " . customer . " SO# " . soNumber . ".ini"
+If FileExist(IniFilePathWithNoCPQ)
+{
+	If FileExist(IniFilePathWithNoCPQ) && (IniFilePathWithSo)
+	{
+		MsgBox, %IniFilePathWithNoCPQ%`n%IniFilePathWithSo%
+		MsgBox, 4,, Do you want to delete %IniFilePathWithNoCPQ%?
+			ifMsgBox, Yes
+				FileDelete, %IniFilePathWithNoCPQ%
+			IfMsgBox, No
+			Return
+	}
+}
 if FileExist(IniFilePath) && (soNumber)
 {
 	gosub, WriteIniVariables
 	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, CheckIfFolderExists
+	Gosub, Search
 	return  
 }
 else if FileExist(IniFilePathWithSo)
 {
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, WriteIniVariables
+	Gosub, Search
 	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
 {
 	gosub, WriteIniVariables
 	gosub, CheckIfFolderExists
+	Gosub, Search
 	return
 }
 else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
@@ -586,17 +612,22 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 	}
 	gosub, WriteIniVariables
 	gosub, CheckIfFolderExists
+	Gosub, Search
 	return
 }
 return
 
 WriteIniVariables:
 Gui submit, NoHide
+if (result = "") || (result = "ERROR")
+{
+	Gosub, iniId
+	IniWrite, %result%, %SelectedFile%, id, ID
+}
 IniRead, resultFromRead, %selectedFile%, id, ID
 MsgBox, %result% from write`n%resultFromRead% from read
 if (result == resultFromRead)
 {
-	MsgBox, i'm about to write
 	IniWrite, %cpq%, %IniFilePath%, orderInfo, cpq
 	IniWrite, %po%, %IniFilePath%, orderInfo, po
 	IniWrite, %sot%, %IniFilePath%, orderInfo, sot
@@ -663,11 +694,19 @@ if (result == resultFromRead)
 	IniWrite, %serialNa%, %IniFilePath%, orderInfo, serialNa
 	IniWrite, %endUserYes%, %IniFilePath%, orderInfo, endUserYes
 	IniWrite, %endUserNa%, %IniFilePath%, orderInfo, endUserNa
+	Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
+		{
+		LV_Add("", A_LoopFileName)
+		LVArray.Push(A_LoopFileName)
+		}
+		LV_ModifyCol()
+		GuiControl, hide, LV
 } else
 {
 	MsgBox, there was an error
 	Return
 }
+
 return
 
 CheckIfFolderExists:
