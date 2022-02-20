@@ -344,6 +344,15 @@ if (ErrorLevel)
 		gosub, restartScript
 		return
 	}
+IniRead, result, %SelectedFile%, id, ID
+MsgBox, %result% from the initial read
+if (result = "") || (result = "ERROR")
+{
+	Gosub, iniId
+	IniWrite, %result%, %SelectedFile%, id, ID
+} else
+IniRead, result, %SelectedFile%, id, ID
+MsgBox, %result% from after read
 IniRead, cpq, %SelectedFile%, orderInfo, cpq
 GuiControl,, cpq, %cpq%
 IniRead, po, %SelectedFile%, orderInfo, po
@@ -493,8 +502,7 @@ GuiControl,, endUserYes, %endUserYes%
 IniRead, endUserNa, %SelectedFile%, orderInfo, endUserNa
 GuiControl,, endUserNa, %endUserNa%
 ; GuiControl,, title, Order Organizer - SO# %soNumber%
-; WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order
-WinSetTitle, SO# %soNumber% PO# %po% %cpq%
+; WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order 
 return
 
 SaveToIni:
@@ -508,7 +516,6 @@ IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 if FileExist(IniFilePath) && (soNumber)
 {
-	MsgBox %IniFilePath%`n`n%IniFilePathWithSo%
 	gosub, WriteIniVariables
 	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
 	IniFilePath = %IniFilePathWithSO% 
@@ -518,7 +525,6 @@ if FileExist(IniFilePath) && (soNumber)
 }
 else if FileExist(IniFilePathWithSo)
 {
-	MsgBox %IniFilePath%`n`n%IniFilePathWithSo%
 	IniFilePath = %IniFilePathWithSO% 
 	Gosub, SaveBar
 	gosub, WriteIniVariables
@@ -526,7 +532,6 @@ else if FileExist(IniFilePathWithSo)
 }
 else if FileExist(IniFilePath) && (!soNumber)
 {
-	MsgBox %IniFilePath%`n`n%IniFilePathWithSo%
 	gosub, WriteIniVariables
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
@@ -536,7 +541,6 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 {
 	if(soNumber)
 	{
-		MsgBox %IniFilePath%`n`n%IniFilePathWithSo%
 		IniFilePath = %IniFilePathWithSo%
 	} else {
 		IniFilePath = %IniFilePath%
@@ -549,6 +553,7 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 return
 
 SaveToIniNoGui:
+MsgBox, %result% from save nogui
 IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 if FileExist(IniFilePath) && (soNumber)
@@ -587,72 +592,82 @@ return
 
 WriteIniVariables:
 Gui submit, NoHide
-IniWrite, %cpq%, %IniFilePath%, orderInfo, cpq
-IniWrite, %po%, %IniFilePath%, orderInfo, po
-IniWrite, %sot%, %IniFilePath%, orderInfo, sot
-IniWrite, %customer%, %IniFilePath%, orderInfo, customer
-IniWrite, %salesPerson%, %IniFilePath%, orderInfo, salesPerson
-IniWrite, %salesManager%, %IniFilePath%, orderInfo, salesManager
-IniWrite, %managerCode%, %IniFilePath%, orderInfo, managerCode
-IniWrite, %salesDirector%, %IniFilePath%, orderInfo, salesDirector
-IniWrite, %directorCode%, %IniFilePath%, orderInfo, directorCode
-IniWrite, %address%, %IniFilePath%, orderInfo, address
-IniWrite, %contact%, %IniFilePath%, orderInfo, contact
-IniWrite, %poValue%, %IniFilePath%, orderInfo, poValue
-IniWrite, %tax%, %IniFilePath%, orderInfo, tax
-IniWrite, %freightCost%, %IniFilePath%, orderInfo, freightCost
-IniWrite, %totalCost%, %IniFilePath%, orderInfo, totalCost
-IniWrite, %system%, %IniFilePath%, orderInfo, system
-IniWrite, %soldTo%, %IniFilePath%, orderInfo, soldTo
-IniWrite, %crd%, %IniFilePath%, orderInfo, crd
-IniWrite, %soNumber%, %IniFilePath%, orderInfo, soNumber
-IniWrite, %poDate%, %IniFilePath%, orderInfo, poDate
-IniWrite, %sapDate%, %IniFilePath%, orderInfo, sapDate
-IniWrite, %endUser%, %IniFilePath%, orderInfo, endUser
-IniWrite, %phone%, %IniFilePath%, orderInfo, phone
-IniWrite, %email%, %IniFilePath%, orderInfo, email
+IniRead, resultFromRead, %selectedFile%, id, ID
+MsgBox, %result% from write`n%resultFromRead% from read
+if (result == resultFromRead)
+{
+	MsgBox, i'm about to write
+	IniWrite, %cpq%, %IniFilePath%, orderInfo, cpq
+	IniWrite, %po%, %IniFilePath%, orderInfo, po
+	IniWrite, %sot%, %IniFilePath%, orderInfo, sot
+	IniWrite, %customer%, %IniFilePath%, orderInfo, customer
+	IniWrite, %salesPerson%, %IniFilePath%, orderInfo, salesPerson
+	IniWrite, %salesManager%, %IniFilePath%, orderInfo, salesManager
+	IniWrite, %managerCode%, %IniFilePath%, orderInfo, managerCode
+	IniWrite, %salesDirector%, %IniFilePath%, orderInfo, salesDirector
+	IniWrite, %directorCode%, %IniFilePath%, orderInfo, directorCode
+	IniWrite, %address%, %IniFilePath%, orderInfo, address
+	IniWrite, %contact%, %IniFilePath%, orderInfo, contact
+	IniWrite, %poValue%, %IniFilePath%, orderInfo, poValue
+	IniWrite, %tax%, %IniFilePath%, orderInfo, tax
+	IniWrite, %freightCost%, %IniFilePath%, orderInfo, freightCost
+	IniWrite, %totalCost%, %IniFilePath%, orderInfo, totalCost
+	IniWrite, %system%, %IniFilePath%, orderInfo, system
+	IniWrite, %soldTo%, %IniFilePath%, orderInfo, soldTo
+	IniWrite, %crd%, %IniFilePath%, orderInfo, crd
+	IniWrite, %soNumber%, %IniFilePath%, orderInfo, soNumber
+	IniWrite, %poDate%, %IniFilePath%, orderInfo, poDate
+	IniWrite, %sapDate%, %IniFilePath%, orderInfo, sapDate
+	IniWrite, %endUser%, %IniFilePath%, orderInfo, endUser
+	IniWrite, %phone%, %IniFilePath%, orderInfo, phone
+	IniWrite, %email%, %IniFilePath%, orderInfo, email
 
-	; Escape all newlines before writing it to ini file.
-	StringReplace, endUseEscaped, endUse, `n, ``n, All
-	StringReplace, endUseEscaped, endUseEscaped, `r, ``r, All
-	IniWrite, %endUseEscaped%, %IniFilePath%, orderInfo, endUse
+		; Escape all newlines before writing it to ini file.
+		StringReplace, endUseEscaped, endUse, `n, ``n, All
+		StringReplace, endUseEscaped, endUseEscaped, `r, ``r, All
+		IniWrite, %endUseEscaped%, %IniFilePath%, orderInfo, endUse
 
-	; Escape all newlines before writing it to ini file.
-	StringReplace, notesEscaped, notes, `n, ``n, All
-	StringReplace, notesEscaped, notesEscaped, `r, ``r, All
-	IniWrite, %notesEscaped%, %IniFilePath%, orderInfo, notes
+		; Escape all newlines before writing it to ini file.
+		StringReplace, notesEscaped, notes, `n, ``n, All
+		StringReplace, notesEscaped, notesEscaped, `r, ``r, All
+		IniWrite, %notesEscaped%, %IniFilePath%, orderInfo, notes
 
-IniWrite, %software%, %IniFilePath%, orderInfo, software
-IniWrite, %serialNumber%, %IniFilePath%, orderInfo, serialNumber
-if (software == 0)
-	IniDelete, %IniFilePath%, orderInfo, serialNumber
-IniWrite, %nameCheck%, %IniFilePath%, orderInfo, nameCheck
-IniWrite, %orderNoticeSent%, %IniFilePath%, orderInfo, orderNoticeSent
-IniWrite, %enteredSot%, %IniFilePath%, orderInfo, enteredSot
-IniWrite, %tandcYes%, %IniFilePath%, orderInfo, tandcYes
-IniWrite, %tandcNa%, %IniFilePath%, orderInfo, tandcNa
-IniWrite, %poAttached%, %IniFilePath%, orderInfo, poAttached
-IniWrite, %quoteAttached%, %IniFilePath%, orderInfo, quoteAttached
-IniWrite, %dpsAttached%, %IniFilePath%, orderInfo, dpsAttached
-IniWrite, %orderNoticeAttached%, %IniFilePath%, orderInfo, orderNoticeAttached
-IniWrite, %winYes%, %IniFilePath%, orderInfo, winYes
-IniWrite, %winNa%, %IniFilePath%, orderInfo, winNa
-IniWrite, %mergeYes%, %IniFilePath%, orderInfo, mergeYes
-IniWrite, %mergeNa%, %IniFilePath%, orderInfo, mergeNa
-IniWrite, %checkPrices%, %IniFilePath%, orderInfo, checkPrices
-IniWrite, %shippingYes%, %IniFilePath%, orderInfo, shippingYes
-IniWrite, %shippingNa%, %IniFilePath%, orderInfo, shippingNa
-IniWrite, %higherLevelLinkingYes%, %IniFilePath%, orderInfo, higherLevelLinkingYes
-IniWrite, %higherLevelLinkingNa%, %IniFilePath%, orderInfo, higherLevelLinkingNa
-IniWrite, %deliveryGroupsYes%, %IniFilePath%, orderInfo, deliveryGroupsYes
-IniWrite, %deliveryGroupsNa%, %IniFilePath%, orderInfo, deliveryGroupsNa
-IniWrite, %updateDeliveryBlock%, %IniFilePath%, orderInfo, updateDeliveryBlock
-IniWrite, %orderAcceptedYes%, %IniFilePath%, orderInfo, orderAcceptedYes
-IniWrite, %orderAcceptedNa%, %IniFilePath%, orderInfo, orderAcceptedNa
-IniWrite, %serialYes%, %IniFilePath%, orderInfo, serialYes
-IniWrite, %serialNa%, %IniFilePath%, orderInfo, serialNa
-IniWrite, %endUserYes%, %IniFilePath%, orderInfo, endUserYes
-IniWrite, %endUserNa%, %IniFilePath%, orderInfo, endUserNa
+	IniWrite, %software%, %IniFilePath%, orderInfo, software
+	IniWrite, %serialNumber%, %IniFilePath%, orderInfo, serialNumber
+	if (software == 0)
+		IniDelete, %IniFilePath%, orderInfo, serialNumber
+	IniWrite, %nameCheck%, %IniFilePath%, orderInfo, nameCheck
+	IniWrite, %orderNoticeSent%, %IniFilePath%, orderInfo, orderNoticeSent
+	IniWrite, %enteredSot%, %IniFilePath%, orderInfo, enteredSot
+	IniWrite, %tandcYes%, %IniFilePath%, orderInfo, tandcYes
+	IniWrite, %tandcNa%, %IniFilePath%, orderInfo, tandcNa
+	IniWrite, %poAttached%, %IniFilePath%, orderInfo, poAttached
+	IniWrite, %quoteAttached%, %IniFilePath%, orderInfo, quoteAttached
+	IniWrite, %dpsAttached%, %IniFilePath%, orderInfo, dpsAttached
+	IniWrite, %orderNoticeAttached%, %IniFilePath%, orderInfo, orderNoticeAttached
+	IniWrite, %winYes%, %IniFilePath%, orderInfo, winYes
+	IniWrite, %winNa%, %IniFilePath%, orderInfo, winNa
+	IniWrite, %mergeYes%, %IniFilePath%, orderInfo, mergeYes
+	IniWrite, %mergeNa%, %IniFilePath%, orderInfo, mergeNa
+	IniWrite, %checkPrices%, %IniFilePath%, orderInfo, checkPrices
+	IniWrite, %shippingYes%, %IniFilePath%, orderInfo, shippingYes
+	IniWrite, %shippingNa%, %IniFilePath%, orderInfo, shippingNa
+	IniWrite, %higherLevelLinkingYes%, %IniFilePath%, orderInfo, higherLevelLinkingYes
+	IniWrite, %higherLevelLinkingNa%, %IniFilePath%, orderInfo, higherLevelLinkingNa
+	IniWrite, %deliveryGroupsYes%, %IniFilePath%, orderInfo, deliveryGroupsYes
+	IniWrite, %deliveryGroupsNa%, %IniFilePath%, orderInfo, deliveryGroupsNa
+	IniWrite, %updateDeliveryBlock%, %IniFilePath%, orderInfo, updateDeliveryBlock
+	IniWrite, %orderAcceptedYes%, %IniFilePath%, orderInfo, orderAcceptedYes
+	IniWrite, %orderAcceptedNa%, %IniFilePath%, orderInfo, orderAcceptedNa
+	IniWrite, %serialYes%, %IniFilePath%, orderInfo, serialYes
+	IniWrite, %serialNa%, %IniFilePath%, orderInfo, serialNa
+	IniWrite, %endUserYes%, %IniFilePath%, orderInfo, endUserYes
+	IniWrite, %endUserNa%, %IniFilePath%, orderInfo, endUserNa
+} else
+{
+	MsgBox, there was an error
+	Return
+}
 return
 
 CheckIfFolderExists:
@@ -806,7 +821,7 @@ Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docum
 Send ^v{Down}{enter}
 Return
 :O:pftl::
-Send Hi ,`nPlease find the license attached for SO{#} %soNumber%. The customer is %customer%.`n`nThank you^{home}{end}{left}
+Send Hi ,`nPlease find the license attached for SO{#} %soNumber%.`n`nThank you^{home}{end}{left}
 Return
 !#p::Pause
 ;----- End Order keyboard shortcuts -----
@@ -2273,3 +2288,20 @@ if salesPerson =
 }
 return
 
+iniId:
+itExists := A_ScriptDir . "\myfile.ini"
+if !FileExist(itExists)
+{
+	FileAppend,, %itExists%
+	
+} Else
+{
+	IniRead, counter, %itExists%, id, ID
+	; MsgBox, The value is %counter%
+	counter++
+	IniWrite, %counter%, %itExists%, id, ID
+}
+
+; counter := SubStr(counter, -6)  
+result := counter
+return
