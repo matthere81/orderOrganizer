@@ -343,7 +343,7 @@ if (ErrorLevel)
 		gosub, restartScript
 		return
 	}
-IniRead, result, %SelectedFile%, id, ID
+IniRead, ID, %SelectedFile%, id, ID
 IniRead, cpq, %SelectedFile%, orderInfo, cpq
 GuiControl,, cpq, %cpq%
 IniRead, po, %SelectedFile%, orderInfo, po
@@ -493,7 +493,7 @@ GuiControl,, endUserYes, %endUserYes%
 IniRead, endUserNa, %SelectedFile%, orderInfo, endUserNa
 GuiControl,, endUserNa, %endUserNa%
 ; GuiControl,, title, Order Organizer - SO# %soNumber%
-WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order 
+WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber% `(DBID-%ID%`)
 
 return
 
@@ -507,18 +507,19 @@ if (!cpq) || (!po)
 IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 IniFilePathWithNoCPQ := myinipath . "\PO " . po . " " . customer . " SO# " . soNumber . ".ini"
-If FileExist(IniFilePathWithNoCPQ)
-{
-	If FileExist(IniFilePathWithNoCPQ) && (IniFilePathWithSo)
-	{
-		MsgBox, %IniFilePathWithNoCPQ%`n%IniFilePathWithSo%
-		MsgBox, 4,, Do you want to delete %IniFilePathWithNoCPQ%?
-			ifMsgBox, Yes
-				FileDelete, %IniFilePathWithNoCPQ%
-			IfMsgBox, No
-			Return
-	}
-}
+; If FileExist(IniFilePathWithNoCPQ)
+; {
+; 	If FileExist(IniFilePathWithNoCPQ) && (IniFilePathWithSo)
+; 	{
+; 		MsgBox, %IniFilePathWithNoCPQ%`n%IniFilePathWithSo%
+; 		MsgBox, 4,, Do you want to delete %IniFilePathWithNoCPQ%?
+; 			ifMsgBox, Yes
+; 				FileDelete, %IniFilePathWithNoCPQ%
+; 				Reload
+; 			IfMsgBox, No
+; 			Return
+; 	}
+; }
 if FileExist(IniFilePath) && (soNumber)
 {
 	gosub, WriteIniVariables
@@ -526,7 +527,7 @@ if FileExist(IniFilePath) && (soNumber)
 	IniFilePath = %IniFilePathWithSO% 
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
-	Gosub, Search
+	; Gosub, Search
 	return  
 }
 else if FileExist(IniFilePathWithSo)
@@ -534,7 +535,7 @@ else if FileExist(IniFilePathWithSo)
 	IniFilePath = %IniFilePathWithSO% 
 	Gosub, SaveBar
 	gosub, WriteIniVariables
-	Gosub, Search
+	; Gosub, Search
 	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
@@ -542,7 +543,7 @@ else if FileExist(IniFilePath) && (!soNumber)
 	gosub, WriteIniVariables
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
-	Gosub, Search
+	; Gosub, Search
 	return
 }
 else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
@@ -556,50 +557,51 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 	gosub, WriteIniVariables
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
-	Gosub, Search
+	; Gosub, Search
 	return
 }
 return
 
 SaveToIniNoGui:
 ; Gosub, RefreshArray
-MsgBox, %result% from save nogui
+; MsgBox, %result% from save nogui
 IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 IniFilePathWithNoCPQ := myinipath . "\PO " . po . " " . customer . " SO# " . soNumber . ".ini"
-If FileExist(IniFilePathWithNoCPQ)
-{
-	If FileExist(IniFilePathWithNoCPQ) && (IniFilePathWithSo)
-	{
-		MsgBox, %IniFilePathWithNoCPQ%`n%IniFilePathWithSo%
-		MsgBox, 4,, Do you want to delete %IniFilePathWithNoCPQ%?
-			ifMsgBox, Yes
-				FileDelete, %IniFilePathWithNoCPQ%
-			IfMsgBox, No
-			Return
-	}
-}
+; If FileExist(IniFilePathWithNoCPQ)
+; {
+; 	If FileExist(IniFilePathWithNoCPQ) && (IniFilePathWithSo)
+; 	{
+; 		MsgBox, %IniFilePathWithNoCPQ%`n%IniFilePathWithSo%
+; 		MsgBox, 4,, Do you want to delete %IniFilePathWithNoCPQ%?
+; 			ifMsgBox, Yes
+; 				FileDelete, %IniFilePathWithNoCPQ%
+; 				Reload
+; 			IfMsgBox, No
+; 			Return
+; 	}
+; }
 if FileExist(IniFilePath) && (soNumber)
 {
 	gosub, WriteIniVariables
 	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, CheckIfFolderExists
-	Gosub, Search
+	; Gosub, Search
 	return  
 }
 else if FileExist(IniFilePathWithSo)
 {
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, WriteIniVariables
-	Gosub, Search
+	; Gosub, Search
 	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
 {
 	gosub, WriteIniVariables
 	gosub, CheckIfFolderExists
-	Gosub, Search
+	; Gosub, Search
 	return
 }
 else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
@@ -612,22 +614,22 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 	}
 	gosub, WriteIniVariables
 	gosub, CheckIfFolderExists
-	Gosub, Search
+	; Gosub, Search
 	return
 }
 return
 
 WriteIniVariables:
 Gui submit, NoHide
-if (result = "") || (result = "ERROR")
+if (ID = "") || (ID = "ERROR")
 {
 	Gosub, iniId
 	IniWrite, %result%, %SelectedFile%, id, ID
 }
-IniRead, resultFromRead, %selectedFile%, id, ID
-MsgBox, %result% from write`n%resultFromRead% from read
-if (result == resultFromRead)
-{
+IniRead, ID, %selectedFile%, id, ID
+; MsgBox, %ID% should match`n%result% if exists
+; if (result == resultFromRead)
+; {
 	IniWrite, %cpq%, %IniFilePath%, orderInfo, cpq
 	IniWrite, %po%, %IniFilePath%, orderInfo, po
 	IniWrite, %sot%, %IniFilePath%, orderInfo, sot
@@ -701,11 +703,11 @@ if (result == resultFromRead)
 		}
 		LV_ModifyCol()
 		GuiControl, hide, LV
-} else
-{
-	MsgBox, there was an error
-	Return
-}
+; } else
+; {
+; 	MsgBox, there was an error
+; 	Return
+; }
 
 return
 
