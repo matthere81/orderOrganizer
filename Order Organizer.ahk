@@ -13,6 +13,7 @@ salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch La
 . "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
 . "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
 . "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|Justin Chang|Kate Lincoln|Angelito Nepomuceno|Patrick Bohman"
+. "|Kristin Roberts|John Venesky|"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch"
 
@@ -75,6 +76,7 @@ LVArray := []
 
 Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
 Gui Add, ListView, grid r5 w400 y50 x250 vLV gMyListView, ORDERS:
+
 
 ; Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch2, ; DDL Search
 Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
@@ -284,19 +286,26 @@ Search:
 ; 	DDLString .= "|" LVArray[A_Index]
 GuiControlGet, SearchTerm
 If SearchTerm =
+{
 	GuiControl, Hide, LV
-GuiControl, -Redraw, LV
+}
+	
+; GuiControl, -Redraw, LV
 LV_Delete()
 For Each, FileName In LVArray
 {
    If (SearchTerm != "")
    {
 	   	GuiControl, Show, LV
+		
 		If InStr(FileName, SearchTerm) ; for overall matching
-	   	LV_Add("", FileName)
+	   		LV_Add("", FileName)
 		; DDLString .= "|" LVArray[A_Index]
    } Else
-   		LV_Add("", FileName)
+   {
+	   LV_Add("", FileName)
+   }
+   		
 }
 GuiControl, +Redraw, LV
 Return
@@ -2314,6 +2323,10 @@ if salesPerson = Nick Duczak
 if salesPerson = Gerald Koncar
 	gosub, porchDropDown
 if salesPerson = Angelito Nepomuceno
+	gosub, porchDropDown
+if salesPerson = John Venesky
+	gosub, porchDropDown
+if salesPerson = Kristin Roberts
 	gosub, porchDropDown
 ;=========== END PORCH ==========
 
