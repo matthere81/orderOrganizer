@@ -79,12 +79,14 @@ Gui Add, Text,, PO Date:
 Gui Add, DateTime, w135 vpoDate, %poDate% 
 Gui Add, Text,, SAP Date:
 Gui Add, DateTime, w135 vsapDate, %sapDate%
+Gui Add, Text,, End User:
+Gui Add, Edit, vendUser
 
 ;----------- END COLUMN 2 END ---------------
 
 ;----------- COLUMN 3 ---------------
 
-Gui Add, Text, ys x+45 Section, PO:
+Gui Add, Text, ys x+45 Section, PO#
 Gui Add, Edit, yp+20 xp-2.5 vpo, %po%
 Gui Add, Text,, PO Value:
 Gui Add, Edit, vpoValue, %poValue%
@@ -94,6 +96,8 @@ Gui Add, Text,, Freight Cost:
 Gui Add, Edit, vfreightCost, %freightCost% 
 Gui Add, Text,, Total:
 Gui Add, Edit, vtotalCost, %totalCost% 
+Gui Add, Text,, End User / Contact Phone:
+Gui Add, Edit, vphone
 
 ;----------- END COLUMN 3 END ---------------
 
@@ -105,10 +109,12 @@ Gui, Add, Text, y+7.5, Sales Manager:
 Gui, Add, DDL, Disabled vsalesManager, % salesManagers
 Gui Add, Text, y+10, Sales Manager Code:
 Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
-Gui, Add, Text, y+10, Sales Director:
+Gui, Add, Text, y+7.5, Sales Director:
 Gui, Add, DropDownList, Disabled vsalesDirector, % salesDirectors
-Gui Add, Text, y+12, Sales Director Code:
+Gui Add, Text, y+10, Sales Director Code:
 Gui, Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
+Gui Add, Text,, End User / Contact Email:
+Gui Add, Edit, vemail
 
 ;----------- END COLUMN 4 END ---------------
 
@@ -116,41 +122,22 @@ Gui, Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
 
 Gui Add, Text, ys x+45, SO#
 Gui Add, Edit, yp+20 xp-2.5 vsoNumber, %soNumber% 
+Gui Add, Text,, Notes:
+Gui Add, Edit, w225 h190 vnotes, %notes%
+Gui Add, Text,, End Use:
+Gui Add, Edit, w225 h78 vendUse
 
 ;----------- END COLUMN 5 END ---------------
 
+Gui Add, Text, x10 y450, ________________________________________________________________________________________________________________________________________________________________________________________________
 
-; Gui Add, Tab3, xm ym+30, Order Info|Checklist
-; Gui Tab, 1
+;----------- END MAIN SECTION ---------------
 
-; Gui Add, CheckBox, x220 y430 vsoftware gdongle, Software?
-; Gui, Add, Text, x190 y435.5 Hidden vserialNumberText, S/N:  ;x187.5 y460.5 h10, S/N: ;x187.5 y437.5
-; Gui Add, Edit, x225 y430 w100 Hidden vserialNumber, ; y432.5
-; Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+;----------- START CHECKLISTS ---------------
 
-; Gui Add, Text,, PO Value:
-; Gui Add, Edit, vpoValue, %poValue%
-; Gui Add, Text,, Tax:
-; Gui Add, Edit, vtax, %tax%
-; Gui Add, Text,, Freight Cost:
-; Gui Add, Edit, vfreightCost, %freightCost% 
-; Gui Add, Text,, Total:
-; Gui Add, Edit, vtotalCost, %totalCost% 
-; Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-; Gui Add, Text, x+12.5 y95 +center, END USER INFO:
-; Gui Add, Text,, End User:
-; Gui Add, Edit, vendUser
-; Gui Add, Text,, Phone:
-; Gui Add, Edit, vphone
-; Gui Add, Text,, Email:
-; Gui Add, Edit, vemail
-; Gui Add, Text,, End Use:
-; Gui Add, Edit, w135 h78 vendUse
-; Gui Add, Text,, SO#
-; Gui Add, Edit, vsoNumber, %soNumber% 
-; Gui, Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-; Gui Add, Text, x+12.5 y70, Notes:
-; Gui Add, Edit, w215 h120 vnotes, %notes%
+Gui Add, Tab3, x25 w925 h200, Pre Salesforce Checklist|Salesforce Checklist|Post Salesforce Checklist|SAP Checklist
+Gui Tab, 1
+
 
 ; ;======== KEYBOARD SHORTCUTS ========
 ; Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
@@ -187,12 +174,16 @@ Gui Add, Edit, yp+20 xp-2.5 vsoNumber, %soNumber%
 
 ; ;======== END KEYBOARD SHORTCUTS ========
 
-; ;******** CHECKLIST GUI ********
+; ------------- CHECKLIST TABS ---------------
 ; Gui, Tab, 2
 
-; ;===== PRE-SAP =======
-; Gui, Add, GroupBox,Section h120 w215, Pre-SAP
-; Gui, Add, Checkbox, xs+10 ys+20 gsubmitChecklist vnameCheck, Check TENA Name On PO
+; ----------- PRE SALESFORCE -----------------
+Gui, Add, GroupBox,Section h150 w250, Pre Salesforce
+Gui, Add, Checkbox, xs+10 ys+20 gsubmitChecklist vnameCheck, Check TENA Name On PO
+Gui, Add, Checkbox, gsubmitChecklist vquoteNumberMatch, Quote number matches on PO && Quote
+Gui, Add, Checkbox, gsubmitChecklist vpaymentTerms, Payment terms match on PO && Quote
+Gui, Add, Checkbox, gsubmitChecklist vpriceMatch, Prices match on PO && Quote
+Gui, Add, Checkbox, gsubmitChecklist vbothAddresses, Bill To && Ship To Address on PO
 ; Gui, Add, Checkbox, gsubmitChecklist vorderNoticeSent, Order Notice Sent
 ; Gui, Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
 ; Gui, Add, Text, tcs y+10, T&&Cs?
