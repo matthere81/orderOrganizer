@@ -97,23 +97,27 @@ Gui Add, Edit, vtotalCost, %totalCost%
 
 ;----------- END COLUMN 3 END ---------------
 
+;----------- COLUMN 4 ---------------
+
 Gui, Add, Text, ys x+45 Section, Salesperson:
-Gui, Add, DropDownList, yp+20 xp-2.5 +Sort vsalesPerson gsubmitSales, % salesPeople
-Gui, Add, Text,, Sales Manager:
+Gui, Add, DropDownList, yp+22.5 xp-2.5 +Sort vsalesPerson gsubmitSales, % salesPeople
+Gui, Add, Text, y+7.5, Sales Manager:
 Gui, Add, DDL, Disabled vsalesManager, % salesManagers
-Gui Add, Text,, Sales Manager Code:
+Gui Add, Text, y+10, Sales Manager Code:
 Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
-Gui, Add, Text,, Sales Director:
+Gui, Add, Text, y+10, Sales Director:
 Gui, Add, DropDownList, Disabled vsalesDirector, % salesDirectors
-Gui Add, Text,, Sales Director Code:
+Gui Add, Text, y+12, Sales Director Code:
 Gui, Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
 
-;----------- COLUMN 4 ---------------
+;----------- END COLUMN 4 END ---------------
+
+;----------- COLUMN 5 ---------------
 
 Gui Add, Text, ys x+45, SO#
 Gui Add, Edit, yp+20 xp-2.5 vsoNumber, %soNumber% 
 
-;----------- END COLUMN 4 END ---------------
+;----------- END COLUMN 5 END ---------------
 
 
 ; Gui Add, Tab3, xm ym+30, Order Info|Checklist
