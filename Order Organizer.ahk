@@ -65,6 +65,8 @@ Gui Add, Text,, Customer / DPS Address:
 Gui Add, Edit, vaddress, %address% 
 Gui Add, Text,, Sold To Account:
 Gui Add, Edit, vsoldTo, %soldTo%
+Gui Add, Text,, SO#
+Gui Add, Edit, vsoNumber, %soNumber% 
 
 ;----------- END COLUMN 1 END ---------------
 
@@ -79,14 +81,15 @@ Gui Add, Text,, PO Date:
 Gui Add, DateTime, w135 vpoDate, %poDate% 
 Gui Add, Text,, SAP Date:
 Gui Add, DateTime, w135 vsapDate, %sapDate%
-Gui Add, Text,, End User:
-Gui Add, Edit, vendUser
+Gui Add, Text,, Software upgrade:
+Gui Add, Radio, x+-80 y+10 gsubmitChecklist vsoftwareUpgradeYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vsoftwareUpgradeNo, N/A
 
 ;----------- END COLUMN 2 END ---------------
 
 ;----------- COLUMN 3 ---------------
 
-Gui Add, Text, ys x+45 Section, PO#
+Gui Add, Text, ys x+80 Section, PO#
 Gui Add, Edit, yp+20 xp-2.5 vpo, %po%
 Gui Add, Text,, PO Value:
 Gui Add, Edit, vpoValue, %poValue%
@@ -96,8 +99,8 @@ Gui Add, Text,, Freight Cost:
 Gui Add, Edit, vfreightCost, %freightCost% 
 Gui Add, Text,, Total:
 Gui Add, Edit, vtotalCost, %totalCost% 
-Gui Add, Text,, End User / Contact Phone:
-Gui Add, Edit, vphone
+Gui Add, Text,, Serial | License | Dongle #:
+Gui Add, Edit, vsoftwareUpgradeLicense, %softwareUpgradeLicense% 
 
 ;----------- END COLUMN 3 END ---------------
 
@@ -113,29 +116,42 @@ Gui, Add, Text, y+7.5, Sales Director:
 Gui, Add, DropDownList, Disabled vsalesDirector, % salesDirectors
 Gui Add, Text, y+10, Sales Director Code:
 Gui, Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
-Gui Add, Text,, End User / Contact Email:
-Gui Add, Edit, vemail
+Gui Add, Text,, Notes:
+Gui Add, Edit, w300 h85 vnotes, %notes%
+
 
 ;----------- END COLUMN 4 END ---------------
 
 ;----------- COLUMN 5 ---------------
 
-Gui Add, Text, ys x+45, SO#
-Gui Add, Edit, yp+20 xp-2.5 vsoNumber, %soNumber% 
-Gui Add, Text,, Notes:
-Gui Add, Edit, w225 h190 vnotes, %notes%
+; Gui Add, Text, ys x+45, SO#
+; Gui Add, Edit, yp+20 xp-2.5 vsoNumber, %soNumber% 
+; Gui Add, Text, y+10, Software upgrade:
+; Gui Add, Radio, gsubmitChecklist vsoftwareUpgradeYes, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vsoftwareUpgradeNo, N/A
+; Gui Add, Text, x+-90 y+10, Serial | License | Dongle #:
+; Gui Add, Edit, vsoftwareUpgradeLicense, %softwareUpgradeLicense% 
+
+Gui Add, Text, ys x+-135 Section, End User:
+Gui Add, Edit, vendUser
+Gui Add, Text,, End User / Contact Phone:
+Gui Add, Edit, vphone
+Gui Add, Text,, End User / Contact Email:
+Gui Add, Edit, vemail
 Gui Add, Text,, End Use:
-Gui Add, Edit, w225 h78 vendUse
+Gui Add, Edit, h78 vendUse
+
 
 ;----------- END COLUMN 5 END ---------------
-
+; Gui Font, c0052cf
 Gui Add, Text, x10 y450, ________________________________________________________________________________________________________________________________________________________________________________________________
+; Gui Font
 
 ;----------- END MAIN SECTION ---------------
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add, Tab3, x25 w925 h200, Pre Salesforce Checklist|Salesforce Checklist|Post Salesforce Checklist|SAP Checklist
+Gui Add, Tab3, x25 w925 h220, Salesforce Checklist|SAP Checklist
 Gui Tab, 1
 
 
@@ -178,12 +194,32 @@ Gui Tab, 1
 ; Gui, Tab, 2
 
 ; ----------- PRE SALESFORCE -----------------
-Gui, Add, GroupBox,Section h150 w250, Pre Salesforce
-Gui, Add, Checkbox, xs+10 ys+20 gsubmitChecklist vnameCheck, Check TENA Name On PO
-Gui, Add, Checkbox, gsubmitChecklist vquoteNumberMatch, Quote number matches on PO && Quote
-Gui, Add, Checkbox, gsubmitChecklist vpaymentTerms, Payment terms match on PO && Quote
-Gui, Add, Checkbox, gsubmitChecklist vpriceMatch, Prices match on PO && Quote
-Gui, Add, Checkbox, gsubmitChecklist vbothAddresses, Bill To && Ship To Address on PO
+
+Gui Add, GroupBox,Section h175 w250, Pre Salesforce
+Gui Add, Checkbox, xp+10 yp+30 gsubmitChecklist vnameCheck, Check TENA name on PO
+Gui Add, Checkbox, gsubmitChecklist vquoteNumberMatch, Quote number matches on PO && quote
+Gui Add, Checkbox, gsubmitChecklist vpaymentTerms, Payment terms match on PO && quote
+Gui Add, Checkbox, gsubmitChecklist vpriceMatch, Prices match on PO && quote
+Gui Add, Checkbox, gsubmitChecklist vbothAddresses, Bill to && Ship to address on PO
+
+; ----------- END PRE SALESFORCE -----------------
+
+; ----------- SALESFORCE -----------------
+
+Gui Add, GroupBox,Section ys h175 w325, Salesforce
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpdfQuote, Save PDF of Quote (Document Output Tab)
+; Gui Add, Text, y+10, Software upgrade:
+; Gui Add, Radio, x+5 gsubmitChecklist vsoftwareUpgradeYes, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vsoftwareUpgradeNo, N/A
+; Gui Add, Text, x+-180 y+10, Serial | License | Dongle #:
+; Gui Add, Edit, vsoftwareUpgradeLicense, %softwareUpgradeLicense% 
+Gui Add, Checkbox, gsubmitChecklist varrangeLines, Arrange quote lines (Quote Details Tab)
+Gui Add, Checkbox, gsubmitChecklist vsoldToIdCheck, Sold-To ID (Customer Details Tab)
+Gui Add, Checkbox, gsubmitChecklist vorderTypeCheck, Check order type (Order Tab)
+Gui Add, Checkbox, gsubmitChecklist vpoInfoCheck, Add PO# / Add PO Value / Upload PO (Order Tab)
+Gui Add, Checkbox, gsubmitChecklist vgenerateDps, Generate && Attach DPS Reports (Attachments Tab)
+
+
 ; Gui, Add, Checkbox, gsubmitChecklist vorderNoticeSent, Order Notice Sent
 ; Gui, Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
 ; Gui, Add, Text, tcs y+10, T&&Cs?
@@ -242,22 +278,6 @@ return
 submitSales:
 Gui, Submit, NoHide
 gosub, findSales
-return
-
-dongle:
-Gui, Submit, NoHide
-if (software == 0)
-    {
-        GuiControl, Hide, serialNumber
-        GuiControl, Hide, serialNumberText
-        GuiControl, Move, software, y368
-    }
-if (software == 1)
-    {
-        GuiControl, Move, software, y345
-        GuiControl, Show, serialNumber
-        GuiControl, Show, serialNumberText
-    }
 return
 
 GuiClose:
@@ -705,12 +725,6 @@ return
 ::ejim::10246281
 ;----- End Order keyboard shortcuts -----
 
-; ::emlinv::E-MAIL INVOICES TO:{space}
-; ::sontc::Hi ,`nPlease see the SO notification below.`n`nThanks{up 4}{left}
-; ::tenaa::THERMO ELECTRON NORTH AMERICA LLC
-; ::zsig:: ; Default Email Signature
-; Send, !e2as{Enter}{down 10}{BackSpace 2}
-return
 
 ;******** END HOTSTRINGS (TEXT EXPANSION) ********
 
