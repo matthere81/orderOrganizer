@@ -145,7 +145,7 @@ Gui Add, Text, x10 y450, _______________________________________________________
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add, Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
+Gui Add, Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order |SAP - Finalizing The Order
 Gui Tab, 1
 
 
@@ -267,7 +267,7 @@ Gui Add, Radio, x+5 gsubmitChecklist vendUserCopyBackNa, N/A
 Gui, Tab, 4
 
 Gui Add, GroupBox,Section h175 w235, Final Steps:
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcheckPrices, Check Net Value
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vfinalTotal, Check Net Value
 Gui Add, Text,, Add Shipping?
 Gui Add, Radio, x+50 gsubmitChecklist vshippingYes, Yes
 Gui Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
@@ -458,8 +458,6 @@ IniRead, mergeYes, %SelectedFile%, orderInfo, mergeYes
 GuiControl,, mergeYes, %mergeYes%
 IniRead, mergeNa, %SelectedFile%, orderInfo, mergeNa
 GuiControl,, mergeNa, %mergeNa%
-IniRead, checkPrices, %SelectedFile%, orderInfo, checkPrices
-GuiControl,, checkPrices, %checkPrices%
 IniRead, shippingYes, %SelectedFile%, orderInfo, shippingYes
 GuiControl,, shippingYes, %shippingYes%
 IniRead, shippingNa, %SelectedFile%, orderInfo, shippingNa
@@ -536,13 +534,44 @@ GuiControl,, generateDps, %generateDps%
 if % generateDps  == "ERROR"
     generateDps := 0
 
-; IniRead, , %SelectedFile%, orderInfo, 
-; GuiControl,, , %%
+IniRead, crdDateAdded, %SelectedFile%, orderInfo,crdDateAdded 
+GuiControl,, crdDateAdded, %crdDateAdded%
 
-; IniRead, , %SelectedFile%, orderInfo, 
-; GuiControl,, , %%
+IniRead, firstDate, %SelectedFile%, orderInfo, firstDate 
+GuiControl,, firstDate, %firstDate%
 
+IniRead, incoterms, %SelectedFile%, orderInfo, incoterms
+GuiControl,, incoterms, %incoterms%
 
+;
+IniRead, volts, %SelectedFile%, orderInfo, volts
+GuiControl,, volts, %volts%
+IniRead, shipper, %SelectedFile%, orderInfo, shipper
+GuiControl,, shipper, %shipper%
+IniRead, verifyIncoterms, %SelectedFile%, orderInfo, verifyIncoterms
+GuiControl,, verifyIncoterms, %verifyIncoterms%
+IniRead, managerCodeCheck, %SelectedFile%, orderInfo, managerCodeCheck
+GuiControl,, managerCodeCheck, %managerCodeCheck%
+IniRead, directorCodeCheck, %SelectedFile%, orderInfo, directorCodeCheck
+GuiControl,, directorCodeCheck, %directorCodeCheck%
+IniRead, billtoCheck, %SelectedFile%, orderInfo, billtoCheck
+GuiControl,, billtoCheck, %billtoCheck%
+IniRead, shiptoCheck, %SelectedFile%, orderInfo, shiptoCheck
+GuiControl,, shiptoCheck, %shiptoCheck%
+IniRead, endUserCheck, %SelectedFile%, orderInfo, endUserCheck
+GuiControl,, endUserCheck, %endUserCheck%
+IniRead, endUserNA, %SelectedFile%, orderInfo, endUserNA
+GuiControl,, endUserNA, %endUserNA%
+IniRead, contactPersonCheck, %SelectedFile%, orderInfo, contactPersonCheck
+GuiControl,, contactPersonCheck, %contactPersonCheck%
+IniRead, textsContactCheck, %SelectedFile%, orderInfo, textsContactCheck
+GuiControl,, textsContactCheck, %textsContactCheck%
+IniRead, endUserCopyBack, %SelectedFile%, orderInfo, endUserCopyBack
+GuiControl,, endUserCopyBack, %endUserCopyBack%
+IniRead, endUserCopyBackNa, %SelectedFile%, orderInfo, endUserCopyBackNa
+GuiControl,, endUserCopyBackNa, %endUserCopyBackNa%
+IniRead, finalTotal, %SelectedFile%, orderInfo, finalTotal
+GuiControl,, finalTotal, %finalTotal%
 
 ; GuiControl,, title, Order Organizer - SO# %soNumber%
 ; WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber%, Standard Order
@@ -690,7 +719,7 @@ IniWrite, %winYes%, %IniFilePath%, orderInfo, winYes
 IniWrite, %winNa%, %IniFilePath%, orderInfo, winNa
 IniWrite, %mergeYes%, %IniFilePath%, orderInfo, mergeYes
 IniWrite, %mergeNa%, %IniFilePath%, orderInfo, mergeNa
-IniWrite, %checkPrices%, %IniFilePath%, orderInfo, checkPrices
+IniWrite, %finalTotal%, %IniFilePath%, orderInfo, finalTotal
 IniWrite, %shippingYes%, %IniFilePath%, orderInfo, shippingYes
 IniWrite, %shippingNa%, %IniFilePath%, orderInfo, shippingNa
 IniWrite, %higherLevelLinkingYes%, %IniFilePath%, orderInfo, higherLevelLinkingYes
@@ -716,6 +745,24 @@ IniWrite, %soldToIdCheck%, %IniFilePath%, orderInfo, soldToIdCheck
 IniWrite, %orderTypeCheck%, %IniFilePath%, orderInfo, orderTypeCheck
 IniWrite, %poInfoCheck%, %IniFilePath%, orderInfo, poInfoCheck
 IniWrite, %generateDps%, %IniFilePath%, orderInfo, generateDps
+
+IniWrite, %crdDateAdded%, %IniFilePath%, orderInfo,crdDateAdded 
+IniWrite, %firstDate%, %IniFilePath%, orderInfo, firstDate
+IniWrite, %incoterms%, %IniFilePath%, orderInfo, incoterms
+
+IniWrite, %volts%, %IniFilePath%, orderInfo, volts
+IniWrite, %shipper%, %IniFilePath%, orderInfo, shipper
+IniWrite, %verifyIncoterms%, %IniFilePath%, orderInfo, verifyIncoterms
+IniWrite, %managerCodeCheck%, %IniFilePath%, orderInfo, managerCodeCheck
+IniWrite, %directorCodeCheck%, %IniFilePath%, orderInfo, directorCodeCheck
+IniWrite, %billtoCheck%, %IniFilePath%, orderInfo, billtoCheck
+IniWrite, %shiptoCheck%, %IniFilePath%, orderInfo, shiptoCheck
+IniWrite, %endUserCheck%, %IniFilePath%, orderInfo, endUserCheck
+IniWrite, %endUserNA%, %IniFilePath%, orderInfo, endUserNA
+IniWrite, %contactPersonCheck%, %IniFilePath%, orderInfo, contactPersonCheck
+IniWrite, %textsContactCheck%, %IniFilePath%, orderInfo, textsContactCheck
+IniWrite, %endUserCopyBack%, %IniFilePath%, orderInfo, endUserCopyBack
+IniWrite, %endUserCopyBackNa%, %IniFilePath%, orderInfo, endUserCopyBackNa
 
 return
 
