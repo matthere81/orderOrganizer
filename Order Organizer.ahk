@@ -33,6 +33,9 @@ if !FileExist(myinipath) {
 
 ; Include Icon
 FileInstall, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico, A_WorkingDir, 1
+I_Icon = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico
+IfExist, %I_Icon%
+	Menu, Tray, Icon, %I_Icon%
 
 SetTitleMatchMode, 2
 
@@ -142,7 +145,7 @@ Gui Add, Text, x10 y450, _______________________________________________________
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add, Tab3, x25 w925 h220, Salesforce Checklist|SAP Checklist (Main Page)|SAP Checklist (Inside The Order)|SAP - Finalizing The Order
+Gui Add, Tab3, x25 w925 h220, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
 Gui Tab, 1
 
 
