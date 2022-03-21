@@ -196,7 +196,7 @@ Gui Add, Checkbox, gsubmitChecklist vbothAddresses, Bill to && Ship to address o
 
 Gui Add, GroupBox, Section ys h175 w325, Salesforce
 Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpdfQuote, Save PDF of Quote (Document Output Tab)
-Gui Add, Checkbox, gsubmitChecklist varrangeLines, Arrange quote lines (Quote Details Tab)
+Gui Add, Checkbox, gsubmitChecklist varrangeLines, Arrange quote lines (if needed) (Quote Details Tab)
 Gui Add, Checkbox, gsubmitChecklist vsoldToIdCheck, Sold-To ID (Customer Details Tab)
 Gui Add, Checkbox, gsubmitChecklist vorderTypeCheck, Check order type (Order Tab)
 Gui Add, Checkbox, gsubmitChecklist vpoInfoCheck, Add PO# / Add PO Value / Upload PO (Order Tab)
@@ -500,26 +500,38 @@ if % priceMatch == "ERROR"
 
 IniRead, bothAddresses, %SelectedFile%, orderInfo, bothAddresses
 GuiControl,, bothAddresses, %bothAddresses%
-if %  bothAddresses == "ERROR"
+if % bothAddresses == "ERROR"
     bothAddresses := 0
 
-; IniRead, , %SelectedFile%, orderInfo, 
-; GuiControl,, , %%
+IniRead, pdfQuote, %SelectedFile%, orderInfo, pdfQuote 
+GuiControl,, pdfQuote, %pdfQuote%
+if % pdfQuote == "ERROR"
+    pdfQuote := 0
 
-; IniRead, , %SelectedFile%, orderInfo, 
-; GuiControl,, , %%
+IniRead, arrangeLines, %SelectedFile%, orderInfo, arrangeLines
+GuiControl,, arrangeLines, %arrangeLines%
+if % arrangeLines == "ERROR"
+    arrangeLines := 0
 
-; IniRead, , %SelectedFile%, orderInfo, 
-; GuiControl,, , %%
+IniRead, soldToIdCheck, %SelectedFile%, orderInfo, soldToIdCheck
+GuiControl,, soldToIdCheck, %soldToIdCheck%
+if % soldToIdCheck  == "ERROR"
+    soldToIdCheck := 0
 
-; IniRead, , %SelectedFile%, orderInfo, 
-; GuiControl,, , %%
+IniRead, orderTypeCheck, %SelectedFile%, orderInfo, orderTypeCheck
+GuiControl,, orderTypeCheck, %orderTypeCheck%
+if % orderTypeCheck  == "ERROR"
+    orderTypeCheck := 0
 
-; IniRead, , %SelectedFile%, orderInfo, 
-; GuiControl,, , %%
+IniRead, poInfoCheck, %SelectedFile%, orderInfo, poInfoCheck
+GuiControl,, poInfoCheck, %poInfoCheck%
+if % poInfoCheck == "ERROR"
+    poInfoCheck := 0
 
-; IniRead, , %SelectedFile%, orderInfo, 
-; GuiControl,, , %%
+IniRead, generateDps, %SelectedFile%, orderInfo, generateDps
+GuiControl,, generateDps, %generateDps%
+if % generateDps  == "ERROR"
+    generateDps := 0
 
 ; IniRead, , %SelectedFile%, orderInfo, 
 ; GuiControl,, , %%
@@ -694,6 +706,13 @@ IniWrite, %quoteNumberMatch%, %IniFilePath%, orderInfo, quoteNumberMatch
 IniWrite, %paymentTerms%, %IniFilePath%, orderInfo,paymentTerms 
 IniWrite, %priceMatch%, %IniFilePath%, orderInfo, priceMatch
 IniWrite, %bothAddresses%, %IniFilePath%, orderInfo, bothAddresses
+
+IniWrite, %pdfQuote%, %IniFilePath%, orderInfo, pdfQuote
+IniWrite, %arrangeLines%, %IniFilePath%, orderInfo, arrangeLines
+IniWrite, %soldToIdCheck%, %IniFilePath%, orderInfo, soldToIdCheck
+IniWrite, %orderTypeCheck%, %IniFilePath%, orderInfo, orderTypeCheck
+IniWrite, %poInfoCheck%, %IniFilePath%, orderInfo, poInfoCheck
+IniWrite, %generateDps%, %IniFilePath%, orderInfo, generateDps
 
 return
 
