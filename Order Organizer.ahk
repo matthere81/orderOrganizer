@@ -39,18 +39,17 @@ SetTitleMatchMode, 2
 orderInfo(){
     global
 ;/******** GUI START ********\
-Gui, destroy
-Gui, Font
+Gui destroy
+Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, x10 y30, ______________________________________________________________
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y20 w300 +Left, Order Organizer ; - SO# %soNumber%
-Gui, Font
-Gui, Color, 79b8d1
-Gui, Font, S9, Segoe UI Semibold
-
-Gui, Add, Button, x650 y20 w70 greadtheini, O&pen
-Gui, Add, Button, x+25 w70 gSaveToIni, &Save
-Gui, Add, Button, x+25 w125 grestartScript, &New PO or Reload
+Gui Font
+Gui Color, 79b8d1
+Gui Font, S9, Segoe UI Semibold
+Gui Add, Button, x650 y20 w70 greadtheini, O&pen
+Gui Add, Button, x+25 w70 gSaveToIni, &Save
+Gui Add, Button, x+25 w125 grestartScript, &New PO or Reload
 ; Gui Add, Edit, x+25 y22 w175 h20, Search
 
 ;----------- COLUMN 1 ---------------
@@ -151,7 +150,7 @@ Gui Add, Text, x10 y450, _______________________________________________________
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add, Tab3, x25 w925 h220, Salesforce Checklist|SAP Checklist
+Gui Add, Tab3, x25 w925 h220, Salesforce Checklist|SAP Checklist (Main Page)|SAP Checklist (Inside The Order)|SAP - Finalizing The Order
 Gui Tab, 1
 
 
@@ -206,67 +205,92 @@ Gui Add, Checkbox, gsubmitChecklist vbothAddresses, Bill to && Ship to address o
 
 ; ----------- SALESFORCE -----------------
 
-Gui Add, GroupBox,Section ys h175 w325, Salesforce
+Gui Add, GroupBox, Section ys h175 w325, Salesforce
 Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpdfQuote, Save PDF of Quote (Document Output Tab)
-; Gui Add, Text, y+10, Software upgrade:
-; Gui Add, Radio, x+5 gsubmitChecklist vsoftwareUpgradeYes, Yes
-; Gui Add, Radio, x+5 gsubmitChecklist vsoftwareUpgradeNo, N/A
-; Gui Add, Text, x+-180 y+10, Serial | License | Dongle #:
-; Gui Add, Edit, vsoftwareUpgradeLicense, %softwareUpgradeLicense% 
 Gui Add, Checkbox, gsubmitChecklist varrangeLines, Arrange quote lines (Quote Details Tab)
 Gui Add, Checkbox, gsubmitChecklist vsoldToIdCheck, Sold-To ID (Customer Details Tab)
 Gui Add, Checkbox, gsubmitChecklist vorderTypeCheck, Check order type (Order Tab)
 Gui Add, Checkbox, gsubmitChecklist vpoInfoCheck, Add PO# / Add PO Value / Upload PO (Order Tab)
 Gui Add, Checkbox, gsubmitChecklist vgenerateDps, Generate && Attach DPS Reports (Attachments Tab)
 
+; ----------- END SALESFORCE -----------------
 
-; Gui, Add, Checkbox, gsubmitChecklist vorderNoticeSent, Order Notice Sent
-; Gui, Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
-; Gui, Add, Text, tcs y+10, T&&Cs?
-; Gui, Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
-; Gui, Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
-; ;===== END PRE-SAP =======
+; ----------- PRE SAP -----------------
 
-; ;===== SAP ATTACHMENTS =======
-; Gui, Add, GroupBox,Section xm+15 y+25 h130 w215, SAP Attachments:
-; Gui, Add, Checkbox,xs+10 ys+25 gsubmitChecklist vpoAttached, PO
-; Gui, Add, Checkbox, x+61 gsubmitChecklist vquoteAttached, Quote
-; Gui, Add, Checkbox, xm+25 y+10 gsubmitChecklist vdpsAttached, DPS Report(s)
-; Gui, Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
-; Gui, Add, Text, xm+25 y+15, WIN Form?
-; Gui, Add, Radio, x+40 gsubmitChecklist vwinYes, Yes
-; Gui, Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
-; Gui, Add, Text, xm+25 y+10, Merge Report?
-; Gui, Add, Radio, x+24 gsubmitChecklist vmergeYes, Yes
-; Gui, Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
-; ;===== END SAP ATTACHMENTS =======
+Gui Add, GroupBox, Section ys h175 w275, Pre SAP
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vorderNoticeSent, Order Notice Sent
+Gui Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
+Gui Add, Text, tcs y+10, T&&Cs?
+Gui Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
 
-; ;===== PRE ACCEPTANCE ========
-; Gui, Add, GroupBox,Section xm+260 ym+63 h225 w235, Pre-Acceptance:
-; Gui, Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcheckPrices, Check Prices
-; Gui, Add, Text,, Add Shipping?
-; Gui, Add, Radio, x+53 gsubmitChecklist vshippingYes, Yes
-; Gui, Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
-; Gui, Add, Text, xm+270 y+10, Higher Level Linking?
-; Gui, Add, Radio, x+18 gsubmitChecklist vhigherLevelLinkingYes, Yes
-; Gui, Add, Radio, x+5 vhigherLevelLinkingNa, N/A
-; Gui, Add, Text,xm+270 y+10, Delivery Groups?
-; Gui, Add, Radio, x+42.5 vdeliveryGroupsYes gsubmitChecklist, Yes
-; Gui, Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
-; Gui, Add, Checkbox, xm+270 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
-; Gui, Add, Text,, Order Acceptance
-; Gui, Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
-; Gui, Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
-; Gui, Add, Text, xm+270 y+10, Serial/Dongle Number?
-; Gui, Add, Radio, x+5 gsubmitChecklist vserialYes, Yes
-; Gui, Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
-; Gui, Add, Text, xm+270 y+10, End User Info?
-; Gui, Add, Radio, x+54 gsubmitChecklist vendUserYes, Yes
-; Gui, Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
-;===== END PRE ACCEPTANCE ========
-;~ Gui, add, Text, x60 y400 , Order Progress
-;~ Gui, Add, Progress, w800 h25, 25
-;******** END CHECKLIST GUI ********
+; ---------- END PRE-SAP ----------
+
+Gui, Tab, 2
+; ----------- SAP -----------------
+
+Gui Add, GroupBox,Section x+15 ys+10 h130 w215, SAP Attachments:
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpoAttached, PO
+Gui Add, Checkbox, x+55 gsubmitChecklist vquoteAttached, Quote
+Gui Add, Checkbox, xm+35 y+10 gsubmitChecklist vdpsAttached, DPS Reports
+Gui Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
+Gui Add, Text, xm+35 y+10, WIN Form?
+Gui Add, Radio, x+25 gsubmitChecklist vwinYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
+Gui Add, Text, xm+35 y+10, Merge Report?
+Gui Add, Radio, x+10 gsubmitChecklist vmergeYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
+
+Gui Add, GroupBox, Section ys h100 w290, Main Sales Tab
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcrdDateAdded, CRD Date (Req delv date)
+Gui Add, Checkbox, y+10 gsubmitChecklist vfirstDate, First Date Lines Updated (Edit -> Fast Change)
+Gui Add, Checkbox, gsubmitChecklist vincoterms, Incoterms
+
+Gui, Tab, 3
+
+Gui Add, GroupBox, Section h100 w200, Inside the Order
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vvolts, 110 Volts (Sales Tab)
+Gui Add, Checkbox, gsubmitChecklist vshipper, Shipper (Shipping Tab)
+Gui Add, Checkbox, gsubmitChecklist vverifyIncoterms, Verify Incoterms (Billing Tab)
+
+Gui Add, GroupBox, ys w250 h175 Section, Partners Tab
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vmanagerCodeCheck, Manager Code (Sales Manager)
+Gui Add, Checkbox, gsubmitChecklist vdirectorCodeCheck, Director Code (Sales Employee 9)
+Gui Add, Checkbox, gsubmitChecklist vbilltoCheck, Verify Billing Address
+Gui Add, Checkbox, gsubmitChecklist vshiptoCheck, Verify Shipping Address
+Gui Add, Text,, End User Added
+Gui Add, Radio, x+25 gsubmitChecklist vendUserCheck, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vendUserNA, N/A
+Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vcontactPersonCheck, Contact Person Added
+
+Gui Add, GroupBox, ys Section h175 w275, Texts Tab
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vtextsContactCheck, Contact Person or End User Info Added
+Gui Add, Text,, Serial/Dongle Number Added To Form Header?
+Gui Add, Radio, xs+25 y+10 gsubmitChecklist vserialYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
+Gui Add, Text, xs+10 y+10, End User info added in the partners tab?
+Gui Add, Radio, xs+25 y+10 gsubmitChecklist vendUserCopyBack, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vendUserCopyBackNa, N/A
+
+Gui, Tab, 4
+
+Gui Add, GroupBox,Section h175 w235, Final Steps:
+Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcheckPrices, Check Net Value
+Gui Add, Text,, Add Shipping?
+Gui Add, Radio, x+50 gsubmitChecklist vshippingYes, Yes
+Gui Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
+Gui Add, Text, xs+10 y+10, Higher Level Linking?
+Gui Add, Radio, x+15 gsubmitChecklist vhigherLevelLinkingYes, Yes
+Gui Add, Radio, x+5 vhigherLevelLinkingNa, N/A
+Gui Add, Text, xs+10 y+10, Delivery Groups?
+Gui Add, Radio, x+39 vdeliveryGroupsYes gsubmitChecklist, Yes
+Gui Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
+Gui Add, Checkbox, xs+10 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
+Gui Add, Text, xs+10 y+10, Order Acceptance
+Gui Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
+Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
+
+; ----------- END SAP -----------------
 
 Gui Show,w1000 h700, Order Organizer ;SO# %soNumber%
 Gui, Submit, NoHide
