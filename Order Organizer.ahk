@@ -145,7 +145,7 @@ Gui Add, Text, x10 y450, _______________________________________________________
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add, Tab3, x25 w925 h220, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
+Gui Add, Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
 Gui Tab, 1
 
 
@@ -224,12 +224,12 @@ Gui, Tab, 2
 Gui Add, GroupBox,Section x+15 ys+10 h130 w215, SAP Attachments:
 Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpoAttached, PO
 Gui Add, Checkbox, x+55 gsubmitChecklist vquoteAttached, Quote
-Gui Add, Checkbox, xm+35 y+10 gsubmitChecklist vdpsAttached, DPS Reports
+Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vdpsAttached, DPS Reports
 Gui Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
-Gui Add, Text, xm+35 y+10, WIN Form?
-Gui Add, Radio, x+25 gsubmitChecklist vwinYes, Yes
+Gui Add, Text, xs+10 y+10, WIN Form?
+Gui Add, Radio, x+26 gsubmitChecklist vwinYes, Yes
 Gui Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
-Gui Add, Text, xm+35 y+10, Merge Report?
+Gui Add, Text, xs+10 y+10, Merge Report?
 Gui Add, Radio, x+10 gsubmitChecklist vmergeYes, Yes
 Gui Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
 
