@@ -7,13 +7,13 @@ SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent star
 
 salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch Lazaro|Tucker Lincoln|Jawad Pashmi|Julie Sawicki|Mike Hughes|Steve Boyanoski"
 . "|Bob Riggs|Chuck Costanza|Navette Shirakawa|Stephanie Koczur|Mark Krigbaum|Jon Needels|Bill Balsanek|Brent Boyle|Andrew Clark|Kevin Clodfelter|Gabriel Mendez"
-. "|Karl Kastner|Michael Burnett|Jerry Pappas|Nick Duczak|Steven Danielson|Nick Hubbard|Samantha Stikeleather|Drew Smillie|Jeff Weller|Jerry Holycross"
-. "|Theresa Borio|Dan Ciminelli|Cynthia Spittler|Gwyn Trojan|Joel Stradtner|Don Rathbauer|Hillary Tennant|Melissa Chandler|Douglas Sears|Rashila Patel|Brian Thompson"
+. "|Karl Kastner|Michael Burnett|Jerry Pappas|Nick Duczak|Steven Danielson|Nick Hubbard (Nik)|Samantha Stikeleather|Drew Smillie|Jeff Weller|Jerry Holycross"
+. "|Theresa Borio|Dan Ciminelli|Cynthia (Cindy) Spittler|Gwyn Trojan|Joel Stradtner|Don Rathbauer|Hillary Tennant|Melissa Chandler|Douglas Sears|Rashila Patel|Brian Thompson"
 . "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
 . "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
-. "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
+. "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun (Simon) Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
 . "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|Justin Chang|Kate Lincoln|Angelito Nepomuceno|Patrick Bohman"
-. "|Kristin Roberts|John Venesky|Sarah Jackson|Daniel Quinn|"
+. "|Kristin Roberts|John Venesky|Sarah Jackson|Daniel Quinn|Eric Norviel|Lisa Kasper|Karla Esparza|Loris Fossir|Russ Constantineau|David Kusel|"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch"
 
@@ -146,7 +146,7 @@ Gui Add, Text, x10 y450, _______________________________________________________
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add, Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order |SAP - Finalizing The Order
+Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
 Gui Tab, 1
 
 
@@ -287,6 +287,10 @@ Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
 
 Gui Show,w1000 h700, Order Organizer ;SO# %soNumber%
 Gui, Submit, NoHide
+
+; WinSetTitle, WinTitle, WinText, NewTitle [, ExcludeTitle, ExcludeText]
+WinSetTitle, Order Organizer,, Order Organizer - v1.1
+
 
 submitChecklist:
 Gui, Submit, Nohide
@@ -1059,13 +1063,15 @@ if salesPerson = Rhonda Oesterle
 	gosub, nadjieDropDown
 if salesPerson = Alexander James
 	gosub, nadjieDropDown
-if salesPerson = Shijun Sheng
+if salesPerson = Shijun (Simon) Sheng
 	gosub, nadjieDropDown
 if salesPerson = Brian Luckenbill
 	gosub, nadjieDropDown
 if salesPerson = Amy Allgower
 	gosub, nadjieDropDown
 if salesPerson = Michael Burnett
+	gosub, nadjieDropDown
+if salesPerson = Karla Esparza
 	gosub, nadjieDropDown
 ;============ END NADJIE ================
 
@@ -1082,17 +1088,19 @@ if salesPerson = Dan Ciminelli
 	gosub, mccormackDropDown
 if salesPerson = Theresa Borio
 	gosub, mccormackDropDown
-if salesPerson = Cynthia Spittler
+if salesPerson = Cynthia (Cindy) Spittler
 	gosub, mccormackDropDown
 if salesPerson = Fred Simpson
 	gosub, mccormackDropDown
 if salesPerson = Gwyn Trojan
 	gosub, mccormackDropDown
-if salesPerson = Nick Hubbard
+if salesPerson = Nick Hubbard (Nik)
 	gosub, mccormackDropDown
 if salesPerson = Kristen Luttner
 	gosub, mccormackDropDown
 if salesPerson = Patrick Bohman
+	gosub, mccormackDropDown
+if salesPerson = Eric Norviel
 	gosub, mccormackDropDown
 ;========== END DOUG MCCORMACK =================
 
@@ -1178,6 +1186,8 @@ if salesPerson = Dana Stradtner
 	gosub, mcfaddenDropDown
 if salesPerson = Sarah Jackson
 	gosub, mcfaddenDropDown
+if salesPerson = Loris Fossir
+	gosub, mcfaddenDropDown
 ;========= END MCFADDEN ==============
 
 ;=========== BUTLER ==========
@@ -1196,7 +1206,7 @@ if salesPerson = Cari Randles
 if salesPerson = Sean Bennett
 	gosub, butlerDropDown
 if salesPerson = Daniel Quinn
-gosub, butlerDropDown
+	gosub, butlerDropDown
 ;=========== END BUTLER ==========
 
 ;=========== KLEIN ==========
@@ -1213,6 +1223,8 @@ if salesPerson = Yuriy Dunayevskiy
 if salesPerson = Nelson Huang
 	gosub, kleinDropDown
 if salesPerson = Kate Lincoln
+	gosub, kleinDropDown
+if salesPerson = Russ Constantineau
 	gosub, kleinDropDown
 ;=========== END KLEIN ==========
 
@@ -1237,6 +1249,8 @@ if salesPerson = Angelito Nepomuceno
 if salesPerson = John Venesky
 	gosub, porchDropDown
 if salesPerson = Kristin Roberts
+	gosub, porchDropDown
+if salesPerson = David Kusel 
 	gosub, porchDropDown
 ;=========== END PORCH ==========
 
