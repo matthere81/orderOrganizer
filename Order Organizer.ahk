@@ -12,7 +12,8 @@ salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch La
 . "|Larry Bellan|Donna Zwirner|Kristen Luttner|Helen Sun|May Chou|Haris Dzaferbegovic|Brian Dowe|Mark Woodworth|Susan Bird|Giovanni Pallante|Alicia Arias"
 . "|Dominique Figueroa|Jonathan McNally|Murray Fryman|Yan Chen|Jie Qian|Joe Bernholz|David Kage|David Scott|Todd Stoner|John Bailey|Katianna Pihakari|Jonathan Ferguson"
 . "|Aeron Avakian|Luke Marty|Alexander James|Timothy Johnson|Yuriy Dunayevskiy|Susan Gelman|Cari Randles|Shijun Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar"
-. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|"
+. "|Lauren Fischer|Brian Luckenbill|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|Justin Chang|Kate Lincoln|Angelito Nepomuceno|Patrick Bohman"
+. "|Kristin Roberts|John Venesky|Sarah Jackson|Daniel Quinn|"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch"
 
@@ -1037,6 +1038,10 @@ if salesPerson = Lisa Kasper
 	gosub, kellerDropDown
 if salesPerson = John Bailey
 	gosub, kellerDropDown
+if salesPerson = Aeron Avakian
+	gosub, kellerDropDown
+if salesPerson = Luke Marty
+	gosub, kellerDropDown
 if salesPerson = Brandon Markle
 	gosub, kellerDropDown
 ;=============== END KELLER ===================
@@ -1190,6 +1195,8 @@ if salesPerson = Cari Randles
 	gosub, butlerDropDown
 if salesPerson = Sean Bennett
 	gosub, butlerDropDown
+if salesPerson = Daniel Quinn
+gosub, butlerDropDown
 ;=========== END BUTLER ==========
 
 ;=========== KLEIN ==========
