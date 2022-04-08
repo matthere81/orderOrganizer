@@ -1782,7 +1782,7 @@ Send, ^{PGUP}
 return
 
 !+d:: ; GET DPS REPORTS
-SetDefaultMouseSpeed, 7
+SetDefaultMouseSpeed, 10
 dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq
 run, https://hub.thermofisher.com/ip
 WinWait, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
@@ -1877,7 +1877,6 @@ Loop
 	generateReport += 1
 	ToolTip, %generateReport%
 }
-ToolTip, 
 Return
 
 PrintDPS:
