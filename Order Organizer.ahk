@@ -251,7 +251,6 @@ Gui Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
 ;******** END CHECKLIST GUI ********
 Gui Show,w920 h485, Order Organizer ;SO# %soNumber%
 Gui Submit, NoHide
-
 submitChecklist:
 Gui Submit, Nohide
 return
@@ -331,12 +330,13 @@ if (A_GuiEvent = "DoubleClick")
 Return
 
 restartScript:
-Gosub, WriteIniVariables
+Gosub, SaveToIni
 if ((!cpq) || (!po))
 {
 	Reload
 } Else
 {
+	MsgBox, %IniFilePath%`n`n%customer%
 	Gosub, SaveToIni
 	Reload
 } 
@@ -345,13 +345,14 @@ return
 readtheini:
 Gui Submit, NoHide
 if (cpq) && (po)
-	gosub, SaveToIniNoGui
+	; MsgBox, Selected: %SelectedFile%`n`nFP: %IniFilePath%
+	gosub, SaveToIni
 ; FileSelectFile, SelectedFile,r,%myinipath%, Open a file ;______ Needs to go back
-if (ErrorLevel)
-	{
-		gosub, restartScript
-		return
-	}
+; if (ErrorLevel)
+; 	{
+; 		gosub, restartScript
+; 		return
+; 	}
 IniRead, ID, %SelectedFile%, id, ID
 IniRead, cpq, %SelectedFile%, orderInfo, cpq
 GuiControl,, cpq, %cpq%
@@ -504,6 +505,9 @@ GuiControl,, endUserNa, %endUserNa%
 ; GuiControl,, title, Order Organizer - SO# %soNumber%
 WinSetTitle, Order Organizer,,Order Organizer - SO# %soNumber% `(DBID-%ID%`)
 
+
+; SelectedFile :=
+; MsgBox, %SelectedFile%
 return
 
 SaveToIni:
@@ -536,7 +540,6 @@ if FileExist(IniFilePath) && (soNumber)
 	IniFilePath = %IniFilePathWithSO% 
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
-	; Gosub, Search
 	return  
 }
 else if FileExist(IniFilePathWithSo)
@@ -544,7 +547,6 @@ else if FileExist(IniFilePathWithSo)
 	IniFilePath = %IniFilePathWithSO% 
 	Gosub, SaveBar
 	gosub, WriteIniVariables
-	; Gosub, Search
 	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
@@ -552,7 +554,6 @@ else if FileExist(IniFilePath) && (!soNumber)
 	gosub, WriteIniVariables
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
-	; Gosub, Search
 	return
 }
 else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
@@ -566,10 +567,15 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 	gosub, WriteIniVariables
 	Gosub, SaveBar
 	gosub, CheckIfFolderExists
-	; Gosub, Search
 	return
 }
 return
+
+ResetIniPath:
+IniFilePath :=
+IniFilePathWithSo :=
+IniFilePathWithNoCPQ :=
+Return
 
 SaveToIniNoGui:
 ; Gosub, RefreshArray
@@ -596,14 +602,12 @@ if FileExist(IniFilePath) && (soNumber)
 	FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, CheckIfFolderExists
-	; Gosub, Search
 	return  
 }
 else if FileExist(IniFilePathWithSo)
 {
 	IniFilePath = %IniFilePathWithSO% 
 	gosub, WriteIniVariables
-	; Gosub, Search
 	return
 }
 else if FileExist(IniFilePath) && (!soNumber)
@@ -623,12 +627,12 @@ else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
 	}
 	gosub, WriteIniVariables
 	gosub, CheckIfFolderExists
-	; Gosub, Search
 	return
 }
 return
 
 WriteIniVariables:
+MsgBox, Ini Filepath: %IniFilePath%`nStart: %cust%`n`nSelected File: %SelectedFile%
 Gui submit, NoHide
 if (ID = "") || (ID = "ERROR")
 {
@@ -717,7 +721,7 @@ IniRead, ID, %selectedFile%, id, ID
 ; 	MsgBox, there was an error
 ; 	Return
 ; }
-
+MsgBox, End Filepath: %IniFilePath%`nEnd: %cust% %cpq% %po%
 return
 
 CheckIfFolderExists:
