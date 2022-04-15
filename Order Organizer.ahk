@@ -306,7 +306,7 @@ Gui, destroy
 Return
 
 restartScript:
-Gosub, WriteIniVariables
+Gosub, SaveToIni
 if ((!cpq) || (!po))
 {
     Reload
