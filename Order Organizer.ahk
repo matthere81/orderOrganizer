@@ -1832,8 +1832,9 @@ Loop
 {   
 	; No records found
 	CoordMode, Pixel, Screen
-	ImageSearch, FoundX, FoundY, 2214, 215, 2866, 380, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203080204.png
-	If ErrorLevel = 0
+	ImageSearch, FoundX, FoundY, 2214, 215, 2866, 380, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\noRecordsFound.png
+    ; ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\noRecordsFound.png
+    If ErrorLevel = 0
 	{
 		Sleep, 200
 		Send, {tab 2}{enter}
@@ -1842,8 +1843,8 @@ Loop
 
 	; No records found / Clear
 	CoordMode, Pixel, Screen
-	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206121523.png
-	If ErrorLevel = 0
+	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\clear.png
+    If ErrorLevel = 0
 	{
 		Sleep, 200
 		Send, {tab 2}{enter}
@@ -1852,7 +1853,7 @@ Loop
 	
 	; Blocked
 	CoordMode, Pixel, Window
-		ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203090941.png
+		ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\blocked.png
 	If ErrorLevel = 0
 	{
 		MsgBox, 4, Found Records,Records WERE Found`nContinue?
@@ -1866,7 +1867,7 @@ Loop
 		{
 			Break
 		}
-		Else
+		; Else
 		{
 			WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 			MouseClick, Left, 899, 257,1,, D ; reset tab position to middle of screen
@@ -1878,7 +1879,6 @@ Loop
 			Break
 		}
 	}
-
 	; Overridden
 	CoordMode, Pixel, Client
 	ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206102506.png
@@ -1890,10 +1890,6 @@ Loop
 	}
 }
 Return
-
-Return
-*/
-
 
 ^6:: ;End User Info
 	endUserInfo = END USER: %endUser%`nPHONE: %phone%`nEMAIL: %email%`n`nEND USE: %endUse%`n`nCPQ-%cpq%
