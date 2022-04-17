@@ -161,40 +161,7 @@ Gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
 Gui Add, Text, x+12.5 y70, Notes:
 Gui Add, Edit, w215 h120 vnotes, %notes%
 
-;======== KEYBOARD SHORTCUTS ========
-; Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
-; LV_ModifyCol(1,190)
-; ;~ LV_ModifyCol(2, 115)
-; LV_Add(Col1, "CPQ (zpq)") ;"zpq")
-; ;~ Gui Add, Text,, CPQ - zpq
-; LV_Add(Col1, "PO# (zpo)") ;,"zpo")
-; ;~ Gui Add, Text, y+5, PO# - zpo
-; LV_Add(Col1, "SO# (zso)") ;,"zso")
-; ;~ Gui Add, Text, y+5, SO# - zso
-; LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
-; ;~ Gui Add, Text, y+5, SOT Line# - zsot
-; LV_Add(Col1, "Customer (zcust)") ;,"zcust")
-; ;~ Gui Add, Text, y+5, Customer - zcust
-; LV_Add(Col1, "PO Value (zval)") ;,"zval")
-; ;~ Gui Add, Text, y+5, PO Value - zval
-; LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
-; ;~ Gui Add, Text, y+5, Salesperson - zsal
-; LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
-; ;~ Gui Add, Text, x775 y225, Customer Contact -
-; ;~ Gui Add, Text, y+5, zcon
-; LV_Add(Col1, "Cust Email (zem)")
-; ;~ Gui Add, Text, y+5, Customer Email - 
-; ;~ Gui Add, Text, y+5, zem
-; LV_Add(Col1, "System (zsys)")
-; ;~ Gui Add, Text, y+5, System - zsys
-; LV_Add(Col1, "End User (zenu)")
-; ;~ Gui Add, Text, y+5, End User - zenu
-; LV_Add(Col1, "End User Phone (zph)")
-; ;~ Gui Add, Text, y+5, Phone - zph
-; LV_Add(Col1, "End Use (zuse)")
-; ;~ Gui Add, Text, y+5, End Use - zuse
 
-;======== END KEYBOARD SHORTCUTS ========
 
 ;******** CHECKLIST GUI ********
  Gui Tab, 2
@@ -697,6 +664,156 @@ Return
 
 orderInfo()
 
+;-------- START TEXT SNIPPET MENU --------
+
+; Create the popup menu by adding some items to it.
+Menu, Snippets, Add, SAP SO#, SoNumber
+Menu, Snippets, Add, CPQ or Quote#, Quote
+Menu, Snippets, Add, PO, PO
+Menu, Snippets, Add, Order Notice, OrderNotice
+Menu, Snippets, Add, Customer Name, CustomerName
+Menu, Snippets, Add, Customer Contact, ContactName
+Menu, Snippets, Add, Customer Sold To Acct#, SoldTo
+Menu, Snippets, Add  ; Add a separator line.
+Menu, Snippets, Add, SalesPerson, SalesPerson
+; Menu, Snippets, Add, Saleserson Code, SalesPersonCode
+Menu, Snippets, Add, Sales Manager, SalesManager
+Menu, Snippets, Add, Sales Manager Code, SalesManagerCode
+Menu, Snippets, Add, Sales Director, SalesDirector
+Menu, Snippets, Add, Sales Director Code, SalesDirectorCode
+Menu, Snippets, Add  ; Add a separator line.
+Menu, Snippets, Add, CRD, Crd
+Menu, Snippets, Add, PO Value, PoValue
+Menu, Snippets, Add, Freight Cost, FreightCost
+; Menu, Snippets, Add, Surcharge, Surcharge
+Menu, Snippets, Add, Total Cost, TotalCost
+Menu, Snippets, Add, End User, EndUser
+Menu, Snippets, Add, Phone#, Phone
+Menu, Snippets, Add, Email, Email
+Menu, Snippets, Add, End User Info, EndUserInfo
+
+SoNumber:
+Clipboard := soNumber
+Send, ^v
+Return
+
+Quote:
+Clipboard := cpq
+Send, ^v
+return
+
+PO:
+Clipboard := po
+Send, ^v
+return
+
+CustomerName:
+Clipboard := customer
+Send, ^v
+return
+
+OrderNotice:
+Clipboard := "Order Notice - " . customer . " - " . poValue
+Send, ^v
+Return
+
+SoldTo:
+Clipboard := soldTo
+Send, ^v
+return
+
+SalesPerson:
+Clipboard := salesPerson
+Send, ^v
+return
+
+SalesManager:
+Clipboard := salesManager
+Send, ^v
+Return
+
+SalesManagerCode:
+Clipboard := managerCode
+Send, ^v
+return
+
+; SalesPersonCode
+; Clipboard := po
+; Send, ^v
+; return
+
+SalesDirector:
+Clipboard := salesDirector
+Send, ^v
+return
+
+SalesDirectorCode:
+Clipboard := directorCode
+Send, ^v
+return
+
+ContactName:
+Clipboard := contact
+Send, ^v
+return
+
+PoValue:
+Clipboard := poValue
+Send, ^v
+return
+
+Crd:
+FormatTime, TimeString, %crd%, MM/dd/yyyy
+Clipboard := crd
+Send, ^v
+return
+
+FreightCost:
+Clipboard := freightCost
+Send, ^v
+return
+
+TotalCost:
+Clipboard := totalCost
+Send, ^v
+return
+
+EndUser:
+Clipboard := endUser
+Send, ^v
+return
+
+Phone:
+Clipboard := phone
+Send, ^v
+return
+
+Email:
+Clipboard := email
+Send, ^v
+return
+
+EndUserInfo:
+endUserInfo := "END USER: " . endUser . "`nPH: " . phone . "`nEMAIL: " . email . "`n`nCPQ-" . cpq . "`n`nEND USE: " . endUseDeescaped
+StringUpper, endUserInfo, endUserInfo
+Clipboard := endUserInfo
+Send, ^v
+return
+
+#z::Menu, Snippets, Show  ; i.e. press the Win-Z hotkey to show the menu.
+
+; ; Create another menu destined to become a submenu of the above menu.
+; Menu, Submenu1, Add, Item1, MenuHandler
+
+; ; Create a submenu in the first menu (a right-arrow indicator). When the user selects it, the second menu is displayed.
+; Menu, MyMenu, Add, My Submenu, :Submenu1
+
+; Menu, MyMenu, Add  ; Add a separator line below the submenu.
+; Menu, MyMenu, Add, Item3, MenuHandler  ; Add another menu item beneath the submenu.
+; return  ; End of script's auto-execute section.
+
+;-------- END TEXT SNIPPET MENU --------
+
 ; myFunc(path, changes) {
 ;     for k, change in changes
 ;         ; 1 means new file was added
@@ -842,14 +959,6 @@ return
 
 !2:: ; Forward SW Licenses
 	Send, Hi%firstname%`nPlease find the license attached for SO{#}{Space}%soNumber%.`n`nThanks{pgup}
-return
-
-^!c:: ; Import Clip
-	gosub, ImportClip
-return
-
-^#c:: ; Save Clip
-	gosub, SaveClip
 return
 
 ^!v:: ; Show/Hide Order Info GUI
@@ -1093,24 +1202,6 @@ return
 
 ToDisplaySap:
 	ControlFocus, Button1, Standard Order
-return
-
-ImportClip:
-	DetectHiddenWindows, On
-	WinActivate, ClipAngel
-	SendMode, event
-	SetKeyDelay, 40
-	Send, {AltDown}{AltUp}{AltDown}{AltUp}
-	Send, {Right 2}{up 3}{Enter}
-return
-
-SaveClip:
-	DetectHiddenWindows, On
-	WinActivate, ClipAngel
-	SendMode, event
-	SetKeyDelay, 40
-	Send, ^a{AltDown}{AltUp}{AltDown}{AltUp}
-	Send, {Right 2}{up 4}{Enter}
 return
 
 CopySOFromSubjectInOutlook:
@@ -2292,3 +2383,40 @@ if !FileExist(itExists)
 ; counter := SubStr(counter, -6)  
 result := counter
 return
+
+
+
+;======== KEYBOARD SHORTCUTS ========
+; Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
+; LV_ModifyCol(1,190)
+; ;~ LV_ModifyCol(2, 115)
+; LV_Add(Col1, "CPQ (zpq)") ;"zpq")
+; ;~ Gui Add, Text,, CPQ - zpq
+; LV_Add(Col1, "PO# (zpo)") ;,"zpo")
+; ;~ Gui Add, Text, y+5, PO# - zpo
+; LV_Add(Col1, "SO# (zso)") ;,"zso")
+; ;~ Gui Add, Text, y+5, SO# - zso
+; LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
+; ;~ Gui Add, Text, y+5, SOT Line# - zsot
+; LV_Add(Col1, "Customer (zcust)") ;,"zcust")
+; ;~ Gui Add, Text, y+5, Customer - zcust
+; LV_Add(Col1, "PO Value (zval)") ;,"zval")
+; ;~ Gui Add, Text, y+5, PO Value - zval
+; LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
+; ;~ Gui Add, Text, y+5, Salesperson - zsal
+; LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
+; ;~ Gui Add, Text, x775 y225, Customer Contact -
+; ;~ Gui Add, Text, y+5, zcon
+; LV_Add(Col1, "Cust Email (zem)")
+; ;~ Gui Add, Text, y+5, Customer Email - 
+; ;~ Gui Add, Text, y+5, zem
+; LV_Add(Col1, "System (zsys)")
+; ;~ Gui Add, Text, y+5, System - zsys
+; LV_Add(Col1, "End User (zenu)")
+; ;~ Gui Add, Text, y+5, End User - zenu
+; LV_Add(Col1, "End User Phone (zph)")
+; ;~ Gui Add, Text, y+5, Phone - zph
+; LV_Add(Col1, "End Use (zuse)")
+; ;~ Gui Add, Text, y+5, End Use - zuse
+
+;======== END KEYBOARD SHORTCUTS ========
