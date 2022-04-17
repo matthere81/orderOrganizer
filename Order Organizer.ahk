@@ -674,19 +674,24 @@ Menu, Snippets, Add, Order Notice, OrderNotice
 Menu, Snippets, Add, Customer Name, CustomerName
 Menu, Snippets, Add, Customer Contact, ContactName
 Menu, Snippets, Add, Customer Sold To Acct#, SoldTo
+Menu, Snippets, Add, CRD, Crd
 Menu, Snippets, Add  ; Add a separator line.
 Menu, Snippets, Add, SalesPerson, SalesPerson
+
 ; Menu, Snippets, Add, Saleserson Code, SalesPersonCode
 Menu, Snippets, Add, Sales Manager, SalesManager
 Menu, Snippets, Add, Sales Manager Code, SalesManagerCode
 Menu, Snippets, Add, Sales Director, SalesDirector
 Menu, Snippets, Add, Sales Director Code, SalesDirectorCode
+
 Menu, Snippets, Add  ; Add a separator line.
-Menu, Snippets, Add, CRD, Crd
 Menu, Snippets, Add, PO Value, PoValue
 Menu, Snippets, Add, Freight Cost, FreightCost
-; Menu, Snippets, Add, Surcharge, Surcharge
 Menu, Snippets, Add, Total Cost, TotalCost
+
+; Menu, Snippets, Add, Surcharge, Surcharge
+
+Menu, Snippets, Add  ; Add a separator line.
 Menu, Snippets, Add, End User, EndUser
 Menu, Snippets, Add, Phone#, Phone
 Menu, Snippets, Add, Email, Email
