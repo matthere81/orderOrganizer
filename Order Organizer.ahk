@@ -852,6 +852,7 @@ Menu, Snippets, Add, Total Cost, TotalCost
 ; Menu, Snippets, Add, Surcharge, Surcharge
 
 Menu, Snippets, Add  ; Add a separator line.
+Menu, Snippets, Add, Serial Number, SerialNumber
 Menu, Snippets, Add, End User, EndUser
 Menu, Snippets, Add, Phone#, Phone
 Menu, Snippets, Add, Email, Email
@@ -921,6 +922,11 @@ ContactName:
 Clipboard := contact
 Send, ^v
 return
+
+SerialNumber:
+Clipboard := serialNumber
+Send, ^v
+Return
 
 PoValue:
 Clipboard := poValue
