@@ -824,6 +824,149 @@ Return
 
 orderInfo()
 
+;-------- START TEXT SNIPPET MENU --------
+
+; Create the popup menu by adding some items to it.
+Menu, Snippets, Add, SAP SO#, SoNumber
+Menu, Snippets, Add, CPQ or Quote#, Quote
+Menu, Snippets, Add, PO, PO
+Menu, Snippets, Add, Order Notice, OrderNotice
+Menu, Snippets, Add, Customer Name, CustomerName
+Menu, Snippets, Add, Customer Contact, ContactName
+Menu, Snippets, Add, Customer Sold To Acct#, SoldTo
+Menu, Snippets, Add, CRD, Crd
+Menu, Snippets, Add  ; Add a separator line.
+Menu, Snippets, Add, SalesPerson, SalesPerson
+
+; Menu, Snippets, Add, Saleserson Code, SalesPersonCode
+Menu, Snippets, Add, Sales Manager, SalesManager
+Menu, Snippets, Add, Sales Manager Code, SalesManagerCode
+Menu, Snippets, Add, Sales Director, SalesDirector
+Menu, Snippets, Add, Sales Director Code, SalesDirectorCode
+
+Menu, Snippets, Add  ; Add a separator line.
+Menu, Snippets, Add, PO Value, PoValue
+Menu, Snippets, Add, Freight Cost, FreightCost
+Menu, Snippets, Add, Total Cost, TotalCost
+
+; Menu, Snippets, Add, Surcharge, Surcharge
+
+Menu, Snippets, Add  ; Add a separator line.
+Menu, Snippets, Add, End User, EndUser
+Menu, Snippets, Add, Phone#, Phone
+Menu, Snippets, Add, Email, Email
+Menu, Snippets, Add, End User Info, EndUserInfo
+
+SoNumber:
+Clipboard := soNumber
+Send, ^v
+Return
+
+Quote:
+Clipboard := cpq
+Send, ^v
+return
+
+PO:
+Clipboard := po
+Send, ^v
+return
+
+CustomerName:
+Clipboard := customer
+Send, ^v
+return
+
+OrderNotice:
+Clipboard := "Order Notice - " . customer . " - " . poValue
+Send, ^v
+Return
+
+SoldTo:
+Clipboard := soldTo
+Send, ^v
+return
+
+SalesPerson:
+Clipboard := salesPerson
+Send, ^v
+return
+
+SalesManager:
+Clipboard := salesManager
+Send, ^v
+Return
+
+SalesManagerCode:
+Clipboard := managerCode
+Send, ^v
+return
+
+; SalesPersonCode
+; Clipboard := po
+; Send, ^v
+; return
+
+SalesDirector:
+Clipboard := salesDirector
+Send, ^v
+return
+
+SalesDirectorCode:
+Clipboard := directorCode
+Send, ^v
+return
+
+ContactName:
+Clipboard := contact
+Send, ^v
+return
+
+PoValue:
+Clipboard := poValue
+Send, ^v
+return
+
+Crd:
+FormatTime, TimeString, %crd%, MM/dd/yyyy
+Clipboard := crd
+Send, ^v
+return
+
+FreightCost:
+Clipboard := freightCost
+Send, ^v
+return
+
+TotalCost:
+Clipboard := totalCost
+Send, ^v
+return
+
+EndUser:
+Clipboard := endUser
+Send, ^v
+return
+
+Phone:
+Clipboard := phone
+Send, ^v
+return
+
+Email:
+Clipboard := email
+Send, ^v
+return
+
+EndUserInfo:
+endUserInfo := "END USER: " . endUser . "`nPH: " . phone . "`nEMAIL: " . email . "`n`nCPQ-" . cpq . "`n`nEND USE: " . endUseDeescaped
+StringUpper, endUserInfo, endUserInfo
+Clipboard := endUserInfo
+Send, ^v
+return
+
+#z::Menu, Snippets, Show  ; i.e. press the Win-Z hotkey to show the menu.
+
 ;******** HOTSTRINGS (TEXT EXPANSION) ********
 #c::run calc.exe ; Run calculator
 F13::Send, +{F7} ; Next line in item Conditions SAP SOs
