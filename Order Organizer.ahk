@@ -70,6 +70,8 @@ Gui Add, Text,, Sold To Account:
 Gui Add, Edit, vsoldTo, %soldTo%
 Gui Add, Text,, SO#
 Gui Add, Edit, vsoNumber, %soNumber% 
+Gui Add, Text,, Payment Terms
+Gui Add, Edit, vterms, %terms% 
 
 ;----------- END COLUMN 1 END ---------------
 
@@ -85,25 +87,34 @@ Gui Add, DateTime, w135 vpoDate, %poDate%
 Gui Add, Text,, SAP Date:
 Gui Add, DateTime, w135 vsapDate, %sapDate%
 Gui Add, Text,, Software upgrade:
-Gui Add, Radio, x+-80 y+10 gsubmitChecklist vsoftwareUpgradeYes, Yes
+Gui Add, Radio, x+-100 y+10 gsubmitChecklist vsoftwareUpgradeYes, Yes
 Gui Add, Radio, x+5 gsubmitChecklist vsoftwareUpgradeNo, N/A
+Gui Add, Text, xs, Serial | License | Dongle #:
+Gui Add, Edit, vsoftwareUpgradeLicense, %softwareUpgradeLicense% 
 
 ;----------- END COLUMN 2 END ---------------
 
 ;----------- COLUMN 3 ---------------
 
-Gui Add, Text, ys x+80 Section, PO#
+; if !(poValue)
+; {
+; 	poValue := 0
+; 	tax := 0
+; 	freightCost := 0
+; 	surcharge := 0
+; }
+Gui Add, Text, ys x+40 Section, PO#
 Gui Add, Edit, yp+20 xp-2.5 vpo, %po%
 Gui Add, Text,, PO Value:
-Gui Add, Edit, vpoValue, %poValue%
+Gui Add, Edit, w135 vpoValue gCalculateTotals, %poValue%
 Gui Add, Text,, Tax:
-Gui Add, Edit, vtax, %tax%
+Gui Add, Edit, w135 vtax gCalculateTotals, %tax%
 Gui Add, Text,, Freight Cost:
-Gui Add, Edit, vfreightCost, %freightCost% 
+Gui Add, Edit, w135 vfreightCost gCalculateTotals, %freightCost% 
+Gui Add, Text,, Surcharge:
+Gui Add, Edit, w135 vsurcharge gCalculateTotals, %surcharge%
 Gui Add, Text,, Total:
 Gui Add, Edit, vtotalCost, %totalCost% 
-Gui Add, Text,, Serial | License | Dongle #:
-Gui Add, Edit, vsoftwareUpgradeLicense, %softwareUpgradeLicense% 
 
 ;----------- END COLUMN 3 END ---------------
 
@@ -148,42 +159,6 @@ Gui Add, Text, x10 y450, _______________________________________________________
 
 Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
 Gui Tab, 1
-
-
-; ;======== KEYBOARD SHORTCUTS ========
-; Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
-; LV_ModifyCol(1,190)
-; ;~ LV_ModifyCol(2, 115)
-; LV_Add(Col1, "CPQ (zpq)") ;"zpq")
-; ;~ Gui Add, Text,, CPQ - zpq
-; LV_Add(Col1, "PO# (zpo)") ;,"zpo")
-; ;~ Gui Add, Text, y+5, PO# - zpo
-; LV_Add(Col1, "SO# (zso)") ;,"zso")
-; ;~ Gui Add, Text, y+5, SO# - zso
-; LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
-; ;~ Gui Add, Text, y+5, SOT Line# - zsot
-; LV_Add(Col1, "Customer (zcust)") ;,"zcust")
-; ;~ Gui Add, Text, y+5, Customer - zcust
-; LV_Add(Col1, "PO Value (zval)") ;,"zval")
-; ;~ Gui Add, Text, y+5, PO Value - zval
-; LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
-; ;~ Gui Add, Text, y+5, Salesperson - zsal
-; LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
-; ;~ Gui Add, Text, x775 y225, Customer Contact -
-; ;~ Gui Add, Text, y+5, zcon
-; LV_Add(Col1, "Cust Email (zem)")
-; ;~ Gui Add, Text, y+5, Customer Email - 
-; ;~ Gui Add, Text, y+5, zem
-; LV_Add(Col1, "System (zsys)")
-; ;~ Gui Add, Text, y+5, System - zsys
-; LV_Add(Col1, "End User (zenu)")
-; ;~ Gui Add, Text, y+5, End User - zenu
-; LV_Add(Col1, "End User Phone (zph)")
-; ;~ Gui Add, Text, y+5, Phone - zph
-; LV_Add(Col1, "End Use (zuse)")
-; ;~ Gui Add, Text, y+5, End Use - zuse
-
-; ;======== END KEYBOARD SHORTCUTS ========
 
 ; ----------- PRE SALESFORCE -----------------
 
@@ -291,6 +266,57 @@ Gui, Submit, NoHide
 ; WinSetTitle, WinTitle, WinText, NewTitle [, ExcludeTitle, ExcludeText]
 WinSetTitle, Order Organizer,, Order Organizer - v1.1
 
+CalculateTotals:
+Gui Submit, NoHide
+StringReplace, poValue, poValue, `,,, All
+StringReplace, tax, tax, `,,, All
+StringReplace, surcharge, surcharge, `,,, All
+StringReplace, freightCost, freightCost, `,,, All
+
+
+if (poValue)
+{
+	totalCost := poValue
+}
+
+if (poValue) && (tax)
+{
+	totalCost := poValue + tax
+}
+
+if (poValue) && (freightCost)
+{
+	totalCost := poValue + freightCost
+}
+
+if (poValue) && (surcharge)
+{
+	totalCost := poValue + surcharge
+}
+
+if (poValue) && (tax) && (freightCost)
+{
+	totalCost := poValue + tax + freightCost
+}
+
+if (poValue) && (tax) && (surcharge)
+{
+	totalCost := poValue + tax + surcharge
+}
+
+if (poValue) && (freightCost) && (surcharge)
+{
+	totalCost := poValue + freightCost + surcharge
+}
+
+if (poValue) && (tax) && (freightCost) && (surcharge)
+{
+	totalCost := poValue + tax + freightCost + surcharge
+}
+
+totalCost := Round(totalCost, 2)
+GuiControl,,totalCost, %totalCost%
+Return
 
 submitChecklist:
 Gui, Submit, Nohide
@@ -356,7 +382,9 @@ GuiControl,, poValue, %poValue%
 IniRead, tax, %SelectedFile%, orderInfo, tax
 GuiControl,, tax, %tax%
 IniRead, freightCost, %SelectedFile%, orderInfo, freightCost
-GuiControl,, freightCost, %freightCost%
+GuiControl,, freightCost, %freightCost% 
+IniRead, surcharge, %SelectedFile%, orderInfo, surcharge
+GuiControl,, surcharge, %surcharge%	
 IniRead, totalCost, %SelectedFile%, orderInfo, totalCost
 GuiControl,, totalCost, %totalCost%
 IniRead, system, %SelectedFile%, orderInfo, system
@@ -367,6 +395,8 @@ IniRead, crd, %SelectedFile%, orderInfo, crd
 GuiControl,, crd, %crd%
 IniRead, soNumber, %SelectedFile%, orderInfo, soNumber
 GuiControl,, soNumber, %soNumber%
+IniRead, terms, %SelectedFile%, orderInfo, terms
+GuiControl,, terms, %terms%
 IniRead, poDate, %SelectedFile%, orderInfo, poDate
 GuiControl,, poDate, %poDate%
 IniRead, sapDate, %SelectedFile%, orderInfo, sapDate
@@ -682,11 +712,13 @@ IniWrite, %contact%, %IniFilePath%, orderInfo, contact
 IniWrite, %poValue%, %IniFilePath%, orderInfo, poValue
 IniWrite, %tax%, %IniFilePath%, orderInfo, tax
 IniWrite, %freightCost%, %IniFilePath%, orderInfo, freightCost
+IniWrite, %surcharge%, %IniFilePath%, orderInfo, surcharge
 IniWrite, %totalCost%, %IniFilePath%, orderInfo, totalCost
 IniWrite, %system%, %IniFilePath%, orderInfo, system
 IniWrite, %soldTo%, %IniFilePath%, orderInfo, soldTo
 IniWrite, %crd%, %IniFilePath%, orderInfo, crd
 IniWrite, %soNumber%, %IniFilePath%, orderInfo, soNumber
+IniWrite, %terms%, %IniFilePath%, orderInfo, terms
 IniWrite, %poDate%, %IniFilePath%, orderInfo, poDate
 IniWrite, %sapDate%, %IniFilePath%, orderInfo, sapDate
 IniWrite, %endUser%, %IniFilePath%, orderInfo, endUser
@@ -857,6 +889,8 @@ Menu, Snippets, Add, End User, EndUser
 Menu, Snippets, Add, Phone#, Phone
 Menu, Snippets, Add, Email, Email
 Menu, Snippets, Add, End User Info, EndUserInfo
+
+Return
 
 SoNumber:
 Clipboard := soNumber
