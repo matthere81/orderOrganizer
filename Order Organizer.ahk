@@ -1880,6 +1880,7 @@ Loop,
 	}
 }
 MouseClick, left, 291, 190
+Sleep 400
 MouseClick, left, 537, 250
 WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 MouseClick, left, 1210, 377
@@ -1914,10 +1915,11 @@ return
 
 ReportGenerate:
 generateReport := 0
+MsgBox in generateReport
 Loop
 {
 	CoordMode, Pixel, Client
-	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211203140835.png
+	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\dateCreated.png
 	If ErrorLevel = 0
 	{
 		; Override success screen
@@ -1939,7 +1941,7 @@ Loop
 		Break
 	}
 	CoordMode, Pixel, Client
-	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211207112110.png
+	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\noRecordsFound.png
 	If ErrorLevel = 0
 	{
 		CoordMode, Pixel, Client
@@ -1956,8 +1958,8 @@ Loop
 		}
 		Break
 	}
-	generateReport += 1
-	ToolTip, %generateReport%
+	; generateReport += 1
+	; ToolTip, %generateReport%
 }
 Return
 
@@ -1977,15 +1979,17 @@ if FileExist(dpsPath . "DPS - " . customer . ".pdf")
 {
 	Clipboard := dpsPath . "DPS - " . customer
 }
+MsgBox %dpsPath%
 Sleep, 200
 Send ^v
-KeyWait, F14, D
+Sleep 200
 Send {Enter}
 WinWaitActive, DTSSearchResults
 Send ^w
 return
 
 DPSResults:
+MsgBox in DPSResults
 Loop
 {   
 	; No records found
@@ -2039,7 +2043,7 @@ Loop
 	}
 	; Overridden
 	CoordMode, Pixel, Client
-	ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211206102506.png
+	ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\overridden.png
 	If ErrorLevel = 0
 	{
 		Sleep, 200
