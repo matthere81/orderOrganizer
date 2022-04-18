@@ -780,7 +780,7 @@ Send, ^v
 return
 
 OrderNotice:
-Clipboard := "Order Notice - " . customer . " - " . poValue
+Clipboard := "Order Notice - " . customer . " - $" . poValue
 Send, ^v
 Return
 
