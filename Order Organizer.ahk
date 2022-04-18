@@ -100,7 +100,7 @@ Gui Add, Button, x+25 w70 gSaveToIni, &Save
 Gui Add, Button, x+25 w150 grestartScript, &New PO or Reload
 Gui Add, Tab3, xm ym+30, Order Info|Checklist
 Gui Tab, 1
-Gui Add, Text,, CPQ:
+Gui Add, Text, Section, CPQ:
 Gui Add, Edit, vcpq, %cpq% 
 Gui Add, Text,, PO:
 Gui Add, Edit, vpo, %po%
@@ -114,8 +114,8 @@ Gui Add, Text,, Customer / DPS Address:
 Gui Add, Edit, vaddress, %address% 
 Gui Add, Text,, Sold To Account:
 Gui Add, Edit, vsoldTo, %soldTo%
-gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-Gui Add, Text, x+12.5 y72, System:
+gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
+Gui Add, Text, x+12.5 y72 Section, System:
 Gui Add, Edit, vsystem, %system% 
 gui Add, Text,, Salesperson:
 Gui Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople
@@ -130,23 +130,25 @@ Gui Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
 Gui Add, CheckBox, x220 y430 vsoftware gdongle, Software?
 Gui Add, Text, x190 y435.5 Hidden vserialNumberText, S/N:  ;x187.5 y460.5 h10, S/N: ;x187.5 y437.5
 Gui Add, Edit, x225 y430 w100 Hidden vserialNumber, ; y432.5
-Gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-Gui Add, Text, x+12.5 y70, CRD:
+Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
+Gui Add, Text, x+12.5 y70 Section, CRD:
 Gui Add, DateTime, w135 vcrd, %crd%
 Gui Add, Text,, PO Date:
 Gui Add, DateTime, w135 vpoDate, %poDate% 
 Gui Add, Text,, SAP Date:
 Gui Add, DateTime, w135 vsapDate, %sapDate%
 Gui Add, Text,, PO Value:
-Gui Add, Edit, vpoValue, %poValue%
+Gui Add, Edit, vpoValue gCalculateTotals, %poValue%
 Gui Add, Text,, Tax:
-Gui Add, Edit, vtax, %tax%
+Gui Add, Edit, vtax gCalculateTotals, %tax%
 Gui Add, Text,, Freight Cost:
-Gui Add, Edit, vfreightCost, %freightCost% 
+Gui Add, Edit, vfreightCost gCalculateTotals, %freightCost% 
+Gui Add, Text,, Surcharge:
+Gui Add, Edit, w135 vsurcharge gCalculateTotals, %surcharge%
 Gui Add, Text,, Total:
 Gui Add, Edit, vtotalCost, %totalCost% 
 Gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-Gui Add, Text, x+12.5 y95 +center, END USER INFO:
+Gui Add, Text, x+12.5 y95 +center Section, END USER INFO:
 Gui Add, Text,, End User:
 Gui Add, Edit, vendUser
 Gui Add, Text,, Phone:
@@ -157,8 +159,8 @@ Gui Add, Text,, End Use:
 Gui Add, Edit, w135 h78 vendUse
 Gui Add, Text,, SO#
 Gui Add, Edit, vsoNumber, %soNumber% 
-Gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
-Gui Add, Text, x+12.5 y70, Notes:
+Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
+Gui Add, Text, x+12.5 y70 Section, Notes:
 Gui Add, Edit, w215 h120 vnotes, %notes%
 
 
@@ -216,11 +218,63 @@ Gui Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
 ;~ Gui Add, Text, x60 y400 , Order Progress
 ;~ Gui Add, Progress, w800 h25, 25
 ;******** END CHECKLIST GUI ********
-Gui Show,w920 h485, Order Organizer ;SO# %soNumber%
+Gui Show,w920 h530, Order Organizer ;SO# %soNumber%
 Gui Submit, NoHide
 submitChecklist:
 Gui Submit, Nohide
 return
+
+CalculateTotals:
+Gui Submit, NoHide
+StringReplace, poValue, poValue, `,,, All
+StringReplace, tax, tax, `,,, All
+StringReplace, surcharge, surcharge, `,,, All
+StringReplace, freightCost, freightCost, `,,, All
+
+
+if (poValue)
+{
+	totalCost := poValue
+}
+
+if (poValue) && (tax)
+{
+	totalCost := poValue + tax
+}
+
+if (poValue) && (freightCost)
+{
+	totalCost := poValue + freightCost
+}
+
+if (poValue) && (surcharge)
+{
+	totalCost := poValue + surcharge
+}
+
+if (poValue) && (tax) && (freightCost)
+{
+	totalCost := poValue + tax + freightCost
+}
+
+if (poValue) && (tax) && (surcharge)
+{
+	totalCost := poValue + tax + surcharge
+}
+
+if (poValue) && (freightCost) && (surcharge)
+{
+	totalCost := poValue + freightCost + surcharge
+}
+
+if (poValue) && (tax) && (freightCost) && (surcharge)
+{
+	totalCost := poValue + tax + freightCost + surcharge
+}
+
+totalCost := Round(totalCost, 2)
+GuiControl,,totalCost, %totalCost%
+Return
 
 submitSales:
 Gui Submit, NoHide
