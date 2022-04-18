@@ -114,6 +114,8 @@ Gui Add, Text,, Customer / DPS Address:
 Gui Add, Edit, vaddress, %address% 
 Gui Add, Text,, Sold To Account:
 Gui Add, Edit, vsoldTo, %soldTo%
+Gui Add, Text,, Payment Terms
+Gui Add, Edit, vterms, %terms% 
 gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
 Gui Add, Text, x+12.5 y72 Section, System:
 Gui Add, Edit, vsystem, %system% 
@@ -147,7 +149,7 @@ Gui Add, Text,, Surcharge:
 Gui Add, Edit, w135 vsurcharge gCalculateTotals, %surcharge%
 Gui Add, Text,, Total:
 Gui Add, Edit, vtotalCost, %totalCost% 
-Gui Add, GroupBox, x+12.5 y100 w1 h347 ; vertical line
+Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
 Gui Add, Text, x+12.5 y95 +center Section, END USER INFO:
 Gui Add, Text,, End User:
 Gui Add, Edit, vendUser
@@ -395,6 +397,8 @@ IniRead, directorCode, %SelectedFile%, orderInfo, directorCode
 GuiControl, ChooseString, directorCode, %directorCode%
 IniRead, address, %SelectedFile%, orderInfo, address
 GuiControl,, address, %address%
+IniRead, terms, %SelectedFile%, orderInfo, terms
+GuiControl,, terms, %terms%
 IniRead, contact, %SelectedFile%, orderInfo, contact
 GuiControl,, contact, %contact%
 IniRead, poValue, %SelectedFile%, orderInfo, poValue
@@ -403,6 +407,8 @@ IniRead, tax, %SelectedFile%, orderInfo, tax
 GuiControl,, tax, %tax%
 IniRead, freightCost, %SelectedFile%, orderInfo, freightCost
 GuiControl,, freightCost, %freightCost%
+IniRead, surcharge, %SelectedFile%, orderInfo, surcharge
+GuiControl,, surcharge, %surcharge%	
 IniRead, totalCost, %SelectedFile%, orderInfo, totalCost
 GuiControl,, totalCost, %totalCost%
 IniRead, system, %SelectedFile%, orderInfo, system
@@ -589,6 +595,7 @@ IniRead, ID, %selectedFile%, id, ID
 	IniWrite, %po%, %IniFilePath%, orderInfo, po
 	IniWrite, %sot%, %IniFilePath%, orderInfo, sot
 	IniWrite, %customer%, %IniFilePath%, orderInfo, customer
+	IniWrite, %terms%, %IniFilePath%, orderInfo, terms
 	IniWrite, %salesPerson%, %IniFilePath%, orderInfo, salesPerson
 	IniWrite, %salesManager%, %IniFilePath%, orderInfo, salesManager
 	IniWrite, %managerCode%, %IniFilePath%, orderInfo, managerCode
@@ -599,6 +606,7 @@ IniRead, ID, %selectedFile%, id, ID
 	IniWrite, %poValue%, %IniFilePath%, orderInfo, poValue
 	IniWrite, %tax%, %IniFilePath%, orderInfo, tax
 	IniWrite, %freightCost%, %IniFilePath%, orderInfo, freightCost
+	IniWrite, %surcharge%, %IniFilePath%, orderInfo, surcharge
 	IniWrite, %totalCost%, %IniFilePath%, orderInfo, totalCost
 	IniWrite, %system%, %IniFilePath%, orderInfo, system
 	IniWrite, %soldTo%, %IniFilePath%, orderInfo, soldTo
