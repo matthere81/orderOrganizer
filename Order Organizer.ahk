@@ -1079,9 +1079,8 @@ return
 	gosub, GetSubjectFromOutlook
 	ClipWait, 1
 	RegExMatch(Clipboard, "(\d{7})", cshSoNumber)
-	SendMode, Event
-	SetKeyDelay, 70
 	Sleep, 500
+	Clipboard := cshSoNumber
 	gosub, OpenSAPWindowForCsh
 	WinActivate, Order %cshSoNumber%,,ClipAngel,
 	Send, !ghd
@@ -1094,15 +1093,17 @@ return
 	gosub WaitInbox
 	Send, ^!s
 	gosub WaitSaveAs
-	Send, PO %cshPo%{Down}{Enter}CSH Removal Email
+	Send, PO %cshPo%{Down} ;{Enter}CSH Removal Email
+	Return
 	gosub WaitSaveAs
 	Send, !s
 	gosub WaitCshSO
-	Send, ^{tab 3}!{Down}
+	Send, ^\
 	Sleep, 500
 	Send, {Down 2}{Enter}
 	gosub WinWaitAttachmentList
 	SendMode, Input
+	Return
 	Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}{tab 6}{Space}{Tab}{Down}{Enter}
 	KeyWait F14, d ; Navigate to CSH Removal Email
 	gosub WinWaitAttachmentList
@@ -1356,7 +1357,7 @@ addAttachment: ; Add Attachment
 return
 
 WaitInbox:
-	WinWait, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
+	; WinWait, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
 	IfWinNotActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, , WinActivate, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
 		WinWaitActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
 return
@@ -1417,47 +1418,6 @@ ToSoDocAttachments:
 	Sleep, 500
 Return
 
-; Send, {tab 6}+{Space}
-; Sleep, 1000
-; Send, {Tab}{down}{Enter}
-; Sleep, 1000
-; Send, !n
-; Send, po{Space}%po%
-; Sleep, 200
-; Send, {Down}{Enter}
-; Sleep, 1000
-; Send, po
-; Sleep, 500
-; Send, {Down}{Enter}
-; Sleep, 1000 
-; Send, ^{tab 3}
-; Sleep, 1500
-; Send, !{Down}
-; Sleep, 500
-; Send, {down}a
-; gosub, WinWaitAttachmentList
-; Send, ^+{tab 3}{left 14}{enter}{down}{enter}
-; gosub, WinWaitImportFile
-; Send, !n
-; gosub, WinWaitImportFile
-; Send, cpq-{Down}{enter}
-; Sleep, 2000
-; Send, ^+{tab}{left 14}{enter}{down}{enter}
-; gosub, WinWaitImportFile
-; Send, !n
-; Send, d
-; Sleep, 200
-; Send, {down}{enter}
-; Sleep, 2000
-; Send, ^+{tab}{left 14}{enter}
-; Sleep, 200
-; Send, {down}{enter}
-; gosub, WinWaitImportFile
-; Send, !n
-; Send, d
-; Sleep, 200
-; Send, {down 2}{enter}
-return
 
 WinWaitImportFile:
 	WinWait, Import file, 
@@ -1645,7 +1605,7 @@ if WinExist("Change Standard Order") {
 	WinWaitActive, Change Standard Order,
 	Send, {F3}{BackSpace}
 	Sleep, 500
-	Send, %cshSoNumber%
+	Send, ^v
 	Sleep, 500
 	Send, {Enter}
 	Sleep, 500
@@ -1656,7 +1616,7 @@ if WinExist("Change Standard Order") {
 	WinActivate, Change Sales Order,
 	WinWaitActive, Change Sales Order,
 	Sleep, 200
-	Send, {end}+{Home}{BackSpace}%cshSoNumber%{Enter}
+	Send, {end}+{Home}{BackSpace}^v{Enter}
 	Sleep, 500
 	Send, {Tab}{Enter}
 	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
@@ -1671,7 +1631,7 @@ if WinExist("Change Standard Order") {
 	WinWait, SAP Easy Access, 
 	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access, 
 		WinWaitActive, SAP Easy Access, 
-	Send, %cshSoNumber%{enter}
+	Send, ^v{enter}
 	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
 		WinWaitActive, Change Standard Order,
 	WinActivate ; use the window found above
