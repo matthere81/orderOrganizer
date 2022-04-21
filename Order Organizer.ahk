@@ -1075,6 +1075,8 @@ return
 return
 
 ^#h:: ;hhbr
+	SendMode, Event
+	SetKeyDelay, 100
 	gosub WaitInbox
 	gosub, GetSubjectFromOutlook
 	ClipWait, 1
@@ -1093,31 +1095,41 @@ return
 	gosub WaitInbox
 	Send, ^!s
 	gosub WaitSaveAs
-	Send, PO %cshPo%{Down} ;{Enter}CSH Removal Email
-	Return
-	gosub WaitSaveAs
-	Send, !s
+	Send, PO ^v
+	Sleep 500
+	Send, {Down}{Enter}
+	Sleep 500
+	Send CSH Removal Email{Enter}
 	gosub WaitCshSO
+	Sleep 200
 	Send, ^\
-	Sleep, 500
+	Sleep, 1250
 	Send, {Down 2}{Enter}
 	gosub WinWaitAttachmentList
-	SendMode, Input
-	Return
-	Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}{tab 6}{Space}{Tab}{Down}{Enter}
-	KeyWait F14, d ; Navigate to CSH Removal Email
+	Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}
+	Gosub, WinWaitImportFile
+	; Send {tab 6}{Space}{Tab}{Down}{Enter}
+	Send !n
+	Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs"
+	Send ^v{enter}
+	Clipboard := cshPo
+	Send PO{space}^v{down}{enter}
+	Gosub, WinWaitImportFile
+	Send csh{down}{enter}
 	gosub WinWaitAttachmentList
+	Sleep 1250
 	Send, ^{Tab}{Enter}
 	gosub WaitCshSO
 	Sleep, 1000
+	; SetKeyDelay, 100
 	Send, ^{tab 4}{down}{tab}{Delete}{Enter}
 	gosub, WaitCshSO
-	Send, ^{tab 3}!{Down}{c 2}{Enter}
 	Sleep, 2000
 	gosub, WaitInbox
+	SetKeyDelay, 0
 	Send, ^+r
 	gosub, GetSenderOrToFieldFromOutlook
-	Send, Hi%firstname%,`nThe hold has been removed.`n`nThanks ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
+	Send, Hi%firstname%,`nThe hold has been removed.`n`nThank you ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
 return
 
 ; Save OA Checklist
@@ -1155,8 +1167,8 @@ return
 return
 
 WaitSaveAs:
-	WinWait, Save As, 
-	IfWinNotActive, Save As, , WinActivate, Save As, 
+	; WinWait, Save As, 
+	; IfWinNotActive, Save As, , WinActivate, Save As, 
 		WinWaitActive, Save As,
 return
 
@@ -1875,7 +1887,6 @@ return
 
 ReportGenerate:
 generateReport := 0
-MsgBox in generateReport
 Loop
 {
 	CoordMode, Pixel, Client
@@ -1939,7 +1950,6 @@ if FileExist(dpsPath . "DPS - " . customer . ".pdf")
 {
 	Clipboard := dpsPath . "DPS - " . customer
 }
-MsgBox %dpsPath%
 Sleep, 200
 Send ^v
 Sleep 200
@@ -1949,7 +1959,6 @@ Send ^w
 return
 
 DPSResults:
-MsgBox in DPSResults
 Loop
 {   
 	; No records found
