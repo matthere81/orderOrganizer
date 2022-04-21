@@ -17,7 +17,9 @@ salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch La
 . "|Cari Randles|Shijun (Simon) Sheng|Sean Bennett|Nelson Huang|Lorraine Foglio|Gerald Koncar|Lauren Fischer|Brian Luckenbill"
 . "|Amy Allgower|Brandon Markle|Crystal Flowers|Douglas McDowell|Dante Bencivengo|Dana Stradtner|Justin Chang|Kate Lincoln|"
 . "Angelito Nepomuceno|Patrick Bohman|Kristin Roberts|John Venesky|Sarah Jackson|Daniel Quinn|Eric Norviel|Lisa Kasper|Karla Esparza|"
-. "Loris Fossir|Russ Constantineau|David Kusel|Taylor Graham|Jerome Johemko|Christie Baldizar|"
+. "Loris Fossir|Russ Constantineau|David Kusel|Taylor Graham|Jerome Johemko|Christie Baldizar|Christina Guintu|Ross Milam|Sunny Chen|David Hill"
+. "|Elaine Miller|Gary Scharrer|Valerie Bruner|Laura Howell|Cecilia Snyder|Tatiana Valle Melendez|Annie Cantelmo|Sitara Chauhan|Doug Meinhart"
+. "|Tori Milioni|Bob Myers|Paulette Parker|Jane-Marie Kowalski|Ronsar Eid|Brian Ridley|Krystina Simms|"
 
 salesManagers := "|Anjou Keller|Joe Hewitt|Zee Nadjie|Doug McCormack|Natalie Foels|Tonya Second|Lou Gavino|Christopher Crafts|Joe McFadden|John Butler|Richard Klein|Ray Chen|Randy Porch|Darren Tollstrup"
 
@@ -1218,6 +1220,24 @@ tollstrupDropDown:
 	Gui Submit, NoHide
 return
 
+gavinoDropDown:
+	GuiControl, Choose, salesManager, Lou Gavino
+	GuiControl, ChooseString, managerCode, 96654
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 202375
+	Gui Submit, NoHide
+return
+
+craftsDropDown:
+	GuiControl, Choose, salesManager, Christopher Crafts
+	GuiControl, ChooseString, managerCode, 202625
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 202375
+	Gui Submit, NoHide
+return
+
 findSales:
 ;=============== KELLER ===================
 if salesPerson = Julie Sawicki
@@ -1461,7 +1481,57 @@ if salesPerson = Christie Baldizar
 
 ;========== END TOLLSTRUP ==========
 
-;======== BLANKS =======
+;========== GAVINO ==========
+
+if salesPerson = Christina Guintu  
+	gosub, gavinoDropDown
+if salesPerson = Ross Milam
+	gosub, gavinoDropDown
+if salesPerson = Sunny Chen  
+	gosub, gavinoDropDown
+if salesPerson = David Hill
+	gosub, gavinoDropDown
+if salesPerson = Elaine Miller
+	gosub, gavinoDropDown
+if salesPerson = Gary Scharrer
+	gosub, gavinoDropDown
+if salesPerson = Valerie Bruner
+	gosub, gavinoDropDown
+if salesPerson = Laura Howell
+	gosub, gavinoDropDown
+if salesPerson = Cecilia Snyder
+	gosub, gavinoDropDown
+if salesPerson = Tatiana Valle Melendez
+	gosub, gavinoDropDown
+
+;========== END GAVINO ==========
+
+;======== CRAFTS =======
+
+if salesPerson = Annie Cantelmo
+	gosub, craftsDropDown
+if salesPerson = Sitara Chauhan
+	gosub, craftsDropDown
+if salesPerson = Doug Meinhart
+	gosub, craftsDropDown
+if salesPerson = Tori Milioni
+	gosub, craftsDropDown
+if salesPerson = Bob Myers
+	gosub, craftsDropDown
+if salesPerson = Paulette Parker
+	gosub, craftsDropDown
+if salesPerson = Jane-Marie Kowalski
+	gosub, craftsDropDown
+if salesPerson = Ronsar Eid
+	gosub, craftsDropDown
+if salesPerson = Brian Ridley
+	gosub, craftsDropDown 
+if salesPerson = Krystina Simms
+	gosub, craftsDropDown
+
+;======== END CRAFTS =======
+
+
 if salesPerson =
 {
 	GuiControl, Choose, salesManager, |1 
