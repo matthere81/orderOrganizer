@@ -1876,19 +1876,19 @@ Send, +{tab 6}{Enter}
 WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 
 Gosub, DPSResults
-Gosub, ReportGenerate
-Gosub, PrintDPS
+; Gosub, ReportGenerate
+; Gosub, PrintDPS
 
-; Contact DPS Report
-WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-Send, {tab 5}{BackSpace}+{Tab}{BackSpace}%contact%+{tab 7}{enter}
-WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+; ; Contact DPS Report
+; WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+; Send, {tab 5}{BackSpace}+{Tab}{BackSpace}%contact%+{tab 7}{enter}
+; WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 
-Gosub, DPSResults
-Gosub, ReportGenerate
-Gosub, PrintDPS
-WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-Send, ^w
+; Gosub, DPSResults
+; Gosub, ReportGenerate
+; Gosub, PrintDPS
+; WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+; Send, ^w
 return
 
 ReportGenerate:
