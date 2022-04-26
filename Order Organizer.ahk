@@ -1841,6 +1841,11 @@ Sleep, 1000
 Send, ^{PGUP}
 return
 
+SetTitleMatchMode, 2
+#IfWinActive Order Organizer
++Space::MouseClick, left,,, 2
+Return
+
 !+d:: ; GET DPS REPORTS
 SetDefaultMouseSpeed, 10
 dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq
