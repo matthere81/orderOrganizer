@@ -1483,18 +1483,25 @@ IfWinNotActive, Save As, , WinActivate, Save As,
 return
 
 ^l::
-gosub, WaitInbox
-Send, ^n
-WinWait, Untitled, 
-IfWinNotActive, Untitled, , WinActivate, Untitled, 
-	WinWaitActive, Untitled, 
-Send, chmielowski{enter}{tab}{tab}SO{#}{space}%soNumber%
-Send, {space}Level 2 Approval{tab}Hi Ellen, `nPlease review SO{#}{space}
-SendRaw, %soNumber% for level 2 approval.`n`nThanks
-	Send, !h
-Sleep, 500
-Send, af{Enter}
-return
+soNumber := 123456
+SendMode, event
+Setkeydelay 20
+gosub WaitInbox
+Send ^n
+WinWait Untitled
+Clipboard := "chmielowski"
+Send %Clipboard%
+Sleep 750
+Send {tab 3}
+Clipboard := "SO{#}{space}" . soNumber . "{space}Level 2 Approval"
+Send %Clipboard%{tab}
+Clipboard := "Hi Ellen, `nPlease review SO{#}{space}" . soNumber .  "{space}for level 2 approval.`n`nThank you"
+Send %Clipboard%
+Sleep 500
+Send !h 
+Sleep 500
+Send af{enter}
+Return
 
 F15:: ; Copy / Paste - Plant Coding
 	Sleep, 200
