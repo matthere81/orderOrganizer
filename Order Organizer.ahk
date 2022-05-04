@@ -1080,9 +1080,9 @@ return
 	Send, ^{tab 4}{Down}{Space}
 return
 
-^#h:: ;hhbr
+^#h:: ;CSH Removal
 	SendMode, Event
-	SetKeyDelay, 100
+	SetKeyDelay, 200
 	gosub WaitInbox
 	gosub, GetSubjectFromOutlook
 	ClipWait, 1
@@ -1099,40 +1099,40 @@ return
 	Send, {F3}
 	gosub, WaitCshSO
 	gosub WaitInbox
-	Send, ^!s
+	Send ^!s
 	gosub WaitSaveAs
 	Send, PO ^v
 	Sleep 500
 	Send, {Down}{Enter}
-	Sleep 500
-	Send CSH Removal Email{Enter}
+	Clipboard := "CSH Removal Email"
+	Send ^v{Enter}
 	gosub WaitCshSO
-	Sleep 200
-	Send, ^\
-	Sleep, 1250
-	Send, {Down 2}{Enter}
+	Sleep 500
+	Send ^\
+	Sleep 1500
+	Send {Down 2}{Enter}
 	gosub WinWaitAttachmentList
 	Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}
 	Gosub, WinWaitImportFile
-	; Send {tab 6}{Space}{Tab}{Down}{Enter}
 	Send !n
-	Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs"
+	Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs" 
 	Send ^v{enter}
 	Clipboard := cshPo
 	Send PO{space}^v{down}{enter}
 	Gosub, WinWaitImportFile
+	SetKeyDelay 150
 	Send csh{down}{enter}
 	gosub WinWaitAttachmentList
 	Sleep 1250
-	Send, ^{Tab}{Enter}
+	Send ^{Tab}{Enter}
 	gosub WaitCshSO
 	Sleep, 1000
 	; SetKeyDelay, 100
-	Send, ^{tab 4}{down}{tab}{Delete}{Enter}
+	Send ^{tab 4}{down}{tab}{Delete}{Enter}
 	gosub, WaitCshSO
 	Sleep, 2000
 	gosub, WaitInbox
-	SetKeyDelay, 0
+	SetKeyDelay 0
 	Send, ^+r
 	gosub, GetSenderOrToFieldFromOutlook
 	Send, Hi%firstname%,`nThe hold has been removed.`n`nThank you ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
@@ -1501,6 +1501,7 @@ Sleep 500
 Send !h 
 Sleep 500
 Send af{enter}
+SetKeyDelay 0
 Return
 
 F15:: ; Copy / Paste - Plant Coding
