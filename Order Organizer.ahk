@@ -1483,7 +1483,6 @@ IfWinNotActive, Save As, , WinActivate, Save As,
 return
 
 ^l::
-soNumber := 123456
 SendMode, event
 Setkeydelay 20
 gosub WaitInbox
@@ -1552,12 +1551,6 @@ return
 	Send ^v
 	Sleep 400
 	Send {Insert}
-return
-
-!o:: ;Navigate to Order Notice
-	Send, !n
-	sleep, 500
-	Send, Ord{Down}{enter}
 return
 
 !+g:: ;---- Delete GSA Price --------
