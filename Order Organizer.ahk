@@ -35,37 +35,6 @@ IfExist, %I_Icon%
 
 Menu, FileMenu, Add
 
-; Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
-; {
-; 	Haystack := A_LoopFileName
-; 	Needle := "CPQ"
-; 	If !InStr(Haystack, Needle, true)
-; 	{
-; 		foundPos := (RegExMatch(Haystack, "\s((?:.*))\s", poCheck))
-; 		; if (RegExMatch(Haystack, "(?:\W(.*)\W[A-Z])", poCheck));[, UnquotedOutputVar = "", StartingPos = 1])
-; 			MsgBox, 4, , %Haystack%`n%poCheck%
-; 			IfMsgBox No
-; 	return
-; 		; if (RegExMatch(cpq, "(?:^00*)", quoteNumberCpq))
-; 	}
-; 	MsgBox, 4, , Delete %A_LoopFileName%? (Press YES or NO)
-; 		IfMsgBox Yes
-; 		{
-; 			MsgBox, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\%A_LoopFileName%
-; 			; FileDelete, A_LoopFileName
-; 		}
-; 		IfMsgBox No
-; 	return
-; 	; Else
-; 	; {
-; 	; 	MsgBox, 4, , Not found`n%A_LoopFileName%
-; 	; 		IfMsgBox No
-; 	; return
-; 	; }
-; }
-
-; Return
-
 SetTitleMatchMode, 2
 
 orderInfo(){
@@ -732,6 +701,7 @@ Return
 
 orderInfo()
 
+
 ;-------- START TEXT SNIPPET MENU --------
 
 ; Create the popup menu by adding some items to it.
@@ -875,48 +845,6 @@ return
 
 #z::Menu, Snippets, Show  ; i.e. press the Win-Z hotkey to show the menu.
 
-; ; Create another menu destined to become a submenu of the above menu.
-; Menu, Submenu1, Add, Item1, MenuHandler
-
-; ; Create a submenu in the first menu (a right-arrow indicator). When the user selects it, the second menu is displayed.
-; Menu, MyMenu, Add, My Submenu, :Submenu1
-
-; Menu, MyMenu, Add  ; Add a separator line below the submenu.
-; Menu, MyMenu, Add, Item3, MenuHandler  ; Add another menu item beneath the submenu.
-; return  ; End of script's auto-execute section.
-
-;-------- END TEXT SNIPPET MENU --------
-
-; myFunc(path, changes) {
-;     for k, change in changes
-;         ; 1 means new file was added
-;         if (change.action = 1) {
-;             gosub doStuff
-;             return
-;         }
-; }
-
-;/******** OPEN QUOTE AND GET INFO ********\
-; WatchFolder("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Sales Quotes", "myFunc", , Watch := 1)
-; return
-
-;~ myFunc(path, changes)
-
-; doStuff:
-; nitroPath := "C:\Program Files\Nitro\Pro\13\NitroPDF.exe"
-; adobePath := "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"
-; SetTitleMatchMode 2
-; myPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Sales Quotes"
-; Sleep, 250
-; Loop %myPath%\*.*               
-; If ( A_LoopFileTimeModified >= Time )
-; 	Time := A_LoopFileTimeModified, attachedFile := A_LoopFileName
-; 	Run %nitroPath% "%myPath%\%attachedFile%"
-	
-; 	KeyWait, F14, d
-; 	FileDelete, %myPath%\%attachedFile%
-; return
-
 ;******** HOTSTRINGS (TEXT EXPANSION) ********
 #c::run calc.exe ; Run calculator
 F13::Send, +{F7} ; Next line in item Conditions SAP SOs
@@ -988,6 +916,7 @@ Return
 Send Hi ,`nPlease find the license attached for SO{#} %soNumber%.`n`nThank you^{home}{end}{left}
 Return
 !#p::Pause
+Return
 ;----- End Order keyboard shortcuts -----
 
 ::emlinv::E-MAIL INVOICES TO:{space}
@@ -1122,12 +1051,17 @@ return
 	Gosub, WinWaitImportFile
 	SetKeyDelay 150
 	Send csh{down}{enter}
-	gosub WinWaitAttachmentList
-	Sleep 1250
+	Sleep 500
+	While (A_cursor = "AppStarting")
+	{
+		sleep 100
+	}
+	Sleep 500
+	WinWaitActive, Service: Attachment list, 
+	Sleep 1500
 	Send ^{Tab}{Enter}
-	gosub WaitCshSO
+	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
 	Sleep, 1000
-	; SetKeyDelay, 100
 	Send ^{tab 4}{down}{tab}{Delete}{Enter}
 	gosub, WaitCshSO
 	Sleep, 2000
@@ -1655,6 +1589,7 @@ if WinExist("Change Standard Order") {
 		WinWaitActive, Change Standard Order,
 	WinActivate ; use the window found above
 }
+Sleep 1000
 return
 
 WaitSAPEasyAccess:
