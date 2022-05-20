@@ -50,8 +50,8 @@ Gui Font, S9, Segoe UI Semibold
 LVArray := []
 
 Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
-Gui Add, ListView, grid r5 w400 y50 x250 vLV gMyListView, ORDERS:
-
+Gui Add, ListView, grid r5 w400 y50 x250 	vLV gMyListView, ORDERS:
+; As a workaround, you could have a visible or hidden default button on the form so that the button's subroutine is triggered whenever the user presses Enter.
 
 ; Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch2, ; DDL Search
 Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
