@@ -50,8 +50,7 @@ Gui Font, S9, Segoe UI Semibold
 LVArray := []
 
 Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
-Gui Add, ListView, grid r5 w400 y50 x250 	vLV gMyListView, ORDERS:
-; As a workaround, you could have a visible or hidden default button on the form so that the button's subroutine is triggered whenever the user presses Enter.
+Gui Add, ListView, grid r5 w400 y50 x250 vLV gMyListView, ORDERS:
 
 ; Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch2, ; DDL Search
 Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
@@ -59,11 +58,6 @@ Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Ord
 LV_Add("", A_LoopFileName)
 LVArray.Push(A_LoopFileName)
 }
-LV_ModifyCol()
-; Loop, % LVArray.MaxIndex()
-	; DDLString .= "|" LVArray[A_Index]
-; Gui Add, DDL, x+20 y19 w125 h27.5 vSearchTerm gSearch2, %DDLString%
-; Gui Add, DropDownList, vLV h250 w400 y50 x250 gMyListView, %DDLString% 
 GuiControl, hide, LV
 
 
@@ -191,6 +185,7 @@ Gui Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
 Gui Add, Text, xm+270 y+10, End User Info?
 Gui Add, Radio, x+54 gsubmitChecklist vendUserYes, Yes
 Gui Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
+
 ;===== END PRE ACCEPTANCE ========
 ;~ Gui Add, Text, x60 y400 , Order Progress
 ;~ Gui Add, Progress, w800 h25, 25
@@ -304,8 +299,6 @@ For Each, FileName In LVArray
    }
    		
 }
-GuiControl, +Redraw, LV
-Return
 
 Search2:
 ; Loop, Read, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
