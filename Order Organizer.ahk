@@ -126,16 +126,16 @@ Gui Add, Edit, vtotalCost, %totalCost%
 
 ;----------- COLUMN 4 ---------------
 
-Gui, Add, Text, ys x+45 Section, Salesperson:
-Gui, Add, DropDownList, yp+22.5 xp-2.5 +Sort vsalesPerson gsubmitSales, % salesPeople
-Gui, Add, Text, y+7.5, Sales Manager:
-Gui, Add, DDL, Disabled vsalesManager, % salesManagers
+Gui Add, Text, ys x+45 Section, Salesperson:
+Gui Add, DropDownList, yp+22.5 xp-2.5 +Sort vsalesPerson gsubmitSales, % salesPeople
+Gui Add, Text, y+7.5, Sales Manager:
+Gui Add, DDL, Disabled vsalesManager, % salesManagers
 Gui Add, Text, y+10, Sales Manager Code:
 Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
-Gui, Add, Text, y+7.5, Sales Director:
-Gui, Add, DropDownList, Disabled vsalesDirector, % salesDirectors
+Gui Add, Text, y+7.5, Sales Director:
+Gui Add, DropDownList, Disabled vsalesDirector, % salesDirectors
 Gui Add, Text, y+10, Sales Director Code:
-Gui, Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
+Gui Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
 Gui Add, Text,, Notes:
 Gui Add, Edit, w300 h85 vnotes, %notes%
 
