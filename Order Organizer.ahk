@@ -1022,12 +1022,13 @@ return
 
 ^!v:: ; Show/Hide Order Info GUI
 	DetectHiddenWindows, on
+	; WinActivate, [ WinTitle, WinText, ExcludeTitle, ExcludeText]
 	if !WinActive(Order Organizer, "Order Organizer")
 	{
-		WinActivate, Order Organizer, Order Organizer
+		WinActivate, Order Organizer, Order Organizer, ClipAngel
 		return
 	}
-	else if WinActive(Order Organizer, "Order Organizer")
+	else if WinActive(Order Organizer, "Order Organizer", ClipAngel)
 	{
 		WinMinimize
 		return
