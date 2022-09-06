@@ -1404,6 +1404,8 @@ if salesPerson = Sarah Jackson
 	gosub, mcfaddenDropDown
 if salesPerson = Loris Fossir
 	gosub, mcfaddenDropDown
+if salesPerson = Mitch Lazaro
+	gosub, mcfaddenDropDown
 ;========= END MCFADDEN ==============
 
 ;=========== BUTLER ==========
