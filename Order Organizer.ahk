@@ -4,7 +4,8 @@
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs ; Ensures a consistent starting directory.
 #SingleInstance Force
-
+; #include <UIA_Interface>
+; #include <UIA_Browser>
 
 salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch Lazaro|Tucker Lincoln|Jawad Pashmi|Julie Sawicki|Mike Hughes|"
 . "Steve Boyanoski|Bob Riggs|Chuck Costanza|Navette Shirakawa|Stephanie Koczur|Mark Krigbaum|Jon Needels|Bill Balsanek|Brent Boyle|Andrew Clark"
@@ -133,63 +134,6 @@ Gui Add, Edit, vsoNumber, %soNumber%
 Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
 Gui Add, Text, x+12.5 y70 Section, Notes:
 Gui Add, Edit, w215 h120 vnotes, %notes%
-
-
-
-;******** CHECKLIST GUI ********
-;  Gui Tab, 2
-
-; ;===== PRE-SAP =======
-; Gui Add, GroupBox,Section h120 w215, Pre-SAP
-; Gui Add, Checkbox, xs+10 ys+20 gsubmitChecklist vnameCheck, Check TENA Name On PO
-; Gui Add, Checkbox, gsubmitChecklist vorderNoticeSent, Order Notice Sent
-; Gui Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
-; Gui Add, Text, tcs y+10, T&&Cs?
-; Gui Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
-; Gui Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
-; ;===== END PRE-SAP =======
-
-; ;===== SAP ATTACHMENTS =======
-; Gui Add, GroupBox,Section xm+15 y+25 h130 w215, SAP Attachments:
-; Gui Add, Checkbox,xs+10 ys+25 gsubmitChecklist vpoAttached, PO
-; Gui Add, Checkbox, x+61 gsubmitChecklist vquoteAttached, Quote
-; Gui Add, Checkbox, xm+25 y+10 gsubmitChecklist vdpsAttached, DPS Report(s)
-; Gui Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
-; Gui Add, Text, xm+25 y+15, WIN Form?
-; Gui Add, Radio, x+40 gsubmitChecklist vwinYes, Yes
-; Gui Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
-; Gui Add, Text, xm+25 y+10, Merge Report?
-; Gui Add, Radio, x+24 gsubmitChecklist vmergeYes, Yes
-; Gui Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
-; ;===== END SAP ATTACHMENTS =======
-
-; ;===== PRE ACCEPTANCE ========
-; Gui Add, GroupBox,Section xm+260 ym+63 h225 w235, Pre-Acceptance:
-; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcheckPrices, Check Prices
-; Gui Add, Text,, Add Shipping?
-; Gui Add, Radio, x+53 gsubmitChecklist vshippingYes, Yes
-; Gui Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
-; Gui Add, Text, xm+270 y+10, Higher Level Linking?
-; Gui Add, Radio, x+18 gsubmitChecklist vhigherLevelLinkingYes, Yes
-; Gui Add, Radio, x+5 vhigherLevelLinkingNa, N/A
-; Gui Add, Text,xm+270 y+10, Delivery Groups?
-; Gui Add, Radio, x+42.5 vdeliveryGroupsYes gsubmitChecklist, Yes
-; Gui Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
-; Gui Add, Checkbox, xm+270 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
-; Gui Add, Text,, Order Acceptance
-; Gui Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
-; Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
-; Gui Add, Text, xm+270 y+10, Serial/Dongle Number?
-; Gui Add, Radio, x+5 gsubmitChecklist vserialYes, Yes
-; Gui Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
-; Gui Add, Text, xm+270 y+10, End User Info?
-; Gui Add, Radio, x+54 gsubmitChecklist vendUserYes, Yes
-; Gui Add, Radio, x+5 gsubmitChecklist vendUserNa, N/A
-
-;===== END PRE ACCEPTANCE ========
-;~ Gui Add, Text, x60 y400 , Order Progress
-;~ Gui Add, Progress, w800 h25, 25
-;******** END CHECKLIST GUI ********
 
 ;----------- START CHECKLISTS ---------------
 
@@ -755,7 +699,7 @@ if FileExist(folderPath)
 if !FileExist(folderPath)
 	FileCreateDir, %folderPath%
 	run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\
-	Return
+	; Return
 return
 
 SaveBar:
@@ -940,10 +884,31 @@ return
 #c::run calc.exe ; Run calculator
 F13::Send, +{F7} ; Next line in item Conditions SAP SOs
 ;----- Order keyboard shortcuts -----
+
+LAlt::LWin
+LWin::LAlt
+RAlt::RWin
+RWin::RAlt
+
 ^Numpad7::
-SetTitleMatchMode, 2
-Winactivate, Training | Microsoft Teams
-Send ^+m
+SendMode Event
+Setkeydelay 80
+Send ISURCHARGE{Tab}1{Tab}EA{Enter}
+Sleep 1000
+Gosub, WaitBeam
+Send {Tab 5}{Up}{End}{BackSpace}0[{Enter}
+Sleep 1000
+Gosub, WaitBeam
+Send {Up}^{Tab}{Tab 9}{Enter}
+Gosub, WaitBeam
+Sleep 1000
+Send ^{End}
+Sleep 500
+Send PR00
+SetKeyDelay 120
+Send {Tab}^v{Home}{Delete}{Enter}
+Gosub, WaitBeam
+Send {F3}
 Return
 ::zpo::
 Send, %po%
@@ -1008,6 +973,7 @@ Send Hi ,`nPlease find the license attached for SO{#} %soNumber%.`n`nThank you^{
 Return
 !#p::Pause
 Return
+::-x8::--------  --------
 ;----- End Order keyboard shortcuts -----
 
 ::emlinv::E-MAIL INVOICES TO:{space}
@@ -1017,7 +983,7 @@ Return
 Send, !e2as{Enter}{down 10}{BackSpace 2}
 return
 
-:O:etid::everytime4Die{!} ; O at the beginning removes trailing space
+:O:etid::everytime5Die{!} ; O at the beginning removes trailing space
 :O:igans::I'vegotanewshirt1996{!} ; O at the beginning removes trailing space
 ::mttf::matthew.terbeek@thermofisher.com
 
@@ -1243,18 +1209,18 @@ return
 
 !+a:: ; Attach last file inside
 	Send, !e2af{Enter}
-return
+; return
 
 !#a:: ; Attach last file pop out
 	Send, !haf{Enter}
-return
+; return
 
 ; ***** FUNCTIONS ***** | ***** FUNCTIONS ***** | ***** FUNCTIONS***** | ***** FUNCTIONS ***** 
-orderFocus() ; Display documents button on SAP Standard Order Page
-{
-	ControlFocus, Button1, Change Standard Order %soNumber%,
-}
-return
+; orderFocus() ; Display documents button on SAP Standard Order Page
+; {
+	; ControlFocus, Button1, Change Standard Order %soNumber%,
+; }
+; return
 
 toMiddle() ; To the middle section of SAP Standard Order Page
 {
@@ -1294,6 +1260,15 @@ WaitArrow:
 	{
 		Sleep, 500
 		if (A_Cursor = "Arrow")
+			Break
+	}
+return
+
+WaitBeam:
+	Loop, ;Wait for mouse to be arrow
+	{
+		Sleep, 750
+		if (A_Cursor = "IBeam")|| (A_Cursor = "Arrow")
 			Break
 	}
 return
@@ -1584,27 +1559,15 @@ return
 	Send, +{F7}
 return
 
-;;;; Remapping Keys & Shortcuts ;;;;
-; !k::
-; Send, ^v ; if modifier is different, it must be on new line as shown here <-
-
-;;;; Sending Mouse Clicks ;;;;
-; ^p::
-; MouseGetPos, Locx, LocY
-; MsgBox X is at %Locx% and Y is at %LocY%
-; Click,598,86
-
-;     InputBox, string, String
-;     StringUpper, string, string
-;     SetTitleMatchMode, 2
-;     if WinExist("Change Standard Order") {
-;         WinActivate ; use the window found above
-;     } else {
-;     return
-; }
-; KeyWait, Left, d
-; Send, %string%
-; return
+!0:: ; Maximie all windows except Order Organizer & Sticky Notes
+WinGet, MyCount, Count
+GroupAdd, temp1,,,,Order Organizer
+GroupAdd, AllWindows, ahk_group temp1,,,Sticky Notes
+; GroupAdd, GroupName, WinTitle [, WinText, Label, ExcludeTitle, ExcludeText]
+Loop, %MyCount%    {
+	WinMaximize ahk_group AllWindows
+  	Send !{tab}
+}
 
 OpenSAPWindow:
 	SetTitleMatchMode, 2
@@ -1697,80 +1660,9 @@ ifWinExist, SAP Easy Access
 }
 return
 
-;================================
-;========= Get quote pdf ========
-;================================
-
-^!q::
-quoteNumber:= Clipboard
-Run, https://tfs-3.my.salesforce.com/
-WinWaitActive, Home | Salesforce
-Send {tab 3}{Space}
-Sleep, 1000
-Send, %quoteNumber%{Enter}
-WinWait, %quoteNumber% - Search | Salesforce
-Send, ^f
-Sleep, 500
-Send, Cpq
-Sleep, 1000
-PixelSearch, x, y, 261, 346, 311, 393, #ff9632, 1, Fast
-If(ErrorLevel = 0)
-{
-MouseClick, left, x+10, y, 1, 0
-WinWaitActive, CPQ-%quoteNumber% | Salesforce
-Send, ^f
-Sleep, 500
-Send, opportunity info
-PixelSearch, x, y, 51, 481,233, 524, #ff9632, 1, Fast
-Sleep, 500
-MouseClick, Right, x+180, y+50,
-Sleep, 200
-Send, {Down}{Enter}
-Sleep, 200
-Send, ^f
-Sleep, 200
-Send, edit
-PixelSearch, x, y, 1612, 210,1663, 243, #FBFB04, 1, Fast
-MouseClick, Left, x, y
-Return
-Send, document
-Sleep, 200
-PixelSearch, x, y, 536, 403, 884, 610, #ff9632, 1, Fast
-MouseClick, left, %x%, %y%, 1, 0
-Sleep, 500
-Send, ^f
-Sleep, 200
-Send, print proposal pdf
-Sleep, 200
-PixelSearch, x, y, 66, 413, 463, 647, ff9632, 2, Fast
-MouseClick, left, %x%, %y%, 1, 0
-Sleep, 2000
-ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211014093314.png
-If (ErrorLevel = 0)
-{
-FoundX := FoundX + 50
-FoundY := FoundY + 25
-MouseClick, left, FoundX, FoundY, 1, 0
-}
-
-}
-else MsgBox, dalak
-return
-
-; Use Numpad 7 To Restart script if VS Code is active window
-; #IfWinActive, Visual Studio Code
-; {
-; Numpad7::Send ^s^{F5}
-; }
-; #IfWinNotActive, Visual Studio Code
-; {
-;     $Numpad7::Send 7
-; }
-; Return
-
 !#c:: ;DocuSign
 Send, %customer%
-KeyWait, F14, d
+KeyWait, PrintScreen, d
 Send, {tab 2}{down}
 Send, {tab 2}{down}{Tab}
 Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%soNumber%{Tab}c{Tab}n{tab}n{Tab}NET30{tab 3}
@@ -1868,106 +1760,100 @@ Sleep, 1000
 Send, ^{PGUP}
 return
 
-!+d:: ; GET DPS REPORTS
+#Include DPS.ahk
+
+!+d:: ; |********** DPS REPORTS **********|
+getDPSReports(cpq,customer,address,contact)
+Return
+
 SetDefaultMouseSpeed, 10
 dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq
-run, https://hub.thermofisher.com/ip
-WinWait, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-Sleep 200
-Loop, 
-{
-	CoordMode, Pixel, Window
-	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, *3 C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211207083807.png
-	If (ErrorLevel = 0)
-	{
-		break
-	}
-}
-MouseClick, left, 291, 190
-Sleep 400
-MouseClick, left, 537, 250
+; run, https://hub.thermofisher.com/ip
+; WinWait, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+; WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+; Sleep 200
+
+; 	Loop, 
+; 	{
+; 		CoordMode, Pixel, Window
+; 		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, *3 C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\dps.png
+; 		If (ErrorLevel = 0)
+; 		{
+; 			break
+; 		}
+; 	}
+
+; ; MouseClick, WhichButton [, X, Y, ClickCount, Speed, D|U, R]
+; MouseClick, left, 290, 190, 1, 0
+; MouseClick, left, 537, 250, 1, 0
+; WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+; MouseClick, left, 1210, 377
+; Send, TENA-CPQ-%cpq%
+; MouseClick, left, 310, 494
+; Send, %customer%
+; MouseClick, left, 541, 527
+; Send, %address%
+; MouseClick left, 1771, 281
 WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-MouseClick, left, 1210, 377
-Sleep, 100
-Send, TENA-CPQ-%cpq%
-MouseClick, left, 310, 494
-Sleep, 100
-Send, %customer%
-MouseClick, left, 541, 527
-Sleep, 100
-Send, %address%
-WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-; MouseClick, left, 1789, 279
-Send, +{tab 6}{Enter}
-WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+Gosub, DPSResults
+Gosub, ReportGenerate
+Gosub, PrintDPS
+
+; Contact DPS Report
+WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+Send, {tab 5}{BackSpace}+{Tab}{BackSpace}%contact%+{tab 7}{enter}
+WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 
 Gosub, DPSResults
-; Gosub, ReportGenerate
-; Gosub, PrintDPS
-
-; ; Contact DPS Report
-; WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-; Send, {tab 5}{BackSpace}+{Tab}{BackSpace}%contact%+{tab 7}{enter}
-; WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-
-; Gosub, DPSResults
-; Gosub, ReportGenerate
-; Gosub, PrintDPS
-; WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-; Send, ^w
+Gosub, ReportGenerate
+Gosub, PrintDPS
+WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+Send, ^w
 return
 
 ReportGenerate:
 generateReport := 0
 Loop
 {
+	; ToolTip, ReportGenerate
 	CoordMode, Pixel, Client
 	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\dateCreated.png
 	If ErrorLevel = 0
 	{
+		MouseClick,, 781, 271
 		; Override success screen
 		;   Tab generate
 		;   Click results
-
-		CoordMode, Pixel, Client
-		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
-		if ErrorLevel = 0
+		Loop 
 		{
-			Send {tab 7}{Enter}
-		}
-		CoordMode, Pixel, Client
-		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
-		if ErrorLevel = 0
-		{
-			Send {tab 8}{Enter}
-		}
-		Break
-	}
-	CoordMode, Pixel, Client
-	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\noRecordsFound.png
-	If ErrorLevel = 0
-	{
-		CoordMode, Pixel, Client
-		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
-		if ErrorLevel = 0
-		{
-			Send {tab 7}{Enter}
-		}
-		CoordMode, Pixel, Client
-		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
-		if ErrorLevel = 0
-		{
-			Send {tab 8}{Enter}
+			CoordMode, Pixel, Client
+			ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
+			if ErrorLevel = 0
+			{
+				; MsgBox Found 7
+				Send {tab 7}{Enter}
+				Break
+			}
+			CoordMode, Pixel, Client
+			ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
+			if ErrorLevel = 0
+			{
+				; MsgBox Found 8
+				Send {tab 8}{Enter}
+				Break
+			}
+			
 		}
 		Break
 	}
-	; generateReport += 1
-	; ToolTip, %generateReport%
 }
+; ToolTip
 Return
 
 PrintDPS:
+ToolTip, PrintDPS
+SetKeyDelay, 50
+WinActivate, DTSSearchResults
 WinWaitActive, DTSSearchResults
 Sleep 500
 Send ^p
@@ -1978,26 +1864,38 @@ WinWaitActive, Save As
 dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq . "\"
 if FileExist(dpsPath . "DPS - " . customer . ".pdf")
 {
-	Clipboard := dpsPath . "DPS - " . contact
+	dpsContact := dpsPath . "DPS - " . contact
+	Clipboard := dpsContact
 } else 
 {
-	Clipboard := dpsPath . "DPS - " . customer
+	dpsCustomer := dpsPath . "DPS - " . customer
+	Clipboard := dpsCustomer
 }
 Sleep, 200
+WinWaitActive Save As
 Send ^v
-Sleep 200
-Send {Enter}
+; While, (Clipboard)
+; {
+; 	Sleep 500
+; }
+; Sleep 3000
+; Send !s
+SendMode Event
+SetKeyDelay 400
+Send {tab 3}{enter}
 WinWaitActive, DTSSearchResults
+SetKeyDelay 0
 Send ^w
+ToolTip
 return
 
 DPSResults:
+ToolTip, DPSResults
 Loop
 {   
 	; No records found
 	CoordMode, Pixel, Screen
 	ImageSearch, FoundX, FoundY, 2214, 215, 2866, 380, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\noRecordsFound.png
-    ; ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\noRecordsFound.png
     If ErrorLevel = 0
 	{
 		Sleep, 200
@@ -2017,16 +1915,10 @@ Loop
 	
 	; Blocked
 	CoordMode, Pixel, Window
-		ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\blocked.png
+	ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\blocked.png
 	If ErrorLevel = 0
 	{
 		MsgBox, 4, Found Records,Records WERE Found`nContinue?
-		Sleep, 200
-		If WinExist("Found Records")
-		{
-			MouseGetPos, x, y
-			WinMove, Found Records,,%x%,%y%
-		}
 		If MsgBox No
 		{
 			Break
@@ -2040,6 +1932,20 @@ Loop
 			Send +{tab}{down 5}{enter}
 			Sleep 200
 			Send {tab 3}{Enter}
+			WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+			; MsgBox Is Tab -> Enter Correct here?
+			;Need search successfully overridden screenshot
+			; Send {tab}{Enter}
+			; Winwait here?
+			; Need wait for overridden screenshot here?
+			; Overridden
+			CoordMode, Pixel, Client
+			ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\overridden.png
+			If ErrorLevel = 0
+			{
+				Sleep, 200
+				Send, {tab}{enter}
+			}
 			Break
 		}
 	}
@@ -2053,6 +1959,7 @@ Loop
 		Break
 	}
 }
+ToolTip
 Return
 
 ^6:: ;End User Info
@@ -2565,3 +2472,6 @@ Return
 ; ;~ Gui Add, Text, y+5, End Use - zuse
 
 ;======== END KEYBOARD SHORTCUTS ========
+
+
+NumpadClear::Pause
