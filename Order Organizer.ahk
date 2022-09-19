@@ -30,7 +30,7 @@ salesCodes := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95
 
 myinipath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB
 
-I_Icon = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico
+I_Icon = C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%
 
@@ -885,10 +885,10 @@ return
 F13::Send, +{F7} ; Next line in item Conditions SAP SOs
 ;----- Order keyboard shortcuts -----
 
-LAlt::LWin
-LWin::LAlt
-RAlt::RWin
-RWin::RAlt
+; LAlt::LWin
+; LWin::LAlt
+; RAlt::RWin
+; RWin::RAlt
 
 ^Numpad7::
 SendMode Event
@@ -1005,6 +1005,12 @@ ToAttachments:
 	gosub,ToDisplaySap
 	Send, ^+{Tab}!{down}
 Return
+
+if WinActive("Change Standard Order")
+{
+	PrintScreen::+F7
+}
+
 
 ^\:: ;To main attachments Button in SAP
 	Gosub, ToAttachments
@@ -1661,9 +1667,9 @@ ifWinExist, SAP Easy Access
 }
 return
 
-!#c:: ;DocuSign
+!c:: ;DocuSign
 Send, %customer%
-KeyWait, PrintScreen, d
+KeyWait, F13, d
 Send, {tab 2}{down}
 Send, {tab 2}{down}{Tab}
 Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%soNumber%{Tab}c{Tab}n{tab}n{Tab}NET30{tab 3}
