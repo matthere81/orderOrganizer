@@ -27,7 +27,7 @@ salesDirectors := "|Denise Schwartz|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|S
 
 salesCodes := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|N/A"
 
-I_Icon = C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico
+I_Icon = C:\%A_UserName%\Thermo Fisher Scientificlist_check_checklist_checkmark_icon_181579.ico
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%
 
