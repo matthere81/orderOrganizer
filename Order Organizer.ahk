@@ -1238,7 +1238,7 @@ craftsDropDown:
 	GuiControl, ChooseString, managerCode, 202625
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Denise Schwartz
-	GuiControl, ChooseString, directorCode, 202375
+	GuiControl, ChooseString, directorCode, 201020
 	Gui Submit, NoHide
 return
 
