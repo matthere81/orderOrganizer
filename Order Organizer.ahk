@@ -989,7 +989,7 @@ return
 
 ::shrug::¯\_(ツ)_/¯ 
 ::winf::
-Send, Hi %salesPerson%^+{left}{delete}{BackSpace},`nGreat order{!} Thanks for filling out the WIN form.`n`nRegards{up 3}{left}
+Send, Hi %salesPerson%^+{left}{delete}{BackSpace},`nGreat order{!} Thank you for filling out the WIN form.`n`nRegards{up 3}{left}
 return
 ::sohu::Hi ,`nThe SO has been updated.`n`nThanks{up 3}{left}
 ::orn::
