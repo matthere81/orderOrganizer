@@ -1429,6 +1429,8 @@ if salesPerson = Sean Bennett
 	gosub, butlerDropDown
 if salesPerson = Daniel Quinn
 	gosub, butlerDropDown
+if salesPerson = Robin Sutka
+	gosub, butlerDropDown
 ;=========== END BUTLER ==========
 
 ;=========== KLEIN ==========
