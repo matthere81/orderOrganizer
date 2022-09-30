@@ -1084,46 +1084,46 @@ return
 	Clipboard := cshSoNumber
 	gosub, OpenSAPWindowForCsh
 	WinActivate, Order %cshSoNumber%,,ClipAngel,
-	Send, !ghd
-	WinWait, Change Standard Order %cshSoNumber%: Header Data,,ClipAngel,
-	Send, ^c
-	ClipWait, 1
-	cshPo := Clipboard
-	Send, {F3}
-	gosub, WaitCshSO
-	gosub WaitInbox
-	Send ^!s
-	gosub WaitSaveAs
-	Send, PO ^v
-	Sleep 500
-	Send, {Down}{Enter}
-	Clipboard := "CSH Removal Email"
-	Send ^v{Enter}
-	gosub WaitCshSO
-	Sleep 500
-	Send ^\
-	Sleep 1500
-	Send {Down 2}{Enter}
-	gosub WinWaitAttachmentList
-	Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}
-	Gosub, WinWaitImportFile
-	Send !n
-	Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs" 
-	Send ^v{enter}
-	Clipboard := cshPo
-	Send PO{space}^v{down}{enter}
-	Gosub, WinWaitImportFile
-	SetKeyDelay 150
-	Send csh{down}{enter}
-	Sleep 500
-	While (A_cursor = "AppStarting")
-	{
-		sleep 100
-	}
-	Sleep 500
-	WinWaitActive, Service: Attachment list, 
-	Sleep 1500
-	Send ^{Tab}{Enter}
+	; Send, !ghd
+	; WinWait, Change Standard Order %cshSoNumber%: Header Data,,ClipAngel,
+	; Send, ^c
+	; ClipWait, 1
+	; cshPo := Clipboard
+	; Send, {F3}
+	; gosub, WaitCshSO
+	; gosub WaitInbox
+	; Send ^!s
+	; gosub WaitSaveAs
+	; Send, PO ^v
+	; Sleep 500
+	; Send, {Down}{Enter}
+	; Clipboard := "CSH Removal Email"
+	; Send ^v{Enter}
+	; gosub WaitCshSO
+	; Sleep 500
+	; Send ^\
+	; Sleep 1500
+	; Send {Down 2}{Enter}
+	; gosub WinWaitAttachmentList
+	; Send, ^+{tab 3}{Home}{Enter}{Down}{Enter}
+	; Gosub, WinWaitImportFile
+	; Send !n
+	; Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs" 
+	; Send ^v{enter}
+	; Clipboard := cshPo
+	; Send PO{space}^v{down}{enter}
+	; Gosub, WinWaitImportFile
+	; SetKeyDelay 150
+	; Send csh{down}{enter}
+	; Sleep 500
+	; While (A_cursor = "AppStarting")
+	; {
+	; 	sleep 100
+	; }
+	; Sleep 500
+	; WinWaitActive, Service: Attachment list, 
+	; Sleep 1500
+	; Send ^{Tab}{Enter}
 	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
 	Sleep, 1000
 	Send ^{tab 4}{down}{tab}{Delete}{Enter}
