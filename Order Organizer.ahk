@@ -1126,7 +1126,7 @@ return
 	; Send ^{Tab}{Enter}
 	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
 	Sleep, 1000
-	Send ^{tab 4}{down}{tab}{Delete}{Enter}
+	Send ^{tab 7}{down}{tab}{Delete}{Enter}
 	gosub, WaitCshSO
 	Sleep, 2000
 	gosub, WaitInbox
