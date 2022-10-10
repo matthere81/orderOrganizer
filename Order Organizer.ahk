@@ -882,13 +882,13 @@ return
 
 ;******** HOTSTRINGS (TEXT EXPANSION) ********
 #c::run calc.exe ; Run calculator
-F13::Send, +{F7} ; Next line in item Conditions SAP SOs
++PrintScreen::Send, +{F7} ; Next line in item Conditions SAP SOs
 ;----- Order keyboard shortcuts -----
 
-; LAlt::LWin
-; LWin::LAlt
-; RAlt::RWin
-; RWin::RAlt
+LAlt::LWin
+LWin::LAlt
+RAlt::RWin
+RWin::RAlt
 
 ^Numpad7::
 SendMode Event
@@ -1669,7 +1669,7 @@ return
 
 !c:: ;DocuSign
 Send, %customer%
-KeyWait, F13, d
+KeyWait, PrintScreen, d
 Send, {tab 2}{down}
 Send, {tab 2}{down}{Tab}
 Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%soNumber%{Tab}c{Tab}n{tab}n{Tab}NET30{tab 3}
