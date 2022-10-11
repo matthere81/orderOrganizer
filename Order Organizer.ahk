@@ -4,6 +4,8 @@
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs ; Ensures a consistent starting directory.
 #SingleInstance Force
+#InstallKeybdHook
+#KeyHistory 50
 ; #include <UIA_Interface>
 ; #include <UIA_Browser>
 
@@ -885,10 +887,14 @@ return
 +PrintScreen::Send, +{F7} ; Next line in item Conditions SAP SOs
 ;----- Order keyboard shortcuts -----
 
-LAlt::LWin
-LWin::LAlt
-RAlt::RWin
-RWin::RAlt
+Alt::LWin
+LWin::Alt
+RWin::Alt
+
+
+
+; RAlt::RWin
+; RWin::RAlt
 
 ^Numpad7::
 SendMode Event
@@ -1749,21 +1755,29 @@ return
 
 ^9:: ;Sales Employee 9
 Send, ^+{end}
-Sleep, 1000
+Sleep, 500
 Send, +{tab}
 
 if (directorCode = "N/A")
 {
 	Send, s{right 11}{Tab}
+	Sleep 200
 	Send, %managerCode%{enter}
 }
 else 
 {
-	Send, s{right 10}{Tab}%directorCode%{down}+{Tab}
+	Send, s{right 10}{Tab}
+	Clipboard := directorCode
+	Send ^v
+	Sleep 200
+	Send {down}+{Tab}
+	Sleep 200
 	Send, s{right 11}{Tab}
-	Send, %managerCode%{enter}
+	Sleep 200
+	Clipboard := managerCode
+	Send, ^v{enter}
 }
-Sleep, 1000
+Sleep, 500
 Send, ^{PGUP}
 return
 
