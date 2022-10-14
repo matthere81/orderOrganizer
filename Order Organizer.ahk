@@ -1144,9 +1144,11 @@ return
 
 ; Save OA Checklist
 !#k::
+	SetTitleMatchMode, 3
 	Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist - TEMPLATE.docx
-	Sleep, 200
+	WinWaitActive, OA Checklist - TEMPLATE.docx - Word,
 	Send, {f12}
+	SetTitleMatchMode, 2
 	WinWait, Save As, 
 	IfWinNotActive, Save As, , WinActivate, Save As, 
 		WinWaitActive, Save As,
