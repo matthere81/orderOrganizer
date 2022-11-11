@@ -1677,7 +1677,7 @@ return
 
 !c:: ;DocuSign
 Send, %customer%
-KeyWait, PrintScreen, d
+KeyWait, F13, d
 Send, {tab 2}{down}
 Send, {tab 2}{down}{Tab}
 Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%soNumber%{Tab}c{Tab}n{tab}n{Tab}NET30{tab 3}
