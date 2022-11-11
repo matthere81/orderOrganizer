@@ -887,9 +887,9 @@ return
 +PrintScreen::Send, +{F7} ; Next line in item Conditions SAP SOs
 ;----- Order keyboard shortcuts -----
 
-Alt::LWin
-LWin::Alt
-RWin::Alt
+; Alt::LWin
+; LWin::Alt
+; RWin::Alt
 
 
 
