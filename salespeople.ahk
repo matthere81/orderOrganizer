@@ -9,16 +9,49 @@ SetWorkingDir, %A_ScriptDir%
 ; Path to the Excel workbook
 workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
 
-; Connect to Excel and open the workbook
-xl := ComObjCreate("Excel.Application")
+; If Excel is not running, create a new instance
+if (!xl)
+{
+    xl := ComObjCreate("Excel.Application")
+}
+Else
+{
+	; Connect to open Excel
+	xl := ComObjActive("Excel.Application")
+}
+
+; Open the workbook
 wb := xl.Workbooks.Open(workbookPath)
 
 ; Access the active worksheet
 ws := wb.ActiveSheet
 
-; Example: Get the value of cell A1 and display it in a message box
-value := ws.Range("A2").Value
-MsgBox % "The value of cell A2 is " value
+; ; Example: Get the value of cell A1 and display it in a message box
+; value := ws.Range("A2").Value
+; MsgBox % "The value of cell A1 is " value
+
+; Get the range of cells to loop through (in this example, cells A1 to A10)
+range := ws.Range("A1:A5")
+
+; Initialize an empty array to store the cell values
+values := []
+
+; Loop through the range and collect the cell values in the array
+for row in range
+{
+    cellValue := row.Value
+    values.Push(cellValue)
+}
+
+
+; Loop,% values.Length()
+; 	(A_Index!=values.MaxIndex())?(temp.=values[A_Index] " "):(temp.=values[A_Index])
+; msgbox,% temp
+
+
+; Display the collected cell values in a message box
+; MsgBox % "The cell values are: " values.Join(", ")
+; MsgBox % values.Join(", ")
 
 ; When finished, close the workbook and quit Excel
 wb.Close()
