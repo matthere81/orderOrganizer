@@ -4,8 +4,6 @@ SendMode, Input
 SetBatchLines, -1
 SetWorkingDir, %A_ScriptDir%
 
-; MsgBox here
-
 ; Path to the Excel workbook
 workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
 
@@ -30,6 +28,7 @@ ws2 := wb.Worksheets[2] ; - East & Canada Maroun
 ws3 := wb.Worksheets[3] ; - Digital
 ws4 := wb.Worksheets[4] ; - IOMS Sales
 ws5 := wb.Worksheets[5] ; - WiAS Team
+;-------- END LIST OUT WORKSHEET NAMES END --------;
 
 ; Get the range of cells that contain data
 usedRange := ws1.UsedRange
@@ -37,17 +36,52 @@ usedRange := ws1.UsedRange
 rowCount := usedRange.Rows.Count
 colCount := usedRange.Columns.Count
 
-Data := {}
-; Get all cell values in column A and put in an array
-for Cell in ws1.UsedRange.Columns("A").Cells
-	Data.Push(Cell.Value)
+ws1SalesTeamA := []
 
-; Display second cells value in array
-MsgBox % Data.2
+counter := 0
+
+; Loop through all cells in column A
+for row in ws1.Range("A1:A" rowCount)
+{
+    cell := row.Cells[1]
+    bgColor := cell.Interior.Color
+	whiteRGB := 16777215
+    if (bgColor <> whiteRGB) ; Check if the background color is not white
+    {
+		if (bgColor && counter <= 1)
+		{
+			ws1SalesTeamA.Push(cell.Address)
+			counter++
+			MsgBox, % cell.Address
+		}
+	}
+		
+		; MsgBox % cell.Row . cell.Column . "-" . cell.Value
+		; MsgBox % cell.Address
+		; MsgBox % cell.Interior.Color
+}
+
+; Display all the values in the array
+for Index, Value in ws1SalesTeamA
+	Display .= Value . "`n"
+MsgBox % Display
+
+; When finished, close the workbook and quit Excel
+wb.Close()
+xl.Quit()
+
+
+Return
+
+Data := {}
+
+; Get all cell values in column A and put in an array
+for Cell in ws1.UsedRange.Cells
+	Data.Push(Cell.Value)
 
 ; Display all the values in the array
 for Index, Value in Data
-	Display .= Index "`t" Value "`n"
+	Display .= Index "`t" Value ;"`n"
 MsgBox % Display
 
 ; When finished, close the workbook and quit Excel
