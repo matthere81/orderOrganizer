@@ -6,6 +6,10 @@ SetWorkingDir, %A_ScriptDir%
 
 ; Path to the Excel workbook
 workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
+lastModifiedIni := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\orderOrganizer\lastModified.ini"
+
+checkLastModified(workbookPath,lastModifiedIni)
+
 
 ; If Excel is not running, create a new instance
 if (!xl)
@@ -30,6 +34,7 @@ ws4 := wb.Worksheets[4] ; - IOMS Sales
 ws5 := wb.Worksheets[5] ; - WiAS Team
 ;-------- END LIST OUT WORKSHEET NAMES END --------;
 
+
 ; Get the range of cells that contain data
 usedRange := ws1.UsedRange
 
@@ -53,18 +58,29 @@ for row in ws1.Range("A1:A" rowCount)
 			ws1SalesTeamA.Push(cell.Address)
 			counter++
 			MsgBox, % cell.Address
+			if counter = 1
+			{
+				startingCell := cell.Address
+			}
+			if counter = 2
+			{
+				lastCell := cell.Address
+			}
 		}
 	}
+	
 		
 		; MsgBox % cell.Row . cell.Column . "-" . cell.Value
 		; MsgBox % cell.Address
 		; MsgBox % cell.Interior.Color
 }
 
+MsgBox, % startingCell . " " . lastCell
+
 ; Display all the values in the array
-for Index, Value in ws1SalesTeamA
-	Display .= Value . "`n"
-MsgBox % Display
+; for Index, Value in ws1SalesTeamA
+; 	Display .= Value . "`n"
+; MsgBox % Display
 
 ; When finished, close the workbook and quit Excel
 wb.Close()
@@ -72,6 +88,66 @@ xl.Quit()
 
 
 Return
+
+
+;-------- FUNCTIONS --------;
+
+checkLastModified(workbookPath,lastModifiedIni)
+{
+; Get the modification time of the file
+FileGetTime, modTime, %workbookPath%, M
+
+; Read the last checked time from a file
+FileRead, lastCheckTime, lastModifiedIni
+
+; If the last check time is more than a week ago, check for changes
+; if (A_Now - lastCheckTime >= 60) ;7 * 24 * 60 * 60)
+; {
+    ; Update the last checked time in the file
+    FileDelete, lastModifiedIni
+    FileAppend, %A_Now%, lastModifiedIni
+
+    ; Get the modification time of the file again
+    FileGetTime, modTime, %workbookPath%, M
+
+    ; Compare the modification time to the previous time
+    if (modTime <> prevModTime)
+    {
+        ; Create an Outlook application object
+		Outlook := ComObjCreate("Outlook.Application")
+
+		; Create an email item
+		Email := Outlook.CreateItem(0)
+
+		; Set the email properties
+		Email.To := "matthew.terbeek@thermofisher.com"
+		Email.Subject := "Sales Change"
+		Email.Body := "This is a test email sent from AutoHotkey."
+
+
+		; Send the email
+		Email.Send()
+
+		; Release the objects
+		Email := ""
+		Outlook := ""
+        prevModTime := modTime
+    }
+}
+Return
+
+
+
+
+Return
+
+
+
+
+
+
+
+
 
 Data := {}
 
