@@ -23,15 +23,41 @@ Else
 ; Open the workbook
 wb := xl.Workbooks.Open(workbookPath)
 
-; Access the active worksheet
-ws := wb.ActiveSheet
+;-------- LIST OUT WORKSHEET NAMES --------;
+; Select the worksheet named "Digital Sales"
+ws1 := wb.Worksheets[1] ; - West Denise Schwartz
+ws2 := wb.Worksheets[2] ; - East & Canada Maroun
+ws3 := wb.Worksheets[3] ; - Digital
+ws4 := wb.Worksheets[4] ; - IOMS Sales
+ws5 := wb.Worksheets[5] ; - WiAS Team
 
-; ; Example: Get the value of cell A1 and display it in a message box
-; value := ws.Range("A2").Value
-; MsgBox % "The value of cell A1 is " value
+; Get the range of cells that contain data
+usedRange := ws1.UsedRange
 
-; Get the range of cells to loop through (in this example, cells A1 to A10)
-range := ws.Range("A1:A5")
+rowCount := usedRange.Rows.Count
+colCount := usedRange.Columns.Count
+
+Data := {}
+; Get all cell values in column A and put in an array
+for Cell in ws1.UsedRange.Columns("A").Cells
+	Data.Push(Cell.Value)
+
+; Display second cells value in array
+MsgBox % Data.2
+
+; Display all the values in the array
+for Index, Value in Data
+	Display .= Index "`t" Value "`n"
+MsgBox % Display
+
+; When finished, close the workbook and quit Excel
+wb.Close()
+xl.Quit()
+
+
+Return
+
+/*
 
 ; Initialize an empty array to store the cell values
 values := []
@@ -43,11 +69,18 @@ for row in range
     values.Push(cellValue)
 }
 
+; Initialize an empty string to hold the message
+valuesString := ""
 
-; Loop,% values.Length()
-; 	(A_Index!=values.MaxIndex())?(temp.=values[A_Index] " "):(temp.=values[A_Index])
-; msgbox,% temp
 
+; Concatenate each value and add a newline character
+for index, value in values
+{
+	valuesString .= value . "`n"
+}
+
+; Display the message box
+msgBox % valuesString
 
 ; Display the collected cell values in a message box
 ; MsgBox % "The cell values are: " values.Join(", ")
@@ -55,10 +88,10 @@ for row in range
 
 ; When finished, close the workbook and quit Excel
 wb.Close()
-; xl.Quit()
+xl.Quit()
 
 
-
+Return
 
 /*
 
