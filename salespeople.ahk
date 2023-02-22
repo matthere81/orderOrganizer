@@ -5,8 +5,9 @@ SetBatchLines, -1
 SetWorkingDir, %A_ScriptDir%
 
 ; Path to the Excel workbook
-; workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
-workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Book1.xlsx"
+workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
+; workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Book1.xlsx"
+salesWorkBook := "Sales List fed 12.xlsx"
 lastModifiedIni := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\orderOrganizer\lastModified.ini"
 
 checkLastModified(workbookPath,lastModifiedIni)
@@ -14,34 +15,11 @@ checkLastModified(workbookPath,lastModifiedIni)
 ; Disables ComObj errors
 ComObjError(false)
 
-; Check if Excel is already running
 xl := ComObjActive("Excel.Application")
-
-if ComObjError(false)
+if (xl != "")
 {
-    MsgBox, There was an error with ComObjActive.
-}
-else if ComObjActive("Excel.Application")
-{
-    MsgBox, Excel is active.
-}
-else
-{
-    MsgBox, Excel is not active.
-}
-
-Return
-
-; MsgBox, % "workbookPath: " . workbookPath
-
-if (xl)
-{
-    MsgBox, Excel is not open.
-}
-else
-{
-    wb := xl.Workbooks(workbookPath)
-    if (wb is Object)
+    wb := xl.Workbooks(salesWorkBook)
+    if (wb != "")
     {
         MsgBox, The workbook is open.
     }
@@ -49,9 +27,113 @@ else
     {
         MsgBox, The workbook is not open.
     }
-    ; xl.Quit()
+}
+else
+{
+    ; the Excel application is not open, so create the COM object
+	xl := ComObjCreate("Excel.Application")
+	; open the workbook
+	wb := xl.Workbooks.Open(workbookPath)
 }
 
+;-------- LIST OUT WORKSHEET NAMES --------;
+; Select the worksheet named "Digital Sales"
+ws1 := wb.Worksheets[1] ; - West Denise Schwartz
+ws2 := wb.Worksheets[2] ; - East & Canada Maroun
+ws3 := wb.Worksheets[3] ; - Digital
+ws4 := wb.Worksheets[4] ; - IOMS Sales
+ws5 := wb.Worksheets[5] ; - WiAS Team
+;-------- END LIST OUT WORKSHEET NAMES END --------;
+
+
+; Identify sales regions
+ws1Regions := ["AMER-GCM", "AMER-MWM", "AMER-MOM", "AMER-NWM", "AMER-SWM"]
+
+; Identify sales manager for that region
+	; Loop through each ws1Regions and find individual region
+	; Identify the next colored cell (the sales manager)
+	; Get sales people in that range and assign them to the group
+
+
+
+; Get the range of cells that contain data
+usedRange := ws1.UsedRange
+
+rowCount := usedRange.Rows.Count
+colCount := usedRange.Columns.Count
+; xlWhole := 1
+
+; Find the first cell containing the search value
+; searchValue := ws1Regions.1
+
+
+; Loop through each value in the array
+for eachRegion in ws1Regions
+{
+	foundCell := usedRange.Find(ws1Regions[eachRegion])
+	currentRegion := ws1Regions[eachRegion]
+	; MsgBox, % ws1Regions[eachRegion]
+	
+	if (foundCell <> "")
+	{
+		; Get the address of the found cell
+		foundAddress := foundCell.Address
+
+		; Display the address in a message box
+		MsgBox, % foundCell.Value
+		MsgBox, The value was found in cell %foundAddress%.
+	}
+	else
+	{
+		MsgBox, % ws1Regions[eachRegion]
+	}
+
+    ; Search for the region in the worksheet
+    ; cell := usedRange.Find(currentRegion)
+
+	; MsgBox % cell
+}
+
+wb.Close()
+MsgBox, end
+
+
+
+
+Return
+
+; Disables ComObj errors
+ComObjError(false)
+
+; Check if Excel is already running
+xl := ComObjActive("Excel.Application")
+
+; check if Excel is already open and create the COM object
+If (xl := ComObjActive("Excel.Application"))
+{
+    ; check if the workbook is already open
+    wb := xl.Workbooks.Item(Book1.xlsx)
+	
+	if (wb = 0)
+    {
+	}
+	Else
+	{
+		
+    	MsgBox, The workbook has been opened.
+	}
+}
+
+ws := wb.Worksheets("Sheet1")
+
+; Read the value of cell A1
+value := ws.Range("A1").Value
+
+MsgBox, % value
+
+wb.Close()
+MsgBox, end
+Return
 
 ; Check if workbook is open
 ; wb := xl.Workbooks(workbookPath)
