@@ -5,26 +5,73 @@ SetBatchLines, -1
 SetWorkingDir, %A_ScriptDir%
 
 ; Path to the Excel workbook
-workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
+; workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
+workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Book1.xlsx"
 lastModifiedIni := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\orderOrganizer\lastModified.ini"
 
 checkLastModified(workbookPath,lastModifiedIni)
 
+; Disables ComObj errors
+ComObjError(false)
 
-; If Excel is not running, create a new instance
-if (!xl)
+; Check if Excel is already running
+xl := ComObjActive("Excel.Application")
+
+if ComObjError(false)
 {
-    xl := ComObjCreate("Excel.Application")
+    MsgBox, There was an error with ComObjActive.
 }
-Else
+else if ComObjActive("Excel.Application")
 {
-	; Connect to open Excel
-	xl := ComObjActive("Excel.Application")
+    MsgBox, Excel is active.
 }
+else
+{
+    MsgBox, Excel is not active.
+}
+
+Return
+
+; MsgBox, % "workbookPath: " . workbookPath
+
+if (xl)
+{
+    MsgBox, Excel is not open.
+}
+else
+{
+    wb := xl.Workbooks(workbookPath)
+    if (wb is Object)
+    {
+        MsgBox, The workbook is open.
+    }
+    else
+    {
+        MsgBox, The workbook is not open.
+    }
+    ; xl.Quit()
+}
+
+
+; Check if workbook is open
+; wb := xl.Workbooks(workbookPath)
+; MsgBox % wb
+; if (wb is not equal to "") {
+;     MsgBox, % "Workbook is open"
+; } else {
+;     MsgBox, % "Workbook is not open"
+; }
+; }
+
+; Check if workbook is open
+; wb := xl.Workbooks(workbookPath)
 
 ; Open the workbook
-wb := xl.Workbooks.Open(workbookPath)
+; wb := xl.Workbooks.Open(workbookPath)
 
+MsgBox, end
+xl.Quit()
+Return
 ;-------- LIST OUT WORKSHEET NAMES --------;
 ; Select the worksheet named "Digital Sales"
 ws1 := wb.Worksheets[1] ; - West Denise Schwartz
@@ -35,13 +82,79 @@ ws5 := wb.Worksheets[5] ; - WiAS Team
 ;-------- END LIST OUT WORKSHEET NAMES END --------;
 
 
+; Identify sales regions
+ws1Regions := ["AMER-GCM", "AMER-MWM", "AMER-MOM", "AMER-NWM", "AMER-SWM"]
+
+; Identify sales manager for that region
+	; Loop through each ws1Regions and find individual region
+	; Identify the next colored cell (the sales manager)
+	; Get sales people in that range and assign them to the group
+
+
+
 ; Get the range of cells that contain data
 usedRange := ws1.UsedRange
 
 rowCount := usedRange.Rows.Count
 colCount := usedRange.Columns.Count
+; xlWhole := 1
 
-ws1SalesTeamA := []
+; Find the first cell containing the search value
+; searchValue := ws1Regions.1
+
+
+; Loop through each value in the array
+for eachRegion in ws1Regions
+{
+	foundCell := usedRange.Find(ws1Regions[eachRegion])
+	currentRegion := ws1Regions[eachRegion]
+	; MsgBox, % ws1Regions[eachRegion]
+	
+	if (foundCell <> "")
+	{
+		; Get the address of the found cell
+		foundAddress := foundCell.Address
+
+		; Display the address in a message box
+		MsgBox, % foundCell.Value
+		MsgBox, The value was found in cell %foundAddress%.
+	}
+	else
+	{
+		MsgBox, % ws1Regions[eachRegion]
+	}
+
+    ; Search for the region in the worksheet
+    ; cell := usedRange.Find(currentRegion)
+
+	; MsgBox % cell
+}
+
+; Check if the search value was found
+; if (foundCell)
+; {
+;     ; Get the address of the found cell
+;     foundCellAddress := foundCell.Address
+    
+;     ; Get the value in the found cell
+;     foundCellValue := foundCell.Value
+    
+;     ; Display the results
+;     MsgBox, Found cell %foundCellAddress% with value %foundCellValue%.
+; }
+; else
+; {
+;     MsgBox, Could not find %searchValue%.
+; }
+
+; Close the workbook and quit Excel
+wb.Close()
+
+MsgBox excel closed
+
+Return
+
+ws1ManagerA := []
 
 counter := 0
 
@@ -55,9 +168,9 @@ for row in ws1.Range("A1:A" rowCount)
     {
 		if (bgColor && counter <= 1)
 		{
-			ws1SalesTeamA.Push(cell.Address)
+			ws1ManagerA.Push(cell.Address)
 			counter++
-			MsgBox, % cell.Address
+			; MsgBox, % cell.Address
 			if counter = 1
 			{
 				startingCell := cell.Address
@@ -65,22 +178,21 @@ for row in ws1.Range("A1:A" rowCount)
 			if counter = 2
 			{
 				lastCell := cell.Address
+				manager := ws1ManagerA.Push(cell.Value)
 			}
 		}
 	}
-	
-		
-		; MsgBox % cell.Row . cell.Column . "-" . cell.Value
-		; MsgBox % cell.Address
-		; MsgBox % cell.Interior.Color
 }
 
-MsgBox, % startingCell . " " . lastCell
+ws1ManagerA.RemoveAt(1,2)
+
+; ws1ManagerA.push(manager)
+; MsgBox, % startingCell . " " . lastCell
 
 ; Display all the values in the array
-; for Index, Value in ws1SalesTeamA
-; 	Display .= Value . "`n"
-; MsgBox % Display
+for Index, Value in ws1ManagerA
+	Display .= Value . "`n"
+MsgBox % Display
 
 ; When finished, close the workbook and quit Excel
 wb.Close()
@@ -100,9 +212,10 @@ FileGetTime, modTime, %workbookPath%, M
 ; Read the last checked time from a file
 FileRead, lastCheckTime, lastModifiedIni
 
+Return
 ; If the last check time is more than a week ago, check for changes
-; if (A_Now - lastCheckTime >= 60) ;7 * 24 * 60 * 60)
-; {
+if (A_Now - lastCheckTime >= 60) ;7 * 24 * 60 * 60)
+{
     ; Update the last checked time in the file
     FileDelete, lastModifiedIni
     FileAppend, %A_Now%, lastModifiedIni
@@ -134,7 +247,7 @@ FileRead, lastCheckTime, lastModifiedIni
         prevModTime := modTime
     }
 }
-Return
+}
 
 
 
