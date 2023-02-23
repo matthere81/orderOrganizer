@@ -5,7 +5,7 @@ SetBatchLines, -1
 SetWorkingDir, %A_ScriptDir%
 
 ; Path to the Excel workbook
-workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
+workbookPath := "C:\Users\" . A_UserName . "\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
 ; workbookPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Book1.xlsx"
 salesWorkBook := "Sales List fed 12.xlsx"
 lastModifiedIni := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\orderOrganizer\lastModified.ini"
@@ -16,16 +16,19 @@ checkLastModified(workbookPath,lastModifiedIni)
 ComObjError(false)
 
 xl := ComObjActive("Excel.Application")
+
 if (xl != "")
 {
     wb := xl.Workbooks(salesWorkBook)
     if (wb != "")
     {
-        MsgBox, The workbook is open.
     }
     else
     {
-        MsgBox, The workbook is not open.
+        ; the Excel application is not open, so create the COM object
+		xl := ComObjCreate("Excel.Application")
+		; open the workbook
+		wb := xl.Workbooks.Open(workbookPath)
     }
 }
 else
@@ -61,11 +64,6 @@ usedRange := ws1.UsedRange
 
 rowCount := usedRange.Rows.Count
 colCount := usedRange.Columns.Count
-; xlWhole := 1
-
-; Find the first cell containing the search value
-; searchValue := ws1Regions.1
-
 
 ; Loop through each value in the array
 for eachRegion in ws1Regions
