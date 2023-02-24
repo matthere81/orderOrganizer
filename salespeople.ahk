@@ -12,9 +12,9 @@ winOpen := 0
 
 if WinExist(salesWorkBook)
 {
-	MsgBox, in winexist
-	WinClose
-	winOpen := 1
+    MsgBox, in winexist
+    WinClose
+    winOpen := 1
 }
 
 ; Create Excel COM object
@@ -35,136 +35,80 @@ ws4 := wb.Worksheets[4] ; - IOMS Sales
 ws5 := wb.Worksheets[5] ; - WiAS Team
 ;-------- END LIST OUT WORKSHEET NAMES END --------;
 
-
 ; Identify sales regions
-ws1Regions := ["AMER-GCM", "AMER-MWM", "AMER-MOM", "AMER-NWM", "AMER-SWM"]
+ws1Regions := ["AMER-GCM"] ;, "AMER-MWM"] ;, "AMER-MOM", "AMER-NWM", "AMER-SWM"]
 
-; Identify sales manager for each region
-; Loop through each ws1Regions and find individual region
-
-; Get the range of cells that contain data
-usedRange := ws1.UsedRange
-
-rowCount := usedRange.Rows.Count
-colCount := usedRange.Columns.Count
-
-; Initialize a two-dimensional array to store the values between the found cells
-regionValues := {}
-
-; Loop through each value in the array
-for eachRegionIndex, eachRegion in ws1Regions
-{
-	foundCell := usedRange.Find(eachRegion)
-	currentRegion := eachRegion
-	; MsgBox, % eachRegion
-	
-	if (foundCell <> "")
-	{
-		; Get the address of the found cell
-		foundAddress := foundCell.Address
-
-		; Display the address in a message box
-		; MsgBox, % foundCell.Value
-		; MsgBox, The value was found in cell %foundAddress%.
-		
-		; Get the range of cells between the found cell and the next colored cell
-		startRow := foundCell.Row + 1
-		startCol := foundCell.Column
-		endRow := startRow
-		endCol := colCount
-		For row In startRow.rowCount
-		{
-			If (ws1.Cells(row, startCol).Interior.ColorIndex = foundCell.Interior.ColorIndex)
-			{
-				endRow := row - 1
-				Break
-			}
-		}
-		cellRange := ws1.Range(ws1.Cells(startRow, startCol), ws1.Cells(endRow, endCol))
-		
-		; Loop through each cell in the range and add its value to the sub-array
-		subArray := []
-		For r, row In cellRange.Cells
-		{
-			For c, col In row
-			{
-				value := col.Value
-				If (value != "")
-				{
-					subArray.Push(value)
-				}
-			}
-		}
-		regionValues[eachRegionIndex] := subArray
-	}
-	else
-	{
-		MsgBox, % eachRegion
-	}
-}
-
-; Display the values stored in the two-dimensional array
-For index, values In regionValues
-{
-	region := ws1Regions[index]
-	MsgBox, % "Region: " . region . "`nValues: " . values
-}
-
-wb.Close()
-Return
-
+; Initialize array to store cell ranges by background color
+colorRanges := []
 
 ; Loop through each value in the array
 for eachRegion in ws1Regions
 {
-	foundCell := usedRange.Find(ws1Regions[eachRegion])
-	currentRegion := ws1Regions[eachRegion]
-	; MsgBox, % ws1Regions[eachRegion]
-	
-	if (foundCell <> "")
+    foundCell := ws1.Cells.Find(ws1Regions[eachRegion])
+    currentRegion := ws1Regions[eachRegion]
+    ; MsgBox, % ws1Regions[eachRegion]
+    
+    if (foundCell <> "")
 	{
 		; Get the address of the found cell
 		foundAddress := foundCell.Address
+		
+		; Get the interior color of the found cell
+		foundColor := foundCell.Interior.Color
 
-		; Display the address in a message box
-		; MsgBox, % foundCell.Value
-		; MsgBox, The value was found in cell %foundAddress%.
+		; Get the next cell in the same row
+		nextCell := foundCell.Offset(1, 0)
+
+		; Loop through the cells in the same row until you find one with the same interior color
+		while (nextCell.Column = foundCell.Column)
+		{
+			; Get the interior color of the next cell
+			nextColor := nextCell.Interior.Color
+
+			if (nextColor = foundColor)
+			{
+				; Display the address of the next cell
+				MsgBox, % "The next cell with the same interior color is " . nextCell.Address . "."
+
+				break
+			}
+			else
+			{
+				; Move to the next cell in the same row
+				nextCell := nextCell.Offset(1, 0)
+			}
+		}
+		; Display the address and interior color in a message box
+		MsgBox, The value was found in cell %foundAddress% with interior color %interiorColor%.
+		
 	}
-	else
-	{
-		MsgBox, % ws1Regions[eachRegion]
-	}
-
-    ; Search for the region in the worksheet
-    ; cell := usedRange.Find(currentRegion)
-
-	; MsgBox % cell
+    else
+    {
+        MsgBox, % ws1Regions[eachRegion]
+    }
 }
 
-
-
-
-
-
-	; Identify the next colored cell (the sales manager)
-	; Get sales people in that range and assign them to the group
-
-
+; Loop through each key in the colorRanges array and display the cell ranges
+for key, value in colorRanges
+{
+    MsgBox, The cell range with background color %key% is %value%.
+}
 
 if winOpen = 1
 {
-	; Open workbook
+    ; Open workbook
     wb := xl.Workbooks.Open(workbookPath)
-	xl.Visible := True
+    xl.Visible := True
 }
 else if winOpen = 0
 {
-	wb.Close()
-	xl.quit()
+    wb.Close()
+    xl.quit()
 }
 
 MsgBox, end
 Return
+
 
 
 
