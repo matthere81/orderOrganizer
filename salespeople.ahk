@@ -8,6 +8,8 @@ SetWorkingDir, %A_ScriptDir%
 workbookPath := "C:\Users\" . A_UserName . "\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
 salesWorkBook := "Sales List fed 12.xlsx"
 
+wb := OpenExcelWorkbook(workbookPath)
+
 winOpen := 0
 
 if WinExist(salesWorkBook)
@@ -16,15 +18,6 @@ if WinExist(salesWorkBook)
     WinClose
     winOpen := 1
 }
-
-; Create Excel COM object
-xl := ComObjCreate("Excel.Application")
-
-; Hide Excel application window
-xl.Visible := False
-
-; Open workbook
-wb := xl.Workbooks.Open(workbookPath)
 
 ;-------- LIST OUT WORKSHEET NAMES --------;
 ; Select the worksheet named "Digital Sales"
@@ -36,7 +29,9 @@ ws5 := wb.Worksheets[5] ; - WiAS Team
 ;-------- END LIST OUT WORKSHEET NAMES END --------;
 
 ; Identify sales regions
-ws1Regions := ["AMER-GCM"] ;, "AMER-MWM"] ;, "AMER-MOM", "AMER-NWM", "AMER-SWM"]
+ws1Regions := ["AMER-GCM", "AMER-MWM", "AMER-MOM", "AMER-NWM", "AMER-SWM"]
+salesManagers := []
+salesPeople := []
 
 ; Initialize array to store cell ranges by background color
 colorRanges := []
@@ -68,9 +63,37 @@ for eachRegion in ws1Regions
 			if (nextColor = foundColor)
 			{
 				; Display the address of the next cell
-				MsgBox, % "The next cell with the same interior color is " . nextCell.Address . "."
+				; MsgBox, % "The next cell with the same interior color is " . nextCell.Address . "."
+				startingCell := foundAddress
+				endingCell := nextCell.Address
+				managerValue := nextCell.Value
+				managerValue := Trim(managerValue)
 
+				; Get the values between the starting cell and ending cell
+				startingRow := foundCell.Row + 1
+				endingRow := nextCell.Row - 1
+
+				; MsgBox, % "Starting row: " . startingRow . ", Ending row: " . endingRow
+				; MsgBox, % "Starting cell address: " . startingCell . ", Ending cell address: " . endingCell
+
+				Loop % (endingRow - startingRow + 1)
+				{
+					cellValue := ws1.Cells(startingRow + A_Index - 1, foundCell.Column).Value
+					cellValue := Trim(cellValue)
+					
+					if (cellValue = "TBD")
+						break
+
+					salesPeople.Push(cellValue)
+				}
+
+				if (managerValue = "Manager TBD")
+					break
+				
+				; Push the Sales Manager to array
+				salesManagers.Push(managerValue)
 				break
+
 			}
 			else
 			{
@@ -79,7 +102,7 @@ for eachRegion in ws1Regions
 			}
 		}
 		; Display the address and interior color in a message box
-		MsgBox, The value was found in cell %foundAddress% with interior color %interiorColor%.
+		; MsgBox, The value was found in cell %foundAddress% with interior color %interiorColor%.
 		
 	}
     else
@@ -88,11 +111,17 @@ for eachRegion in ws1Regions
     }
 }
 
+; Print the values in the endingCells array
+for index, value in salesPeople
+    Display .= value . "`n"
+
+MsgBox, %Display%
+
 ; Loop through each key in the colorRanges array and display the cell ranges
-for key, value in colorRanges
-{
-    MsgBox, The cell range with background color %key% is %value%.
-}
+; for key, value in colorRanges
+; {
+;     MsgBox, The cell range with background color %key% is %value%.
+; }
 
 if winOpen = 1
 {
@@ -110,374 +139,15 @@ MsgBox, end
 Return
 
 
+;-------- FUNCTIONS FUNCTIONS FUNCTIONS --------;
 
-
-
-
-
-
-;******** CHECKS IF EXCEL IS OPEN AND SALES WB OPEN ********;
-
-; if (xl != "")
-if (xl = 0)
-{
-    wb := xl.Workbooks(salesWorkBook)
-
-	; Check if the workbook is open
-	workbookFound := false
-	; ComObjArray(VarType, Count1 [, Count2, ... Count8])
-	for index, wb in ComObjArray(xl.Workbooks,1)
-	{
-		MsgBox % wb.Name
-	}
-
-    if (wb != "")
-    {
-		MsgBox in first if
-    }
-    else
-    {
-		MsgBox in first else
-        ; the Excel application is not open, so create the COM object
-		xl := ComObjCreate("Excel.Application")
-		; open the workbook
-		wb := xl.Workbooks.Open(workbookPath)
-    }
-}
-else
-{
-	MsgBox in last else
-    ; the Excel application is not open, so create the COM object
-	xl := ComObjCreate("Excel.Application")
-	; open the workbook
-	wb := xl.Workbooks.Open(workbookPath)
+OpenExcelWorkbook(workbookPath) {
+    xl := ComObjCreate("Excel.Application")
+    xl.Visible := False
+    wb := xl.Workbooks.Open(workbookPath)
+    return wb
 }
 
-;-------- LIST OUT WORKSHEET NAMES --------;
-; Select the worksheet named "Digital Sales"
-ws1 := wb.Worksheets[1] ; - West Denise Schwartz
-ws2 := wb.Worksheets[2] ; - East & Canada Maroun
-ws3 := wb.Worksheets[3] ; - Digital
-ws4 := wb.Worksheets[4] ; - IOMS Sales
-ws5 := wb.Worksheets[5] ; - WiAS Team
-;-------- END LIST OUT WORKSHEET NAMES END --------;
-
-
-; Identify sales regions
-ws1Regions := ["AMER-GCM", "AMER-MWM", "AMER-MOM", "AMER-NWM", "AMER-SWM"]
-
-; Identify sales manager for that region
-	; Loop through each ws1Regions and find individual region
-	; Identify the next colored cell (the sales manager)
-	; Get sales people in that range and assign them to the group
-
-
-
-; Get the range of cells that contain data
-usedRange := ws1.UsedRange
-
-rowCount := usedRange.Rows.Count
-colCount := usedRange.Columns.Count
-
-; Loop through each value in the array
-for eachRegion in ws1Regions
-{
-	foundCell := usedRange.Find(ws1Regions[eachRegion])
-	currentRegion := ws1Regions[eachRegion]
-	; MsgBox, % ws1Regions[eachRegion]
-	
-	if (foundCell <> "")
-	{
-		; Get the address of the found cell
-		foundAddress := foundCell.Address
-
-		; Display the address in a message box
-		MsgBox, % foundCell.Value
-		MsgBox, The value was found in cell %foundAddress%.
-	}
-	else
-	{
-		MsgBox, % ws1Regions[eachRegion]
-	}
-
-    ; Search for the region in the worksheet
-    ; cell := usedRange.Find(currentRegion)
-
-	; MsgBox % cell
-}
-
-wb.Close()
-MsgBox, end
-
-
-
-
-Return
-
-;******** END**** CHECKS IF EXCEL IS OPEN AND SALES WB OPEN **** END ********;
-
-;******** CHECKS IF EXCEL IS OPEN
-if (xl = "")
-{
-	; MsgBox, %ComObjActive%
-    MsgBox, ComObjActive does not exist.
-}
-else
-{
-    MsgBox, ComObjActive exists and its value is %xl%
-}
-
-Return
-
-;******** END END END | CHECKS IF EXCEL IS OPEN | END END END ********;
-
-; Disables ComObj errors
-ComObjError(false)
-
-; Check if Excel is already running
-xl := ComObjActive("Excel.Application")
-
-; check if Excel is already open and create the COM object
-If (xl := ComObjActive("Excel.Application"))
-{
-    ; check if the workbook is already open
-    wb := xl.Workbooks.Item(Book1.xlsx)
-	
-	if (wb = 0)
-    {
-	}
-	Else
-	{
-		
-    	MsgBox, The workbook has been opened.
-	}
-}
-
-ws := wb.Worksheets("Sheet1")
-
-; Read the value of cell A1
-value := ws.Range("A1").Value
-
-MsgBox, % value
-
-wb.Close()
-MsgBox, end
-Return
-
-; Check if workbook is open
-; wb := xl.Workbooks(workbookPath)
-; MsgBox % wb
-; if (wb is not equal to "") {
-;     MsgBox, % "Workbook is open"
-; } else {
-;     MsgBox, % "Workbook is not open"
-; }
-; }
-
-; Check if workbook is open
-; wb := xl.Workbooks(workbookPath)
-
-; Open the workbook
-; wb := xl.Workbooks.Open(workbookPath)
-
-MsgBox, end
-xl.Quit()
-Return
-;-------- LIST OUT WORKSHEET NAMES --------;
-; Select the worksheet named "Digital Sales"
-ws1 := wb.Worksheets[1] ; - West Denise Schwartz
-ws2 := wb.Worksheets[2] ; - East & Canada Maroun
-ws3 := wb.Worksheets[3] ; - Digital
-ws4 := wb.Worksheets[4] ; - IOMS Sales
-ws5 := wb.Worksheets[5] ; - WiAS Team
-;-------- END LIST OUT WORKSHEET NAMES END --------;
-
-
-; Identify sales regions
-ws1Regions := ["AMER-GCM", "AMER-MWM", "AMER-MOM", "AMER-NWM", "AMER-SWM"]
-
-; Identify sales manager for that region
-	; Loop through each ws1Regions and find individual region
-	; Identify the next colored cell (the sales manager)
-	; Get sales people in that range and assign them to the group
-
-
-
-; Get the range of cells that contain data
-usedRange := ws1.UsedRange
-
-rowCount := usedRange.Rows.Count
-colCount := usedRange.Columns.Count
-; xlWhole := 1
-
-; Find the first cell containing the search value
-; searchValue := ws1Regions.1
-
-
-; Loop through each value in the array
-for eachRegion in ws1Regions
-{
-	foundCell := usedRange.Find(ws1Regions[eachRegion])
-	currentRegion := ws1Regions[eachRegion]
-	; MsgBox, % ws1Regions[eachRegion]
-	
-	if (foundCell <> "")
-	{
-		; Get the address of the found cell
-		foundAddress := foundCell.Address
-
-		; Display the address in a message box
-		MsgBox, % foundCell.Value
-		MsgBox, The value was found in cell %foundAddress%.
-	}
-	else
-	{
-		MsgBox, % ws1Regions[eachRegion]
-	}
-
-    ; Search for the region in the worksheet
-    ; cell := usedRange.Find(currentRegion)
-
-	; MsgBox % cell
-}
-
-; Check if the search value was found
-; if (foundCell)
-; {
-;     ; Get the address of the found cell
-;     foundCellAddress := foundCell.Address
-    
-;     ; Get the value in the found cell
-;     foundCellValue := foundCell.Value
-    
-;     ; Display the results
-;     MsgBox, Found cell %foundCellAddress% with value %foundCellValue%.
-; }
-; else
-; {
-;     MsgBox, Could not find %searchValue%.
-; }
-
-; Close the workbook and quit Excel
-wb.Close()
-
-MsgBox excel closed
-
-Return
-
-ws1ManagerA := []
-
-counter := 0
-
-; Loop through all cells in column A
-for row in ws1.Range("A1:A" rowCount)
-{
-    cell := row.Cells[1]
-    bgColor := cell.Interior.Color
-	whiteRGB := 16777215
-    if (bgColor <> whiteRGB) ; Check if the background color is not white
-    {
-		if (bgColor && counter <= 1)
-		{
-			ws1ManagerA.Push(cell.Address)
-			counter++
-			; MsgBox, % cell.Address
-			if counter = 1
-			{
-				startingCell := cell.Address
-			}
-			if counter = 2
-			{
-				lastCell := cell.Address
-				manager := ws1ManagerA.Push(cell.Value)
-			}
-		}
-	}
-}
-
-ws1ManagerA.RemoveAt(1,2)
-
-; ws1ManagerA.push(manager)
-; MsgBox, % startingCell . " " . lastCell
-
-; Display all the values in the array
-for Index, Value in ws1ManagerA
-	Display .= Value . "`n"
-MsgBox % Display
-
-; When finished, close the workbook and quit Excel
-wb.Close()
-xl.Quit()
-
-
-Return
-
-
-;-------- FUNCTIONS --------;
-
-checkLastModified(workbookPath,lastModifiedIni)
-{
-; Get the modification time of the file
-FileGetTime, modTime, %workbookPath%, M
-
-; Read the last checked time from a file
-FileRead, lastCheckTime, lastModifiedIni
-
-Return
-; If the last check time is more than a week ago, check for changes
-if (A_Now - lastCheckTime >= 60) ;7 * 24 * 60 * 60)
-{
-    ; Update the last checked time in the file
-    FileDelete, lastModifiedIni
-    FileAppend, %A_Now%, lastModifiedIni
-
-    ; Get the modification time of the file again
-    FileGetTime, modTime, %workbookPath%, M
-
-    ; Compare the modification time to the previous time
-    if (modTime <> prevModTime)
-    {
-        ; Create an Outlook application object
-		Outlook := ComObjCreate("Outlook.Application")
-
-		; Create an email item
-		Email := Outlook.CreateItem(0)
-
-		; Set the email properties
-		Email.To := "matthew.terbeek@thermofisher.com"
-		Email.Subject := "Sales Change"
-		Email.Body := "This is a test email sent from AutoHotkey."
-
-
-		; Send the email
-		Email.Send()
-
-		; Release the objects
-		Email := ""
-		Outlook := ""
-        prevModTime := modTime
-    }
-}
-}
-
-
-
-
-Return
-
-
-
-
-
-
-
-
-
-Data := {}
-
-; Get all cell values in column A and put in an array
-for Cell in ws1.UsedRange.Cells
-	Data.Push(Cell.Value)
 
 ; Display all the values in the array
 for Index, Value in Data
