@@ -1498,26 +1498,26 @@ IfWinNotActive, Save As, , WinActivate, Save As,
 		WinWaitActive, Save As, 
 return
 
-^l::
-SendMode, event
-Setkeydelay 20
-gosub WaitInbox
-Send ^n
-WinWait Untitled
-Clipboard := "talia.oberling@thermofisher.com"
-Send %Clipboard%
-Sleep 750
-Send {tab 3}
-Clipboard := "SO{#}{space}" . soNumber . "{space}Level 2 Approval"
-Send %Clipboard%{tab}
-Clipboard := "Hi Talia, `nPlease review SO{#}{space}" . soNumber .  "{space}for level 2 approval.`n`nThank you"
-Send %Clipboard%
-Sleep 500
-Send !h 
-Sleep 500
-Send af{enter}
-SetKeyDelay 0
-Return
+; ^l::
+; SendMode, event
+; Setkeydelay 20
+; gosub WaitInbox
+; Send ^n
+; WinWait Untitled
+; Clipboard := "talia.oberling@thermofisher.com"
+; Send %Clipboard%
+; Sleep 750
+; Send {tab 3}
+; Clipboard := "SO{#}{space}" . soNumber . "{space}Level 2 Approval"
+; Send %Clipboard%{tab}
+; Clipboard := "Hi Talia, `nPlease review SO{#}{space}" . soNumber .  "{space}for level 2 approval.`n`nThank you"
+; Send %Clipboard%
+; Sleep 500
+; Send !h 
+; Sleep 500
+; Send af{enter}
+; SetKeyDelay 0
+; Return
 
 F15:: ; Copy / Paste - Plant Coding
 	Sleep, 200
