@@ -1002,6 +1002,25 @@ return
 Send, Order Notice - %customer% - $%poValue%
 return
 
+~LButton::
+If (A_TimeSincePriorHotkey < 300)
+{
+   Clipboard =
+   SendInput, ^c
+   Sleep, 50
+   Clipboard =
+   ClipboardOld := ClipboardAll
+}
+Return
+
+~LButton up::
+If (A_TimeSincePriorHotkey < 300)
+{
+   Clipboard := ClipboardOld
+}
+Return
+
+
 ; /******** RMA HOTSTRINGS ********/
 ::sjr::PLEASE RETURN THESE ITEMS PREPAID TO:`nTHERMO FISHER SCIENTIFIC`nRMA {#}: XXXXXXX`n355 RIVER OAKS PARKWAY`nSAN JOSE, CA 95134{`n 2}PLEASE INCLUDE A COMPILED DECONTAMINATION FORM & A COPY OF THIS RETURN AUTHORIZATION
 ::rht::ORIGINAL SO{#} XXXXXX`nITEMS CONFIRMED DOWN BY FSE XXXXXXX{`n 2}REPLACEMENT SO{#} XXXXXX
