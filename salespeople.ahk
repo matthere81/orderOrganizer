@@ -14,7 +14,7 @@ winOpen := 0
 
 if WinExist(salesWorkBook)
 {
-    MsgBox, in winexist
+    ; MsgBox, in winexist
     WinClose
     winOpen := 1
 }
@@ -25,103 +25,50 @@ ws1 := wb.Worksheets[1] ; - West Denise Schwartz
 ws2 := wb.Worksheets[2] ; - East & Canada Maroun
 ws3 := wb.Worksheets[3] ; - Digital
 ws4 := wb.Worksheets[4] ; - IOMS Sales
-ws5 := wb.Worksheets[5] ; - WiAS Team
+; ws5 := wb.Worksheets[5] ; - WiAS Team
 ;-------- END LIST OUT WORKSHEET NAMES END --------;
 
 ; Identify sales regions
 ws1Regions := ["AMER-GCM", "AMER-MWM", "AMER-MOM", "AMER-NWM", "AMER-SWM"]
+ws2Regions := ["AMER-CAM", "AMER-TSM", "AMER-NEM", "AMER-MAM"]
+ws3Regions := ["USA"]
+ws4Regions := ["IOMS Sales Team"]
 salesManagers := []
 salesPeople := []
+regionsArray := [ws1Regions, ws2Regions, ws3Regions, ws4Regions]
+worksheetsArray := [ws1, ws2, ws3, ws4]
 
 ; Initialize array to store cell ranges by background color
 colorRanges := []
+bgcolor := cell
+usedRange := ws1.UsedRange
 
-; Loop through each value in the array
-for eachRegion in ws1Regions
-{
-    foundCell := ws1.Cells.Find(ws1Regions[eachRegion])
-    currentRegion := ws1Regions[eachRegion]
-    ; MsgBox, % ws1Regions[eachRegion]
-    
-    if (foundCell <> "")
+; Example usage: Find values in ws1Regions in worksheet ws1
+; FindArrayValues(ws1Regions, ws1)
+; Loop through each cell in the worksheet
+count := 0
+
+for Column in usedRange.Columns
+{	
+	for Cell in Column.Cells
 	{
-		; Get the address of the found cell
-		foundAddress := foundCell.Address
-		
-		; Get the interior color of the found cell
-		foundColor := foundCell.Interior.Color
-
-		; Get the next cell in the same row
-		nextCell := foundCell.Offset(1, 0)
-
-		; Loop through the cells in the same row until you find one with the same interior color
-		while (nextCell.Column = foundCell.Column)
-		{
-			; Get the interior color of the next cell
-			nextColor := nextCell.Interior.Color
-
-			if (nextColor = foundColor)
-			{
-				; Display the address of the next cell
-				; MsgBox, % "The next cell with the same interior color is " . nextCell.Address . "."
-				startingCell := foundAddress
-				endingCell := nextCell.Address
-				managerValue := nextCell.Value
-				managerValue := Trim(managerValue)
-
-				; Get the values between the starting cell and ending cell
-				startingRow := foundCell.Row + 1
-				endingRow := nextCell.Row - 1
-
-				; MsgBox, % "Starting row: " . startingRow . ", Ending row: " . endingRow
-				; MsgBox, % "Starting cell address: " . startingCell . ", Ending cell address: " . endingCell
-
-				Loop % (endingRow - startingRow + 1)
-				{
-					cellValue := ws1.Cells(startingRow + A_Index - 1, foundCell.Column).Value
-					cellValue := Trim(cellValue)
-					
-					if (cellValue = "TBD")
-						break
-
-					salesPeople.Push(cellValue)
-				}
-
-				if (managerValue = "Manager TBD")
-					break
-				
-				; Push the Sales Manager to array
-				salesManagers.Push(managerValue)
-				break
-
-			}
-			else
-			{
-				; Move to the next cell in the same row
-				nextCell := nextCell.Offset(1, 0)
-			}
-		}
-		; Display the address and interior color in a message box
-		; MsgBox, The value was found in cell %foundAddress% with interior color %interiorColor%.
-		
+		; if Cell.Interior.Color <>
+		; {
+			; MsgBox % Cell.Value
+		; }
+		if count < 30
+			MsgBox % Cell.Interior.Color ; . " " . Cell.Address ;. " is located " . %Row.Range%"
+		else
+			Break
+		count ++
 	}
-    else
-    {
-        MsgBox, % ws1Regions[eachRegion]
-    }
 }
 
+
+
 ; Print the values in the endingCells array
-for index, value in salesPeople
+for index, value in salesManagers
     Display .= value . "`n"
-
-MsgBox, %Display%
-
-; Loop through each key in the colorRanges array and display the cell ranges
-; for key, value in colorRanges
-; {
-;     MsgBox, The cell range with background color %key% is %value%.
-; }
 
 if winOpen = 1
 {
@@ -141,18 +88,224 @@ Return
 
 ;-------- FUNCTIONS FUNCTIONS FUNCTIONS --------;
 
-OpenExcelWorkbook(workbookPath) {
+OpenExcelWorkbook(workbookPath)
+{
     xl := ComObjCreate("Excel.Application")
     xl.Visible := False
     wb := xl.Workbooks.Open(workbookPath)
     return wb
 }
 
+; Function to find values in an array in an Excel worksheet
+FindArrayValues(array, worksheet)
+{
+    ; Loop through the array
+    for i, value in array
+    {
+        ; Search for the value in the worksheet
+        cell := worksheet.Cells.Find(value)
+        cellAddress := cell.Address
+		; Get the interior color of the cell
+		interiorColor := cell.Interior.color
+
+		; Search for the next cell with the same interior color in the same column
+        nextCell := cell.Offset(1, 0)
+		nextCellColor := nextCell.Interior.color
+
+		; Iterate over each cell in the same column until there is a cell with no value found
+        while (nextCell.Value != "")
+        {
+			msgbox % nextCell.Value
+			nextCell := nextCell.Offset(1, 0)
+            ; if (nextCellColor = interiorColor)
+            ; {
+            ;     if (nextCellColor != -4142)
+            ;     {
+            ;         MsgBox, % "Value: " . nextCell.Value . " from first else`nNextCellColor is " . nextCellColor . " and original color is " . interiorColor
+            ;     }
+            ;     nextCell := nextCell.Offset(1, 0)
+            ;     nextCellColor := nextCell.Interior.color
+            ; }
+            ; else
+            ; {
+            ;     if (nextCellColor != -4142)
+            ;     {
+            ;         MsgBox, % "Value: " . nextCell.Value . "`nNextCellColor is " . nextCellColor . " and original color is " . interiorColor
+            ;     }
+            ;     break
+            ; }
+		}
+    }
+}
+
+
+
+LoopRegions(ws1Regions)
+{
+	; Initialize array to store cell information dictionaries
+    cellInfoList := []
+    ; Loop through each value in the array
+    for eachRegion in ws1Regions
+    {
+        foundCell := ws1.Cells.Find(ws1Regions[eachRegion])
+		MsgBox, Found cell: %foundCell%
+        currentRegion := ws1Regions[eachRegion]
+		cellInfo := GetCellInfo(foundCell)
+		cellInfoList.push(cellInfo)
+    }
+
+	; Loop over cell information dictionaries and show address in message box
+    for eachCell in cellInfoList
+    {
+        MsgBox, % eachCell["Address"]
+    }
+
+    ; }
+
+        
+	; Add the cellInfo dictionary to the colorRanges array
+	colorRanges.Push(cellInfo)
+
+	; Loop through each value in the array
+	; for eachRegion in ws1Regions
+	; {
+	;     foundCell := ws1.Cells.Find(ws1Regions[eachRegion])
+	;     currentRegion := ws1Regions[eachRegion]
+	; 	MsgBox, % ws1Regions[eachRegion]
+	; }  
+}
+
+GetCellInfo(foundCell)
+{
+    foundAddress := foundCell.Address
+    foundColor := foundCell.Interior.Color
+    nextCell := foundCell.Offset(1, 0)
+    
+    ; Return a dictionary containing the cell information
+    cellInfo := {}
+    cellInfo["Address"] := foundAddress
+    cellInfo["Color"] := foundColor
+    cellInfo["NextCell"] := nextCell
+	MsgBox, Cell info: %cellInfo%
+    
+    return cellInfo
+
+	    ; if (foundCell <> "")
+	; {
+	; 	; Get the address of the found cell
+	; 	foundAddress := foundCell.Address
+		
+	; 	; Get the interior color of the found cell
+	; 	foundColor := foundCell.Interior.Color
+
+	; 	; Get the next cell in the same row
+	; 	nextCell := foundCell.Offset(1, 0)
+}
+
+/*
+* Given a starting cell and an interior color, finds the next cell with the same interior color in the same column
+* Returns the next cell and its interior color, or an empty string and 0 if not found
+*/
+FindNextCellWithSameInteriorColor(startingCell, interiorColor, worksheet)
+{
+    foundCell := startingCell.Offset(1, 0)
+    foundColor := foundCell.Interior.Color
+    
+    while (foundCell.Column = startingCell.Column)
+    {
+        if (foundColor = interiorColor)
+        {
+            return [foundCell, foundColor]
+        }
+        else
+        {
+            foundCell := foundCell.Offset(1, 0)
+            foundColor := foundCell.Interior.Color
+        }
+    }
+    
+    ; If the loop completes without finding a match, return empty string and 0
+    return ["", 0]
+
+
+	; 	; Loop through the cells in the same row until you find one with the same interior color
+	; 	while (nextCell.Column = foundCell.Column)
+	; 	{
+	; 		; Get the interior color of the next cell
+	; 		nextColor := nextCell.Interior.Color
+
+	; 		if (nextColor = foundColor)
+	; 		{
+}
+
+/*
+* Given a starting cell, starting row, ending row, and worksheet, extracts sales people from a range of cells
+* Returns an array of sales people
+*/
+ExtractSalesPeopleInRange(startingCell, startingRow, endingRow, worksheet)
+{
+    salesPeople := []
+    
+    Loop % (endingRow - startingRow + 1)
+    {
+        cellValue := worksheet.Cells(startingRow + A_Index - 1, startingCell.Column).Value
+        cellValue := Trim(cellValue)
+        
+        if (cellValue = "TBD")
+            break
+        
+        salesPeople.Push(cellValue)
+    }
+    
+    return salesPeople
+}
+
+
+/*
+* Given a starting cell and worksheet, finds the next cell with the same interior color in the same column,
+* and extracts sales people from the range of cells between the starting and ending cells
+* Returns an array of sales people and the sales manager, or an empty array if the manager value is "Manager TBD"
+*/
+; FindSalesPeopleInRange(startingCell, worksheet)
+; {
+;     salesPeople := []
+;     foundColor := startingCell.Interior.Color
+    
+;     while (startingCell <> "")
+;     {
+;         [nextCell, nextColor] := FindNextCellWithSameInteriorColor(startingCell, foundColor, worksheet)
+        
+;         if (nextCell = "")
+;             break
+        
+;         startingRow := startingCell.Row + 1
+;         endingRow := nextCell.Row - 1
+        
+;         extractedSalesPeople := ExtractSalesPeopleInRange(startingCell, startingRow, endingRow, worksheet)
+;         salesPeople.Push(extractedSalesPeople)
+        
+;         managerValue := nextCell.Value
+;         managerValue := Trim(managerValue)
+        
+;         if (managerValue = "Manager TBD")
+;             break
+        
+;         salesManagers.Push(managerValue)
+        
+;         startingCell := nextCell
+;         foundColor := nextColor
+;     }
+    
+;     return [salesPeople, salesManagers]
+; }
+
+;-------- END FUNCTIONS END FUNCTIONS END FUNCTIONS --------;
+
 
 ; Display all the values in the array
-for Index, Value in Data
-	Display .= Index "`t" Value ;"`n"
-MsgBox % Display
+; for Index, Value in Data
+; 	Display .= Index "`t" Value ;"`n"
+; MsgBox % Display
 
 ; When finished, close the workbook and quit Excel
 wb.Close()
