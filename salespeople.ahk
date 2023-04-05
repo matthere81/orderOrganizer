@@ -6,26 +6,30 @@ SetWorkingDir, %A_ScriptDir%
 
 ; Path to the Excel workbook
 workbookPath := "C:\Users\" . A_UserName . "\OneDrive - Thermo Fisher Scientific\General\Training Docs\Sales List fed 12.xlsx"
-salesWorkBook := "Sales List fed 12.xlsx"
+salesWorkBookName := "Sales List fed 12.xlsx"
+
+; Function to open an Excel workbook
+OpenExcelWorkbook(path) {
+    xlApp := ComObjCreate("Excel.Application")
+    xlApp.Visible := false
+    workbook := xlApp.Workbooks.Open(path)
+    return workbook
+}
 
 wb := OpenExcelWorkbook(workbookPath)
 
 winOpen := 0
 
-if WinExist(salesWorkBook)
-{
-    ; MsgBox, in winexist
+if WinExist(salesWorkBookName) {
     WinClose
     winOpen := 1
 }
 
 ;-------- LIST OUT WORKSHEET NAMES --------;
-; Select the worksheet named "Digital Sales"
 ws1 := wb.Worksheets[1] ; - West Denise Schwartz
 ws2 := wb.Worksheets[2] ; - East & Canada Maroun
 ws3 := wb.Worksheets[3] ; - Digital
 ws4 := wb.Worksheets[4] ; - IOMS Sales
-; ws5 := wb.Worksheets[5] ; - WiAS Team
 ;-------- END LIST OUT WORKSHEET NAMES END --------;
 
 ; Identify sales regions
@@ -34,41 +38,65 @@ ws2Regions := ["AMER-CAM", "AMER-TSM", "AMER-NEM", "AMER-MAM"]
 ws3Regions := ["USA"]
 ws4Regions := ["IOMS Sales Team"]
 salesManagers := []
+salesDirectors := []
 salesPeople := []
 regionsArray := [ws1Regions, ws2Regions, ws3Regions, ws4Regions]
-worksheetsArray := [ws1, ws2, ws3, ws4]
+worksheetsArray := [ws1, ws2, ws3, ws4] ; ws1, ws2, 
 
-; Initialize array to store cell ranges by background color
-colorRanges := []
-bgcolor := cell
-usedRange := ws1.UsedRange
+; Get the last row and column in the worksheet
+; lastRow := ws1.UsedRange.Rows.Count
+; lastColumn := ws1.UsedRange.Columns.Count
 
-; Example usage: Find values in ws1Regions in worksheet ws1
-; FindArrayValues(ws1Regions, ws1)
-; Loop through each cell in the worksheet
-count := 0
+; Arrays for storing names
+names_with_white_bg := []
+names_with_non_white_bg := []
 
-for Column in usedRange.Columns
-{	
-	for Cell in Column.Cells
+for index, worksheet in worksheetsArray
+{
+    ; cellA3 := worksheet.Range("A3")
+    ; MsgBox, % "Value of cell A3: " . cellA3.Value
+    ; MsgBox, % "Formula of cell A3: " . cellA3.Formula
+    ; MsgBox, % "Address of cell A3: " . cellA3.Address
+    ; MsgBox, % "Color of cell A3: " . cellA3.Interior.Color
+	; MsgBox, % "The used range of " . worksheet.Name . " is " . usedRange.Address
+	usedRange := worksheet.UsedRange
+	
+	for column in usedRange.Columns
 	{
-		; if Cell.Interior.Color <>
-		; {
-			; MsgBox % Cell.Value
-		; }
-		if count < 30
-			MsgBox % Cell.Interior.Color ; . " " . Cell.Address ;. " is located " . %Row.Range%"
-		else
-			Break
-		count ++
-	}
+    	for cell in column.Cells
+    	{		
+			; MsgBox, 1,, % cell.Value . " " . found . " at " cell.Address . " " . cell.Interior.Color ;. " " . foundDirector
+			; IfMsgBox, Cancel
+			; {
+			; 	break	
+			; }	
+			; Find names
+			found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
+			; found := RegExMatch(cell.Value, "(?:[B{1}][a-zA-z]*\s[a-zA-z]*)")
+			cell.Value := Trim(cell.Value)
+			if (cell.Value = "Sales Director:")
+				{
+					myOffset := cell.Offset(1,0)
+					foundDirector := myOffset.Value
+					salesDirectors.Push(foundDirector)
+				}
+			; if (found = 1) && !(cell.Value = " ") && !(cell.Interior.Color = 16777215) && !(cell.Value = "Gulf Coast") && !(cell.Value = "Sales Director:")
+			; 	&& !(cell.Value = "Manager TBD") && !(cell.Value = "Sales Director:") && !(cell.Value = foundDirector)
+			; 	MsgBox, 1,, % cell.Value . " " . found . " at " cell.Address . " " . cell.Interior.Color . " " . foundDirector
+			; 	IfMsgBox, Cancel
+			; 	{
+			; 		break	
+			; 	}	
+    	}
+	}		
 }
 
 
-
 ; Print the values in the endingCells array
-for index, value in salesManagers
-    Display .= value . "`n"
+for index, value in salesDirectors
+    display .= value . "`n"
+
+MsgBox % display
 
 if winOpen = 1
 {
@@ -82,19 +110,30 @@ else if winOpen = 0
     xl.quit()
 }
 
+; Perform any desired operations on the names arrays
+; MsgBox("Names with white background:")
+; for index, name in names_with_white_bg {
+;     MsgBox % "Names with white backgroudnd " . name
+; }
+
+; ; MsgBox("Names with non-white background:")
+; for index, name in names_with_non_white_bg {
+;     MsgBox % "Names with non-white background: " . name
+; }
+
 MsgBox, end
 Return
 
 
 ;-------- FUNCTIONS FUNCTIONS FUNCTIONS --------;
 
-OpenExcelWorkbook(workbookPath)
-{
-    xl := ComObjCreate("Excel.Application")
-    xl.Visible := False
-    wb := xl.Workbooks.Open(workbookPath)
-    return wb
-}
+; OpenExcelWorkbook(workbookPath)
+; {
+;     xl := ComObjCreate("Excel.Application")
+;     xl.Visible := False
+;     wb := xl.Workbooks.Open(workbookPath)
+;     return wb
+; }
 
 ; Function to find values in an array in an Excel worksheet
 FindArrayValues(array, worksheet)
