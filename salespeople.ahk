@@ -38,18 +38,16 @@ ws2Regions := ["AMER-CAM", "AMER-TSM", "AMER-NEM", "AMER-MAM"]
 ws3Regions := ["USA"]
 ws4Regions := ["IOMS Sales Team"]
 salesManagers := []
-salesDirectors := []
 salesPeople := []
 regionsArray := [ws1Regions, ws2Regions, ws3Regions, ws4Regions]
-worksheetsArray := [ws1, ws2, ws3, ws4] ; ws1, ws2, 
-
-; Get the last row and column in the worksheet
-; lastRow := ws1.UsedRange.Rows.Count
-; lastColumn := ws1.UsedRange.Columns.Count
+worksheetsArray := [ws1] ;, ws2, ws3, ws4] ; ws1, ws2, 
 
 ; Arrays for storing names
 names_with_white_bg := []
 names_with_non_white_bg := []
+interiorColors := []
+
+FileDelete salesPeople.ini
 
 for index, worksheet in worksheetsArray
 {
@@ -59,44 +57,173 @@ for index, worksheet in worksheetsArray
     ; MsgBox, % "Address of cell A3: " . cellA3.Address
     ; MsgBox, % "Color of cell A3: " . cellA3.Interior.Color
 	; MsgBox, % "The used range of " . worksheet.Name . " is " . usedRange.Address
-	usedRange := worksheet.UsedRange
 	
-	for column in usedRange.Columns
+	usedRange := worksheet.UsedRange
+	rows := usedRange.Rows.Count
+	columns := usedRange.Columns.Count
+	usedRange := usedRange.Address
+
+	newValue := RegExReplace(usedRange, "\$", "")
+	; \K resets the match
+	RegExMatch(newValue, "[A-Z]\d*:\K([A-Z])", lastRow) ;:\K(?:[A-Z])
+
+	firstColumn := SubStr(newValue, 1, 1)
+	firstRow = 1
+	firstCell := firstColumn . firstRow
+	lastRow := firstColumn . rows
+	finalColumnRange := firstCell . ":" . lastRow
+	finalColumnRange := worksheet.Range(finalColumnRange)
+
+	For cell in finalColumnRange
 	{
-    	for cell in column.Cells
-    	{		
-			; MsgBox, 1,, % cell.Value . " " . found . " at " cell.Address . " " . cell.Interior.Color ;. " " . foundDirector
+		; if the background color of cell is not 16777215 (white)
+		if !(cell.Interior.Color = 16777215)
+		{
+			; MsgBox,1,, % cell.Address . " " . cell.Value . " " . cell.Interior.Color
 			; IfMsgBox, Cancel
 			; {
 			; 	break	
-			; }	
-			; Find names
-			found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
-			; found := RegExMatch(cell.Value, "(?:[B{1}][a-zA-z]*\s[a-zA-z]*)")
-			cell.Value := Trim(cell.Value)
-			if (cell.Value = "Sales Director:")
-				{
-					myOffset := cell.Offset(1,0)
-					foundDirector := myOffset.Value
-					salesDirectors.Push(foundDirector)
-				}
-			; if (found = 1) && !(cell.Value = " ") && !(cell.Interior.Color = 16777215) && !(cell.Value = "Gulf Coast") && !(cell.Value = "Sales Director:")
-			; 	&& !(cell.Value = "Manager TBD") && !(cell.Value = "Sales Director:") && !(cell.Value = foundDirector)
-			; 	MsgBox, 1,, % cell.Value . " " . found . " at " cell.Address . " " . cell.Interior.Color . " " . foundDirector
-			; 	IfMsgBox, Cancel
-			; 	{
-			; 		break	
-			; 	}	
-    	}
-	}		
+			; }
+
+			; Find the next cell with matching color
+			if cell.Interior.Color = currentColor
+			{
+				; MsgBox, % cell.Value . " " . cell.Address . " " . currentColor.Value
+				endCell := cell.Address
+				break
+			}
+
+			; Get the current color
+			currentColor := cell.Interior.Color
+			
+			; Set the start cell 
+			startCell := cell.Address
+			startCellOffset := cell.Offset(1,0)
+			startCell := startCellOffset.Address
+
+			MsgBox, % startCell . " " . endCell
+
+
+			
+
+		}
+
+		; Find names
+		found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
+		if (found = 1)
+		{
+			; cellValue := Trim(cell.Value)
+			; MsgBox, 1,, % cellValue ;  % row.Value . " " . row.Address
+			; IfMsgBox, Cancel
+			; {
+			; 	break	
+			; }
+		}
+
+		; Find Sales Director
+		if (cell.Value = "Sales Director:")
+		{	
+			myOffset := cell.Offset(1,0)
+			foundDirector := myOffset.Value
+			worksheetName := worksheet.Name
+			; IniWrite, %foundDirector%, salesPeople.ini, %foundDirector%, salesDirector  ;UNCOMMMMMMMMEEEENNNNNTTT WHNE CODE IS READY
+			; IniWrite, Value, Filename, Section, Key
+		}
+		
+	}
+
 }
 
+			foundColor1 := 
+			foundColor2 := 
+
+			; if the background color of cell is not 16777215
+			; if !(cell.Interior.Color = 16777215)
+			; {
+			; 	
+				
+			
+				; for index, value in interiorColors
+				; {
+					; MsgBox, % value . " " . index
+					; MsgBox % interiorColors.MaxIndex()
+				; }
+				
+				; Add the color to an array
+				; interiorColors.Push(cell.Interior.Color)
+				; break
+				; MsgBox, % foundColor1 . " " . foundColor2
+				; MsgBox, here
+
+				; Get the range between cells with an interior color
+				; if (names_with_non_white_bg.MaxIndex() = 0)
+				; {
+				; firstColorCellFound := cell.Address
+				; RegExMatch(firstColorCellFound, "(\d*\d){1}", newRow)
+					
+				; names_with_non_white_bg.Push(colorCellFound)
+					
+					; MsgBox, % firstColorCellFound
+				; }
+				; if (names_with_non_white_bg.MaxIndex() = 2)
+				; {
+					; lastColorCellFound := cell.Address
+					; MsgBox, % firstColorCellFound . " & " . lastColorCellFound
+					; firstCell := names_with_non_white_bg[1]
+					; lastCell := names_with_non_white_bg[2]
+				; }	
+					; MsgBox % firstCell . " " . lastCell . " max index"
+					; MsgBox % lastCell . " max index"
+
+					; Once the second cell is found define the range to loop over
+					; if (lastCell)
+					; {
+
+						; myRange := worksheet.Range(firstCell . ":" . lastCell)
+
+						; loop through the rang
+						; for index in myRange
+						; {
+							; MsgBox, % index.Value
+							; found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
+							; if (found = 1) && !(cell.Value = " ") ;&& !(cell.Interior.Color = 16777215) && ;!(cell.Value = "Gulf Coast") && !(cell.Value = "Sales Director:") && !(cell.Value = "Manager TBD") && !(cell.Value = "Sales Director:") && !(cell.Value = foundDirector)
+								; MsgBox, 1,, % index.Value
+								; IfMsgBox, Cancel
+								; {
+								; 	break	
+								; }	
+					; 	}
+						
+					; }
+				; }
+				
+
+				; ; notWhiteCell := cell.Offset(1,0)
+				; msgbox 1,, % notWhiteCell.Address . " " . notWhiteCell.Value
+				; IfMsgBox, Cancel
+				; {
+				; 	break	
+				; }	
+			; }
+				
+
+			; found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
+			; if (found = 1) && !(cell.Value = " ") && !(cell.Interior.Color = 16777215) && !(cell.Value = "Gulf Coast") && !(cell.Value = "Sales Director:")
+				; && !(cell.Value = "Manager TBD") && !(cell.Value = "Sales Director:") && !(cell.Value = foundDirector)
+				; MsgBox, 1,, here ;% cell.Value . " " . found . " at " cell.Address . " " . cell.Interior.Color . " " . foundDirector
+				; IfMsgBox, Cancel
+				; {
+				; 	break	
+				; }	
+    	; }
+	; }		
+; }
 
 ; Print the values in the endingCells array
-for index, value in salesDirectors
+for index, value in names_with_non_white_bg
     display .= value . "`n"
 
-MsgBox % display
+; MsgBox % display
 
 if winOpen = 1
 {
