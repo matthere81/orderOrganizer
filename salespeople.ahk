@@ -38,14 +38,12 @@ ws2Regions := ["AMER-CAM", "AMER-TSM", "AMER-NEM", "AMER-MAM"]
 ws3Regions := ["USA"]
 ws4Regions := ["IOMS Sales Team"]
 salesManagers := []
-salesPeople := []
+salespeople := []
 regionsArray := [ws1Regions, ws2Regions, ws3Regions, ws4Regions]
 worksheetsArray := [ws1] ;, ws2, ws3, ws4] ; ws1, ws2, 
 
 ; Arrays for storing names
-names_with_white_bg := []
-names_with_non_white_bg := []
-interiorColors := []
+colorAddress := []
 
 FileDelete salesPeople.ini
 
@@ -62,11 +60,13 @@ for index, worksheet in worksheetsArray
 	rows := usedRange.Rows.Count
 	columns := usedRange.Columns.Count
 	usedRange := usedRange.Address
+	arrayLength :=
 
 	newValue := RegExReplace(usedRange, "\$", "")
+	; Sets the range of the sheet
 	; \K resets the match
 	RegExMatch(newValue, "[A-Z]\d*:\K([A-Z])", lastRow) ;:\K(?:[A-Z])
-
+	
 	firstColumn := SubStr(newValue, 1, 1)
 	firstRow = 1
 	firstCell := firstColumn . firstRow
@@ -76,152 +76,215 @@ for index, worksheet in worksheetsArray
 
 	For cell in finalColumnRange
 	{
-		; if the background color of cell is not 16777215 (white)
-		if !(cell.Interior.Color = 16777215)
-		{
-			; MsgBox,1,, % cell.Address . " " . cell.Value . " " . cell.Interior.Color
-			; IfMsgBox, Cancel
-			; {
-			; 	break	
-			; }
+		getSalesDirector(cell)
+		getColorCells(cell, colorAddress, worksheet)
+		; getEachColoredRange(cell, colorAddress, arrayLength)
+	}
+	
+	; for key, value in colorAddress
+		; display .= value . "`n"
+	; MsgBox, % display
 
-			; Find the next cell with matching color
-			if cell.Interior.Color = currentColor
+	; currentAddress := worksheet.Range(currentAddress)
+	
+	arrayLength := colorAddress.MaxIndex()
+	numberOfRanges := Round(arrayLength / 2 + 1)
+	
+	Loop, % numberOfRanges
+	{
+		myRange := colorAddress[A_Index]  . ":" . colorAddress[A_Index + 1]
+
+		; Convert string to Excel Range
+		myRange := worksheet.Range(myRange)
+		; MsgBox % myRange.Address . " " . myRange.Count
+		
+		if myRange.Count > 4
+		{
+			for row in myRange
 			{
-				; MsgBox, % cell.Value . " " . cell.Address . " " . currentColor.Value
-				endCell := cell.Address
-				break
+				; Cell Value
+				; MsgBox % row.Value
+				found := RegExMatch(row.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
+				if (found = 1)
+				{
+					rowValue := Trim(row.Value)
+					salespeople.Push(rowValue)
+					; MsgBox, 1,, % rowValue ;  % row.Value . " " . row.Address
+				}
 			}
-
-			; Get the current color
-			currentColor := cell.Interior.Color
-			
-			; Set the start cell 
-			startCell := cell.Address
-			startCellOffset := cell.Offset(1,0)
-			startCell := startCellOffset.Address
-
-			MsgBox, % startCell . " " . endCell
-
-
-			
-
-		}
-
-		; Find names
-		found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
-		if (found = 1)
-		{
-			; cellValue := Trim(cell.Value)
-			; MsgBox, 1,, % cellValue ;  % row.Value . " " . row.Address
-			; IfMsgBox, Cancel
-			; {
-			; 	break	
-			; }
-		}
-
-		; Find Sales Director
-		if (cell.Value = "Sales Director:")
-		{	
-			myOffset := cell.Offset(1,0)
-			foundDirector := myOffset.Value
-			worksheetName := worksheet.Name
-			; IniWrite, %foundDirector%, salesPeople.ini, %foundDirector%, salesDirector  ;UNCOMMMMMMMMEEEENNNNNTTT WHNE CODE IS READY
-			; IniWrite, Value, Filename, Section, Key
 		}
 		
+		
+
+		; Define the range to loop through
+		; Currently getting the ranges from each colored cell
+		; Need to find if there are names
+		; MsgBox % myRangeAddress
+
+		; Loop through each cell in the range and get the value of each cell
+		; for row in myRange
+		; MsgBox % myRange.Count
 	}
+
+	
+	for key, value in salespeople
+		display .= value . "`n"
+	MsgBox, % display
+
+	For cell in finalColumnRange
+	{	
+		; Set the start cell 
+		startCell := getStartCell(cell)
+		break	
+	}
+
+	startingRange := startCell . ":" . lastRow
+	startingRange := StrReplace(startingRange, "$", "")
+	startingRange := worksheet.Range(startingRange)
+
+	; MsgBox, % startingRange.Address 
+
+	Break
+
+	For cell in startingRange
+	{
+		theInterior := cell.Interior.Color
+		; if the background color of cell is not 16777215 (white)
+		if !(theInterior = 16777215)
+		{
+			MsgBox, % theInterior . " " . firstColor
+			endCell := getEndCell(cell)
+			salesManager := getSalesManager(cell, salesManager)
+			salesManagers.Push(salesManager)
+			Break
+		}
+	}
+	
+	salesSectionRange := startCell . ":" . endCell
+	salesSectionRange := worksheet.Range(salesSectionRange)
+	
+
+	; for cell in salesSectionRange
+	; {
+		; findNames(cell,salespeople)
+	; }
 
 }
 
-			foundColor1 := 
-			foundColor2 := 
+getEachColoredRange(cell, colorAddress, arrayLength)
+{
+	arrayLength := colorAddress.MaxIndex()
+	; for key, value in interiorColorsAndAddresses
+	; {
+		; MsgBox, % value
+	; }
+	MsgBox, % arrayLength
 
-			; if the background color of cell is not 16777215
-			; if !(cell.Interior.Color = 16777215)
-			; {
-			; 	
-				
-			
-				; for index, value in interiorColors
-				; {
-					; MsgBox, % value . " " . index
-					; MsgBox % interiorColors.MaxIndex()
-				; }
-				
-				; Add the color to an array
-				; interiorColors.Push(cell.Interior.Color)
-				; break
-				; MsgBox, % foundColor1 . " " . foundColor2
-				; MsgBox, here
+	; Return arrayLength
+}
 
-				; Get the range between cells with an interior color
-				; if (names_with_non_white_bg.MaxIndex() = 0)
-				; {
-				; firstColorCellFound := cell.Address
-				; RegExMatch(firstColorCellFound, "(\d*\d){1}", newRow)
-					
-				; names_with_non_white_bg.Push(colorCellFound)
-					
-					; MsgBox, % firstColorCellFound
-				; }
-				; if (names_with_non_white_bg.MaxIndex() = 2)
-				; {
-					; lastColorCellFound := cell.Address
-					; MsgBox, % firstColorCellFound . " & " . lastColorCellFound
-					; firstCell := names_with_non_white_bg[1]
-					; lastCell := names_with_non_white_bg[2]
-				; }	
-					; MsgBox % firstCell . " " . lastCell . " max index"
-					; MsgBox % lastCell . " max index"
+getColorCells(cell, colorAddress, worksheet)
+{
+	; if the background color of cell is not 16777215 (white)
+	if !(cell.Interior.Color = 16777215)
+	{
+		; Get the current color
+		; currentColor := cell.Interior.Color
+		currentAddress := cell.Address
+		currentValue := cell.Value
+		
+		; MsgBox % currentAddress
+		colorAddress.Push(currentAddress)
+		Return currentValue, colorAddress
+	}
+}
 
-					; Once the second cell is found define the range to loop over
-					; if (lastCell)
-					; {
+getSalesDirector(cell)
+{
+	; Find Sales Director
+	if (cell.Value = "Sales Director:")
+	{	
+		myOffset := cell.Offset(1,0)
+		foundDirector := myOffset.Value
+		worksheetName := worksheet.Name
+		; IniWrite, %foundDirector%, salesPeople.ini, %foundDirector%, salesDirector  ;UNCOMMMMMMMMEEEENNNNNTTT WHNE CODE IS READY
+		; IniWrite, Value, Filename, Section, Key
+	}
+}
 
-						; myRange := worksheet.Range(firstCell . ":" . lastCell)
+findNames()
+{
+	; Find names
+	found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
+	if (found = 1)
+	{
+		cellValue := Trim(cell.Value)
+		salespeople.Push(cellValue)
+		MsgBox, 1,, % cellValue ;  % row.Value . " " . row.Address
+	}
+	Return salespeople
+}
 
-						; loop through the rang
-						; for index in myRange
-						; {
-							; MsgBox, % index.Value
-							; found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
-							; if (found = 1) && !(cell.Value = " ") ;&& !(cell.Interior.Color = 16777215) && ;!(cell.Value = "Gulf Coast") && !(cell.Value = "Sales Director:") && !(cell.Value = "Manager TBD") && !(cell.Value = "Sales Director:") && !(cell.Value = foundDirector)
-								; MsgBox, 1,, % index.Value
-								; IfMsgBox, Cancel
-								; {
-								; 	break	
-								; }	
-					; 	}
-						
-					; }
-				; }
-				
+getStartCell(cell)
+{
+	startCellOffset := cell.Offset(1,0)
+	startCell := startCellOffset.Address
+	; MsgBox, % startCell
+	Return startCell
+}
 
-				; ; notWhiteCell := cell.Offset(1,0)
-				; msgbox 1,, % notWhiteCell.Address . " " . notWhiteCell.Value
-				; IfMsgBox, Cancel
-				; {
-				; 	break	
-				; }	
-			; }
-				
+getEndCell(cell)
+{
+	endCellOffset := cell.Offset(-1,0)
+	endCell := endCellOffset.Address
+	Return endCell
+}
 
-			; found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
-			; if (found = 1) && !(cell.Value = " ") && !(cell.Interior.Color = 16777215) && !(cell.Value = "Gulf Coast") && !(cell.Value = "Sales Director:")
-				; && !(cell.Value = "Manager TBD") && !(cell.Value = "Sales Director:") && !(cell.Value = foundDirector)
-				; MsgBox, 1,, here ;% cell.Value . " " . found . " at " cell.Address . " " . cell.Interior.Color . " " . foundDirector
-				; IfMsgBox, Cancel
-				; {
-				; 	break	
-				; }	
-    	; }
-	; }		
-; }
+getSalesManager(cell, salesManager)
+{
+	salesManager := cell.Value
+	salesManager := Trim(salesManager)
+	Return salesManager
+}
+
+
+; for key, value in interiorColorsAndAddresses
+;     	display .= key . " - " . value . "`n"
+; 		; MsgBox, % key . " " . value
+; 	MsgBox, % display
+
+	; found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
+	; if (found = 1) && !(cell.Value = " ") ;&& !(cell.Interior.Color = 16777215) && ;!(cell.Value = "Gulf Coast") && !(cell.Value = "Sales Director:") && !(cell.Value = "Manager TBD") && !(cell.Value = "Sales Director:") && !(cell.Value = foundDirector)
+		; MsgBox, 1,, % index.Value
+		; IfMsgBox, Cancel
+		; {
+		; 	break	
+		; }	
+		
+
+	; found := RegExMatch(cell.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
+	; if (found = 1) && !(cell.Value = " ") && !(cell.Interior.Color = 16777215) && !(cell.Value = "Gulf Coast") && !(cell.Value = "Sales Director:")
+		; && !(cell.Value = "Manager TBD") && !(cell.Value = "Sales Director:") && !(cell.Value = foundDirector)
+		; MsgBox, 1,, here ;% cell.Value . " " . found . " at " cell.Address . " " . cell.Interior.Color . " " . foundDirector
+		; IfMsgBox, Cancel
+		; {
+		; 	break	
+		; }	
+
 
 ; Print the values in the endingCells array
-for index, value in names_with_non_white_bg
-    display .= value . "`n"
+; for index, manager in salesManagers
+;     display .= manager . "`n"
+
+; MsgBox % display
+
+; for index, person in salespeople
+;     display .= person . "`n"
+
+; MsgBox % display
+
+; for index, color in interiorColorsAndAddresses
+;     display .= color . "`n"
 
 ; MsgBox % display
 
