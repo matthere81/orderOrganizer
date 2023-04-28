@@ -37,10 +37,15 @@ ws1Regions := ["AMER-GCM", "AMER-MWM", "AMER-MOM", "AMER-NWM", "AMER-SWM"]
 ws2Regions := ["AMER-CAM", "AMER-TSM", "AMER-NEM", "AMER-MAM"]
 ws3Regions := ["USA"]
 ws4Regions := ["IOMS Sales Team"]
-salesManagers := []
-salespeople := []
+
 regionsArray := [ws1Regions, ws2Regions, ws3Regions, ws4Regions]
 worksheetsArray := [ws1] ;, ws2, ws3, ws4] ; ws1, ws2, 
+
+salesManagers := []
+salesDirector := []
+salespeople := []
+managerRanges := []
+managersAndRanges := {}
 
 ; Arrays for storing names
 colorAddress := []
@@ -73,44 +78,61 @@ for index, worksheet in worksheetsArray
 	lastRow := firstColumn . rows
 	finalColumnRange := firstCell . ":" . lastRow
 	finalColumnRange := worksheet.Range(finalColumnRange)
+	startCell :=
+	count := 1
 
 	For cell in finalColumnRange
 	{
-		getSalesDirector(cell)
-		getColorCells(cell, colorAddress, worksheet)
-		; getEachColoredRange(cell, colorAddress, arrayLength)
+		getSalesDirector(cell, salesDirector)
+		getColorCells(cell, colorAddress, salesManagers, managerRanges, managersAndRanges)
 	}
-	
-	; for key, value in colorAddress
-		; display .= value . "`n"
-	; MsgBox, % display
 
-	; currentAddress := worksheet.Range(currentAddress)
+	for key, value in managersAndRanges
+		display .= key . " " . value . "`n"
+	MsgBox, % display
+	; for key, value in managerRanges
+	; 	display .= value . "`n"
+	; MsgBox, % display
 	
-	arrayLength := colorAddress.MaxIndex()
-	numberOfRanges := Round(arrayLength / 2 + 1)
-	
+	arrayLength := salesManagers.MaxIndex()
+	numberOfRanges := Round(arrayLength + 2)
+	; MsgBox % arrayLength . " " . numberOfRanges
 	Loop, % numberOfRanges
 	{
 		myRange := colorAddress[A_Index]  . ":" . colorAddress[A_Index + 1]
-
+	
 		; Convert string to Excel Range
 		myRange := worksheet.Range(myRange)
-		; MsgBox % myRange.Address . " " . myRange.Count
 		
-		if myRange.Count > 4
+		if myRange.Count > 3
 		{
+			currentManager := salesManagers[A_Index]
+			; MsgBox % myRange.Address . " " . 
+			; MsgBox % currentManager . " range is " . myRange.Address
+			salesManagerMaxLength := 0
 			for row in myRange
 			{
 				; Cell Value
 				; MsgBox % row.Value
 				found := RegExMatch(row.Value, "(?:[a-zA-z]*\s([\(][a-zA-z]*[\)]\s[a-zA-Z]*|[a-zA-Z]*))")
-				if (found = 1)
+				if (found = 1) && !(row.Interior.Color = 16777215) && (salesManagers.MaxIndex() <= salesManagerMaxLength)
 				{
+					; MsgBox % row.Value
 					rowValue := Trim(row.Value)
-					salespeople.Push(rowValue)
+					salesManagers.Push(rowValue)
 					; MsgBox, 1,, % rowValue ;  % row.Value . " " . row.Address
-				}
+					; msgbox % salesManagers[1]	
+					; MsgBox % .MaxIndex() . " " rowValue
+					currentManager := rowValue
+					
+				} 
+				; MsgBox % currentManager
+				; if (found = 1)
+				; {
+					; MsgBox % row.Value
+
+				; 	salespeople.Pop(rowValue)
+				; }
 			}
 		}
 		
@@ -126,10 +148,9 @@ for index, worksheet in worksheetsArray
 		; MsgBox % myRange.Count
 	}
 
-	
-	for key, value in salespeople
-		display .= value . "`n"
-	MsgBox, % display
+	; for key, value in salesDirector
+	; 	display .= value . "`n"
+	; MsgBox, % display
 
 	For cell in finalColumnRange
 	{	
@@ -183,23 +204,37 @@ getEachColoredRange(cell, colorAddress, arrayLength)
 	; Return arrayLength
 }
 
-getColorCells(cell, colorAddress, worksheet)
+getColorCells(cell, colorAddress, salesManagers, managerRanges, managersAndRanges)
 {
+	
 	; if the background color of cell is not 16777215 (white)
 	if !(cell.Interior.Color = 16777215)
 	{
 		; Get the current color
-		; currentColor := cell.Interior.Color
 		currentAddress := cell.Address
 		currentValue := cell.Value
-		
-		; MsgBox % currentAddress
-		colorAddress.Push(currentAddress)
-		Return currentValue, colorAddress
-	}
-}
+		myOffsetCell :=  cell.Offset(-1,0).Address
+		myOffsetValue := cell.Offset(-1,0).Value
 
-getSalesDirector(cell)
+		if (managerRanges.MaxIndex() <= 1) && !(myOffsetValue = "Sales Director:")
+		{
+			managerRanges.Push(currentAddress)
+			
+			if (managerRanges.MaxIndex() = 2)
+			{
+				managerRange := managerRanges[1] . ":" . managerRanges[2] ;. " " . currentValue
+				; colorAddress["end cell"] := currentAddress
+				managersAndRanges[managerRange] := currentValue
+				managerRanges.Remove(1)
+				managerRanges.Remove(1)
+			} ; end if
+		} ; end if
+		
+		Return colorAddress, salesManagers, managerRanges, managerRange, managersAndRanges
+	} ; end if
+} ; end function
+
+getSalesDirector(cell, salesDirector)
 {
 	; Find Sales Director
 	if (cell.Value = "Sales Director:")
@@ -207,6 +242,9 @@ getSalesDirector(cell)
 		myOffset := cell.Offset(1,0)
 		foundDirector := myOffset.Value
 		worksheetName := worksheet.Name
+		salesDirector.Push(foundDirector)
+		
+		Return salesDirector
 		; IniWrite, %foundDirector%, salesPeople.ini, %foundDirector%, salesDirector  ;UNCOMMMMMMMMEEEENNNNNTTT WHNE CODE IS READY
 		; IniWrite, Value, Filename, Section, Key
 	}
