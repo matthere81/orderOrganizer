@@ -989,8 +989,8 @@ Return
 Send, !e2as{Enter}{down 10}{BackSpace 2}
 return
 
-:O:etid::everytime7Die{!} ; O at the beginning removes trailing space
-:O:igans::I'vegotanewshirt1996{!} ; O at the beginning removes trailing space
+; :O:etid::everytime7Die{!} ; O at the beginning removes trailing space
+; :O:igans::I'vegotanewshirt1996{!} ; O at the beginning removes trailing space
 ::mttf::matthew.terbeek@thermofisher.com
 
 ::shrug::¯\_(ツ)_/¯ 
