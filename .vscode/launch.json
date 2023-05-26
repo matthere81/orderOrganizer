@@ -3,5 +3,49 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": []
+    "configurations": [
+        {
+            "name": "AutoHotkey1 Debug",
+            "type": "autohotkey",
+            "program": "${file}",
+            "request": "launch",
+            "runtime": "v1.1.36.02/AutoHotkeyU64.exe",
+            // "runtimeArgs_v1": [
+                // "C:\Program Files\AutoHotkey\v1.1.36.02\AutoHotkeyU64_UIA.exe"
+            // ],
+            "port": "9003",
+            "runtime_v1": "v1.1.36.02/AutoHotkeyU64.exe",
+            "runtimeArgs": [
+                "/ErrorStdOut=UTF-8"
+            ]
+        },
+        {
+            "name": "AutoHotkey2 Debug",
+            "type": "autohotkey",
+            "request": "launch",
+            "program": "${file}",
+            "runtime": "v2/AutoHotkey64.exe",
+            // "runtimeArgs_v2": [
+            //     ".ah2"
+            // ],
+            "runtime_v2": "v2/AutoHotkey64.exe",
+            "runtimeArgs": [
+                "/ErrorStdOut=UTF-8"
+            ]
+        },
+        // {
+        //     "name": "AutoHotkey2 Debug",
+        //     "type": "autohotkey",
+        //     "request": "launch",
+        //     "runtimeArgs_v2": [
+        //         ".ahk2"
+        //     ],
+        //     "port": "9010",
+        //     "runtime_v2": "v2/AutoHotkey64.exe",
+        //     "program": "${file}",
+        //     "runtimeArgs": [
+        //         "/ErrorStdOut=UTF-8"
+        //     ]
+        // }
+    ]
 }

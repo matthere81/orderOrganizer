@@ -1787,7 +1787,7 @@ return
 #Include DPS.ahk
 
 !+d:: ; |********** DPS REPORTS **********|
-getDPSReports(cpq,customer,address,contact)
+; getDPSReports(cpq,customer,address,contact)
 Return
 
 SetDefaultMouseSpeed, 10

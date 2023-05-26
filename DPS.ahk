@@ -6,12 +6,13 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 ; #Include Order Organizer.ahk
 #include <UIA_Interface>
 #include <UIA_Browser>
+; #include <UIA_Constants>
 
 ;cUIA.FindFirstByName("Override Block").Click() ; Click Override
 ;text "Search Successfully Overridden." ; Wait for this text
 ;text "RESULTS" ; Click Results
 ;link "Generate" ; Click Generate
-;header "Title" wait for this element
+;header "Title" wait for this element 
 ;text "No records found" ; No records found
 
 ; -------- Status Possibilites --------
@@ -19,21 +20,101 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 ;	Click generate
 ;	Wait for pdf - click
 
+; -------- DO THE DUMP --------
+; Clipboard := cUIA.DumpAll()
 
-getDPSReports(cpq,customer,address,contact){
+; -------- Hardcode Testing Vars --------
+cpq := "00535570"
+customer := "United Salt Corporation"
+contact := "Kevin Gardner"
+address := "7901 FM 1405"
+
+; getDPSReports(cpq,customer,address,contact){
 browserExe := "chrome.exe"
 Run, %browserExe% --force-renderer-accessibility "https://hub.thermofisher.com/ip"
 WinWaitActive, ahk_exe %browserExe%
 cUIA := new UIA_Browser("ahk_exe " browserExe)
-chrome := UIA.ElementFromHandle(browserExe, True)
+
 WinWait GTC: Homepage - ONESOURCE Global Trade - Google Chrome
+; Sleep 1000
+
+; -------- Click DPS and DPS Search on homepage --------
 cUIA.WaitElementExistByName("DPS")
 cUIA.FindFirstByName("DPS")
+cUIA.FindFirstByName("DPS").Click()
+cUIA.WaitElementExistByName("DPS Search")
+cUIA.FindFirstByName("DPS Search").Click()
+
+WinWaitActive DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+
+defaultClick := "left","1, 500"
+
+; -------- Set paths for text entries --------
+searchName := cUIA.FindByPath("1.1.2.1.1.1.6.2.2.1")
+organization := cUIA.FindByPath("1.1.2.1.1.1.6.3.2.1.1.1.1")
+individual := cUIA.FindByPath("1.1.2.1.1.1.6.3.2.1.1.2.1")
+addressField := cUIA.FindByPath("1.1.2.1.1.1.6.4.2.1")
+tenaCpq := cUIA.FindByPath("1.1.2.1.1.1.7.2.2.1")
+screenNow := cUIA.FindFirstByName("Screen now")
+; status := cUIA.FindByPath("1.1.2.1.1.1.13.3")
+status := cUIA.FindFirstByName("Status").FindByPath("+1")
+
+
+cUIA.WaitElementExistByName("Postal Code")
+Sleep 2000
+searchName.SetFocus()
+if (!searchName.HasKeyboardFocus = 1)
+{
+	Sleep 500
+	searchName.SetFocus()
+}
+searchName.SetValue(customer)
+Sleep 3000
+textPattern := searchName.GetCurrentPatternAs("Text")
+wholeRange := textPattern.DocumentRange
+MsgBox % wholeRange.GetText()
+; MsgBox % wholeRange.FindText()
+; MsgBox % wholeRange.FindText().Select()
+Sleep 250
+Return
+organization.Click(defaultClick)
+Sleep 250
+addressField.SetValue(address)
+Sleep 250
+tenaCpq.SetValue("TENA-CPQ-" . cpq)
+Sleep 250
+screenNow.Click(defaultClick)
+
+cUIA.WaitElementExistByName("Override Block")
+cUIA.FindByPath("1.1.2.1.1.1.13.2.2.1")
+MsgBox % cUIA.FindFirstBy("AutomationId = 'ctl00_MainContent_txtLastDTSStatus'").currentName
+; MsgBox % cUIA.FindByPath("1.1.2.1.1.1.13.2.2.1").Name
+; MsgBox % cUIA.FindByPath("1.1.2.1.1.1.13.2.2.1").currentName
+; status.Highlight()
+; MsgBox % status.Current
+; individual.Click()
+
+; status := cUIA.FindByPath("1.1.2.1.1.1.13.1.1")
+
+Return
+; Clipboard := cUIA.DumpAll()
+cUIA.WaitElementExistByName("DPS")
+highlighter := cUIA.FindFirstByName("DPS")
+highlighter.Highlight()
+Return
 Sleep 1000
-cUIA.FindFirstByName("DPS").Click() ; Click DPS
+; cUIA.FindFirstByName("DPS").Click() ; Click DPS
+; WinWait DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+
+; -------- DOES THE DUMP -------- ;
+; Clipboard := cUIA.DumpAll()
+
 cUIA.WaitElementExistByName("DPS Search")
 cUIA.FindFirstByName("DPS Search").Click() ; Click DPS Search
 WinWait DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+myPath := cUIA.FindByPath(1.1.2.1.1.1.6.2.1)
+myPath.Highlight()
+Return
 
 ;-------- Input TENA-CPQ Number
 referenceNumber := cUIA.FindByPath("1.2.2.1.1.1.9.2.2.1")
@@ -100,16 +181,23 @@ msgbox % searchTW.GetValue(searchTW)
 
 ; clipboard := cUIA.DumpAll()
 Return
-}
+; }
 
-browserExe := "chrome.exe"
-Run, %browserExe% --force-renderer-accessibility "https://hub.thermofisher.com/ip"
-WinWaitActive, ahk_exe %browserExe%
-cUIA := new UIA_Browser("ahk_exe " browserExe)
+; browserExe := "chrome.exe"
+; Run, %browserExe% --force-renderer-accessibility "https://hub.thermofisher.com/ip"
+; WinWaitActive, ahk_exe %browserExe%
+; cUIA := new UIA_Browser("ahk_exe " browserExe)
+; cUIA.WaitPageLoad("GTC: Homepage - ONESOURCE Global Trade - Google Chrome",,1000)
+
+; dlLink := cUIA.FindFirstByName("Download")
+; MsgBox, % cUIA.DumpAll()
 ; cUIA.WaitTitleChange("DPS Search - ONESOURCE Global Trade - Google Chrome", 60000, 1000)
-WinWait, DPS Search
-MsgBox, here
-Return
+; WinWait, DPS Search
+; WinWaitActive GTC: Homepage - ONESOURCE Global Trade - Google Chrome
+Sleep 3000
+; MsgBox, here
+; Clipboard := cUIA.DumpAll()
+; ReturnW
 
 
 DPSResults(){
