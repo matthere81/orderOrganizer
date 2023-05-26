@@ -8,12 +8,17 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 #include <UIA_Browser>
 ; #include <UIA_Constants>
 
-;cUIA.FindFirstByName("Override Block").Click() ; Click Override
-;text "Search Successfully Overridden." ; Wait for this text
-;text "RESULTS" ; Click Results
-;link "Generate" ; Click Generate
-;header "Title" wait for this element 
-;text "No records found" ; No records found
+browserExe := "chrome.exe"
+WinWaitActive, ahk_exe %browserExe%
+cUIA := new UIA_Browser("ahk_exe " browserExe)
+WinWait DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+; clipboard := cUIA.DumpAll()
+; cUIA.FindByPath("1.1.2.1.1.1.8").Highlight()
+; cUIA.FindFirst("Name=Screen Now").Highlight()
+; cUIA.FindFirstByName("found",,2).Highlight()
+hl := cUIA.FindFirstByName("Screen Now")
+hl.Highlight()
+Return
 
 ; -------- Status Possibilites --------
 ; if Clear
@@ -34,9 +39,8 @@ browserExe := "chrome.exe"
 Run, %browserExe% --force-renderer-accessibility "https://hub.thermofisher.com/ip"
 WinWaitActive, ahk_exe %browserExe%
 cUIA := new UIA_Browser("ahk_exe " browserExe)
-
 WinWait GTC: Homepage - ONESOURCE Global Trade - Google Chrome
-; Sleep 1000
+Sleep 1000
 
 ; -------- Click DPS and DPS Search on homepage --------
 cUIA.WaitElementExistByName("DPS")
@@ -57,98 +61,74 @@ addressField := cUIA.FindByPath("1.1.2.1.1.1.6.4.2.1")
 tenaCpq := cUIA.FindByPath("1.1.2.1.1.1.7.2.2.1")
 screenNow := cUIA.FindFirstByName("Screen now")
 ; status := cUIA.FindByPath("1.1.2.1.1.1.13.3")
-status := cUIA.FindFirstByName("Status").FindByPath("+1")
+; status := cUIA.FindFirstByName("Status").FindByPath("+1")
+status := cUIA.FindByPath("1.1.2.1.1.1.13.2.2.1")
 
 
 cUIA.WaitElementExistByName("Postal Code")
-Sleep 2000
+cUIA.WaitElementExistByName("Search Name")
 searchName.SetFocus()
-if (!searchName.HasKeyboardFocus = 1)
+
+while (!searchName.HasKeyboardFocus = 1)
 {
-	Sleep 500
+	Sleep 200
 	searchName.SetFocus()
+	Break
 }
+
+; -------- Input Organization Name -------- ;
 searchName.SetValue(customer)
-Sleep 3000
-textPattern := searchName.GetCurrentPatternAs("Text")
-wholeRange := textPattern.DocumentRange
-MsgBox % wholeRange.GetText()
-; MsgBox % wholeRange.FindText()
-; MsgBox % wholeRange.FindText().Select()
 Sleep 250
-Return
+
+; -------- Click Organization -------- ;
 organization.Click(defaultClick)
 Sleep 250
 addressField.SetValue(address)
 Sleep 250
+
+;-------- Input TENA-CPQ Number -------- ;
 tenaCpq.SetValue("TENA-CPQ-" . cpq)
 Sleep 250
+
+; -------- Input Address -------- ;
 screenNow.Click(defaultClick)
 
 cUIA.WaitElementExistByName("Override Block")
-cUIA.FindByPath("1.1.2.1.1.1.13.2.2.1")
-MsgBox % cUIA.FindFirstBy("AutomationId = 'ctl00_MainContent_txtLastDTSStatus'").currentName
-; MsgBox % cUIA.FindByPath("1.1.2.1.1.1.13.2.2.1").Name
-; MsgBox % cUIA.FindByPath("1.1.2.1.1.1.13.2.2.1").currentName
-; status.Highlight()
-; MsgBox % status.Current
-; individual.Click()
 
-; status := cUIA.FindByPath("1.1.2.1.1.1.13.1.1")
+; -------- GET TEXT FROM FIELD -------- ;
+textPattern := status.GetCurrentPatternAs("Text")
+dpsStatus := textPattern.DocumentRange
+
+
+if dpsStatus = "Overridden"
+{
+	MsgBox % "Status is " . dpsStatus
+}
+else if dpsStatus = "Blocked"
+{
+	MsgBox % "Status is " . dpsStatus . "`nCheck results"
+	; -------- SELECT ALL RECORDS -------- :
+
+	; -------- Get all elements with name of select (returns array) -------- ;
+	dropdowns := cUIA.FindAllByName("select")
+
+	; -------- Get last element in array -------- ;
+	lastElement := dropdowns[dropdowns.Length()]
+	lastElement.Click()
+	Sleep 200
+	Send {down 2}
+	Sleep 200
+	Send {Enter}
+	; -------- END SELECT ALL RECORDS -------- :
+	; ^F to find if the match is >2
+}
+else if dpsStatus = "Cleared"
 
 Return
-; Clipboard := cUIA.DumpAll()
-cUIA.WaitElementExistByName("DPS")
-highlighter := cUIA.FindFirstByName("DPS")
-highlighter.Highlight()
-Return
-Sleep 1000
-; cUIA.FindFirstByName("DPS").Click() ; Click DPS
-; WinWait DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
 
 ; -------- DOES THE DUMP -------- ;
 ; Clipboard := cUIA.DumpAll()
 
-cUIA.WaitElementExistByName("DPS Search")
-cUIA.FindFirstByName("DPS Search").Click() ; Click DPS Search
-WinWait DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-myPath := cUIA.FindByPath(1.1.2.1.1.1.6.2.1)
-myPath.Highlight()
-Return
-
-;-------- Input TENA-CPQ Number
-referenceNumber := cUIA.FindByPath("1.2.2.1.1.1.9.2.2.1")
-referenceNumber.Click()
-referenceNumber.SetValue("TENA-CPQ-" . cpq)
-
-;-------- Input Cust Name
-dpsFirst := cUIA.FindByPath("1.2.2.1.1.1.8.2.2.1")
-dpsFirst.Click()
-dpsFirst.SetValue(customer)
-
-;-------- Click Organization
-organization := cUIA.FindByPath("1.2.2.1.1.1.8.3.2.1.1.1.1")
-organization.Click()
-
-;-------- Input Address
-dpsAddress := cUIA.FindByPath("1.2.2.1.1.1.8.4.2.1")
-dpsAddress.Click()
-dpsAddress.SetValue(address)
-
-cUIA.FindFirstByName("Search").Click() ; Click Search
-
-WinWait DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-cUIA.WaitPageLoad("DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window")
-; cUIA.FindFirstByNameAndType("Status", "text").Click() ; Click Status
-cUIA.WaitElementExist
-cUIA.WaitElementExist("Status")
-MsgBox, Element exist
-msgbox % cUIA.FindByPath("1.2.2.1.1.1.15.2.2.1").GetText()
-; Clipboard := cUIA.DumpAll()
-
-
-
-Return
 
 ;-------- Click Individual
 individual := cUIA.FindByPath("1.2.2.1.1.1.8.3.2.1.1.2.1")
