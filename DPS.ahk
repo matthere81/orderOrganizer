@@ -12,12 +12,8 @@ browserExe := "chrome.exe"
 WinWaitActive, ahk_exe %browserExe%
 cUIA := new UIA_Browser("ahk_exe " browserExe)
 WinWait DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-; clipboard := cUIA.DumpAll()
-; cUIA.FindByPath("1.1.2.1.1.1.8").Highlight()
-; cUIA.FindFirst("Name=Screen Now").Highlight()
-; cUIA.FindFirstByName("found",,2).Highlight()
-hl := cUIA.FindFirstByName("Screen Now")
-hl.Highlight()
+
+
 Return
 
 ; -------- Status Possibilites --------
@@ -107,23 +103,68 @@ if dpsStatus = "Overridden"
 else if dpsStatus = "Blocked"
 {
 	MsgBox % "Status is " . dpsStatus . "`nCheck results"
-	; -------- SELECT ALL RECORDS -------- :
+	
+	; -------- Finds the element with number of records and returns a string -------- ;
+	recordsFound := cUIA.FindByPath("1.1.2.1.1.1.9.1.1.2") ;.Highlight()
+	recordsFound := recordsFound.CurrentName
+	recordsFound := RegExMatch(recordsFound, "(\d)")
+	
+	if recordsFound < 25
+	{
+		; -------- VIEW ALL RECORDS -------- :
+		
+		Send ^f
+		Sleep 200
+		Send customer
+		numberFoundOnPage := cUIA.FindFirstByType("50017")
+		numberFoundOnPage := numberFoundOnPage.CurrentName
+		numberFoundOnPage := RegExMatch(numberFoundOnPage, "(?:.*(\d$))")
+		
+		If numberFoundOnPage <=2
+		{
+			cUIA.FindFirstByName("Override Block").Click()
+			Send +{tab}{down 5}{Enter}
+			Sleep 200
+			Send {tab 3}
+			Sleep 200
+			Send {enter}
 
-	; -------- Get all elements with name of select (returns array) -------- ;
-	dropdowns := cUIA.FindAllByName("select")
+			cUIA.WaitElementExist("Search Successfully Overridden.")
+			cUIA.FindFirstByName("RESULTS").Click()
+			cUIA.FindFirstByName("Screening Report").Click()
+			cUIA.WaitElementExist("Title")
+			cUIA.FindFirstByName("Title").Click("left", "2, 500")
+			Sleep 1000
+			Send {Tab}
+			Send {Enter}
+			; Wait for DTSSearch Results
+		}
+		Else
+			Return
+	} 
+	Else 
+	{
+		MsgBox % recordsFound . " from else"
 
-	; -------- Get last element in array -------- ;
-	lastElement := dropdowns[dropdowns.Length()]
-	lastElement.Click()
-	Sleep 200
-	Send {down 2}
-	Sleep 200
-	Send {Enter}
-	; -------- END SELECT ALL RECORDS -------- :
-	; ^F to find if the match is >2
+		; -------- VIEW ALL RECORDS -------- :
+
+		; -------- Get all elements with name of select (returns array) -------- ;
+		dropdowns := cUIA.FindAllByName("select")
+
+		; -------- Get last element in array -------- ;
+		lastElement := dropdowns[dropdowns.Length()]
+		lastElement.Click()
+		Sleep 200
+		Send {down 2}
+		Sleep 200
+		Send {Enter}
+		; -------- END VIEW ALL RECORDS -------- :
+	}
+	; ---- END Finds the element with number of records and returns a string -------- ;
 }
-else if dpsStatus = "Cleared"
-
+else if dpsStatus = "Clear"
+	cUIA.FindFirstByName("No records found.")
+	; ^p to print screen 
 Return
 
 ; -------- DOES THE DUMP -------- ;

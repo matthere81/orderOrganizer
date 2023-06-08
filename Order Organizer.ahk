@@ -991,7 +991,7 @@ return
 
 ; :O:etid::everytime7Die{!} ; O at the beginning removes trailing space
 ; :O:igans::I'vegotanewshirt1996{!} ; O at the beginning removes trailing space
-::mttf::matthew.terbeek@thermofisher.com
+; ::mttf::matthew.terbeek@thermofisher.com
 
 ::shrug::¯\_(ツ)_/¯ 
 ::winf::
