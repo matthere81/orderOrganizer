@@ -984,7 +984,7 @@ Return
 
 ::emlinv::E-MAIL INVOICES TO:{space}
 ::sontc::Hi ,`nPlease see the SO notification below.`n`nThanks{up 4}{left}
-::tenaa::THERMO ELECTRON NORTH AMERICA LLC
+; ::tenaa::THERMO ELECTRON NORTH AMERICA LLC
 ::zsig:: ; Default Email Signature
 Send, !e2as{Enter}{down 10}{BackSpace 2}
 return
