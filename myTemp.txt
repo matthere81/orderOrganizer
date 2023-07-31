@@ -1,0 +1,95 @@
+Sales Quotation
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Thermo Electron North America LLC
+5225 Verona Road
+Madison WI 53711
+
+1400 Northpoint Parkway
+West Palm Beach FL 33407
+
+ 
+
+ 
+
+Quote Number Version Quotation Date Page
+CPQ-00536856 1.00 July 25, 2023 1
+Lead Time Payment Terms Freight Terms Expiration Date
+NET 30 DAYS UPON | Origin - Prepay And October 23, 2023
+INVOICE DATE Add
+Company Name Customer Name
+ABC POLYMERS INC MICKEY MOUSE
+* See ard pages of quots for PO Submrissizn satis
+
+ 
+
+ 
+
+ 
+
+ 
+
+Customer Info:
+
+| Sales Contact Info:
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Customer Name: MICKEY MOUSE Contact Name: Yossi Goldstein
+Company Name: ABC POLYMERS INC Phone:
+Address: 123 BBBBBB Email:
+Los Altos 94023 yossi.goldstein@thermofisher.com.invalid
+Phone: 12344455555
+Email: mickeymouse@gmail.com.emaildisable
+UAT - Test 03 - Add 0020
+Item Description Qty Discount Total Price
+1.1 7310.0002 65 $0.00 $26,771.55
+SUBSCR. ADD-ON TF INSTR/3RD PARTY GC
+65 licenses 1 years
+12 7310.0001 60 $0.00 $55,933.20
+SUBSCRIPTION ADD-ON CLIENT/3RD PARTY LC
+60 licenses 1 years
+13 7310.0003 75 $0.00 $0.75
+SUBSCRIPTION ADD-ON XPS/SDK RUNTIME
+75 licenses 1 years
+Quote Subtotal: $82,705.50
+Quotation Totals: $82,705.50
+
+Sales tax exemption/resale certificates or direct pay permits must be provided with the order documents, if applicable. If valid sales tax
+exemption documentation is not provided, buyer shall pay all applicable federal, state and local taxes in addition to the price stated on this
+
+quotation.
+
+reno. THermoFisher
+SCIENTIFIC
+
+Thermo Electron North America LLC
