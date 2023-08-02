@@ -7,8 +7,9 @@ SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docu
 #InstallKeybdHook
 #KeyHistory 50
 #include <Vis2>
-; #include <UIA_Interface>
-; #include <UIA_Browser>
+#include <UIA_Interface>
+#include <UIA_Browser>
+; #Include QuoteInfo.ahk
 
 salesPeople := "|Justin Carder|Robin Sutka|Fred Simpson|Rhonda Oesterle|Mitch Lazaro|Tucker Lincoln|Jawad Pashmi|Julie Sawicki|Mike Hughes|"
 . "Steve Boyanoski|Bob Riggs|Chuck Costanza|Navette Shirakawa|Stephanie Koczur|Mark Krigbaum|Jon Needels|Bill Balsanek|Brent Boyle|Andrew Clark"
@@ -137,7 +138,6 @@ Gui Add, Edit, vsoNumber, %soNumber%
 Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
 Gui Add, Text, x+12.5 y70 Section, Notes:
 Gui Add, Edit, w215 h120 vnotes, %notes%
-Gui Add, Text,, ;Drag a file onto this window.
 
 ;----------- START CHECKLISTS ---------------
 
@@ -1587,22 +1587,24 @@ IfWinNotActive, Save As, , WinActivate, Save As,
 		WinWaitActive, Save As, 
 return
 
+; OAC CHECKLIST
+
 ^l::
 SendMode, event
 Setkeydelay 20
 gosub WaitInbox
 Send ^n
 WinWait Untitled
-Clipboard := "paige.chapman"
-Send ^v
+Clipboard := "debbie.erickson"
+Send % Clipboard
 Sleep 1000
 Send {tab 3}
-Clipboard := "SO# " . soNumber . " Level 2 Approval"
-Send ^v
+Clipboard := "SO{#} " . soNumber . " Level 2 Approval"
+Send % Clipboard
 Sleep 200
 Send {tab}
-Clipboard := "Hi Paige, `nPlease review SO# " . soNumber .  " for level 2 approval.`n`nThank you"
-Send ^v
+Clipboard := "Hi Debbie, `nPlease review SO{#} " . soNumber .  " for level 2 approval.`n`nThank you"
+Send % Clipboard
 Sleep 500
 Send !h 
 Sleep 500
