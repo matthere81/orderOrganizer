@@ -114,13 +114,13 @@ Gui Add, DateTime, w135 vpoDate, %poDate%
 Gui Add, Text,, SAP Date:
 Gui Add, DateTime, w135 vsapDate, %sapDate%
 Gui Add, Text,, PO Value:
-Gui Add, Edit, vpoValue gCalculateTotals, %poValue%
+Gui Add, Edit, vpoValue, %poValue%
 Gui Add, Text,, Tax:
-Gui Add, Edit, vtax gCalculateTotals, %tax%
+Gui Add, Edit, vtax, %tax%
 Gui Add, Text,, Freight Cost:
-Gui Add, Edit, vfreightCost gCalculateTotals, %freightCost% 
+Gui Add, Edit, vfreightCost, %freightCost% 
 Gui Add, Text,, Surcharge:
-Gui Add, Edit, w135 vsurcharge gCalculateTotals, %surcharge%
+Gui Add, Edit, w135 vsurcharge, %surcharge%
 Gui Add, Text,, Total:
 Gui Add, Edit, vtotalCost, %totalCost% 
 Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
@@ -138,6 +138,7 @@ Gui Add, Edit, vsoNumber, %soNumber%
 Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
 Gui Add, Text, x+12.5 y70 Section, Notes:
 Gui Add, Edit, w215 h120 vnotes, %notes%
+Gui, Add, Button, w200 h30 gMyButton, Get Quote Info  ; Create a button
 
 ;----------- START CHECKLISTS ---------------
 
@@ -247,103 +248,16 @@ Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
 Gui Show,w920, Order Organizer ;SO# %soNumber%
 Gui Submit, NoHide
 
-GuiDropFiles:
-Loop, parse, A_GuiEvent, `n
-{
-    ; Create the progress bar
-	Gui 2: Add, Progress, vMyProgress w300 h20, 0
-	Gui 2: Add, Text,, Reading Quote
-	Gui 2: Show, w220 h60, Reading Quote
-
-	text := OCR(A_LoopField)
-
-	Clipboard := text
-
-	; outputFilePath := A_ScriptDir . "\myTemp.txt"
-
-	; FileDelete % outputFilePath
-	; FileAppend %text%, %outputFilePath%
-
-	; ; Load the text file
-	; FileRead, FileContent, %outputFilePath%
-
-	
-	; ; Split the file content into lines
-	; Lines := StrSplit(FileContent, "`n")
-
-	; Process each line
-	; Index := 1
-	; Loop ;Parse, FileContent, `n, `r
-	; {
-	; 	if Index := 10
-	; 		Break
-
-	; 	; Update the progress bar
-	; 	GuiControl,, MyProgress, % Index
-	; 	Index++
-	; 	Sleep, 100  ; Delay for demonstration purposes
-	; }
-
-    ; Quote Number
-    RegExMatch(text,"(CPQ-\d*)", quoteNumber)
-    quoteNumber := RegExReplace(quoteNumber, "CPQ-", "")
-    quoteNumber := Trim(quoteNumber)
-	GuiControl,, cpq, %quoteNumber%
-
-    ; Company Name
-    RegExMatch(text, "Company Name:(.*)", company)
-    company := RegExReplace(company, "Company Name: ", "")
-    RegExMatch(company, "(.*)(?=\sP)", company)
-    company := Trim(company)
-	GuiControl,, customer, %company%
-
-    ; Address
-    RegExMatch(text, "Address: (.*)", address)
-    address := RegExReplace(address, "Address: ", "")
-    RegExMatch(address, "(?:(.*)\s)", address)
-    address := Trim(address)
-	GuiControl,, address, %address%
-    
-    ; Customer Name
-    RegExMatch(text, "Customer Name:(.*)", customerName)
-    customerName := RegExReplace(customerName, "Customer Name: ", "")
-    customerName := RegExReplace(customerName, "Contact Name:.*", "")
-    customerName := Trim(customerName)
-	GuiControl,, contact, %customerName%
-    
-    ; Salesperson
-    RegExMatch(text, "Contact Name:(.*)", salesperson)
-    salesperson := RegExReplace(salesperson, "Contact Name: ", "")
-    salesperson := Trim(salesperson)
-	; GuiControl,, cpq, %quoteNumber%
-
-    ; Payment Terms
-    RegExMatch(text, "(?<=)(?i)(net.\d*)", paymentTerms)
-    ; paymentTerms := RegExReplace(paymentTerms, "(.*weeks\s)", "")
-    paymentTerms := Trim(paymentTerms)
-	GuiControl,, terms, %paymentTerms%
-
-    ; Totals
-    RegExMatch(text, "Quotation Totals:(.*)", quoteTotal)
-    quoteTotal := RegExReplace(quoteTotal, "Quotation Totals: ", "")
-    quoteTotal := Trim(quoteTotal)
-	GuiControl,, totalCost, %quoteTotal%
-
-	Gui 2: Destroy
-    MsgBox % quoteNumber . "`n" . company . "`n" . address . "`n" . customerName . "`n" . salesperson . "`n" . paymentTerms . "`n" . quoteTotal
-}
-return
-
 submitChecklist:
 Gui Submit, Nohide
 return
 
-CalculateTotals:
-Gui Submit, NoHide
-StringReplace, poValue, poValue, `,,, All
-StringReplace, tax, tax, `,,, All
-StringReplace, surcharge, surcharge, `,,, All
-StringReplace, freightCost, freightCost, `,,, All
+; CalculateTotals:
+; Gui Submit, NoHide
+; StringReplace, poValue, poValue, `,,, All
+; StringReplace, tax, tax, `,,, All
+; StringReplace, surcharge, surcharge, `,,, All
+; StringReplace, freightCost, freightCost, `,,, All
 
 
 if (poValue)
@@ -1878,6 +1792,29 @@ Send, ^{PGUP}
 return
 
 #Include DPS.ahk
+#Include QuoteInfo.ahk
+MyButton:  ; Label for the button
+	Gosub goGetQuoteInfo
+return
+
+goGetQuoteInfo:
+	getQuoteInfo(quoteId, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal)
+	GuiControl,, cpq, %quoteId%
+	GuiControl,, customer, %customerName%
+	GuiControl,, contact, %contactName%
+	GuiControl,, email, %contactEmail%
+	GuiControl,, phone, %contactPhone%
+	GuiControl,, address, %contactAddress%
+	GuiControl,, salesPerson, %quoteOwner%
+	MsgBox % totalNetAmount . " is totalNetAmount"
+	GuiControl,, poValue, %totalNetAmount%
+	MsgBox % freightCost . " is freight cost"
+	GuiControl,, freightCost, %totalFreight%
+	MsgBox % freightCost . " is freight cost"
+	GuiControl,, tax, %totalTax%
+	GuiControl,, totalCost, %quoteTotal%
+	GuiControl,, notes, %quoteOwner%`n%creatorManager%
+Return
 
 !+d:: ; |********** DPS REPORTS **********|
 ; getDPSReports(cpq,customer,address,contact)
