@@ -90,13 +90,15 @@ Gui Add, Text,, Sold To Account:
 Gui Add, Edit, vsoldTo, %soldTo%
 Gui Add, Text,, Payment Terms
 Gui Add, Edit, vterms, %terms% 
-gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
+Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
 Gui Add, Text, x+12.5 y72 Section, System:
 Gui Add, Edit, vsystem, %system% 
-gui Add, Text,, Salesperson:
-Gui Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople
+Gui Add, Text,, Salesperson:
+; Gui Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople
+Gui Add, Edit, vsalesPerson, %salesPerson%
 Gui Add, Text,, Sales Manager:
-Gui Add, DDL, Disabled vsalesManager, % salesManagers
+; Gui Add, DDL, Disabled vsalesManager, % salesManagers
+Gui Add, Edit, vsalesManager, %salesManager%
 Gui Add, Text,, Sales Manager Code:
 Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
 Gui Add, Text,, Sales Director:
@@ -964,6 +966,9 @@ return
 ::zuse::
 Send, %endUse%
 return
+::zadd::
+Send, %address%
+return
 ::zsot::
 Send, %sot% ;^{Left}{BackSpace}
 return
@@ -1798,22 +1803,22 @@ MyButton:  ; Label for the button
 return
 
 goGetQuoteInfo:
-	getQuoteInfo(quoteId, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal)
-	GuiControl,, cpq, %quoteId%
+	getQuoteInfo(quoteID, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms)
+	GuiControl,, cpq, %quoteID%
 	GuiControl,, customer, %customerName%
 	GuiControl,, contact, %contactName%
 	GuiControl,, email, %contactEmail%
 	GuiControl,, phone, %contactPhone%
 	GuiControl,, address, %contactAddress%
+	GuiControl,, soldTo, %soldToID%
 	GuiControl,, salesPerson, %quoteOwner%
-	MsgBox % totalNetAmount . " is totalNetAmount"
 	GuiControl,, poValue, %totalNetAmount%
-	MsgBox % freightCost . " is freight cost"
 	GuiControl,, freightCost, %totalFreight%
-	MsgBox % freightCost . " is freight cost"
 	GuiControl,, tax, %totalTax%
 	GuiControl,, totalCost, %quoteTotal%
-	GuiControl,, notes, %quoteOwner%`n%creatorManager%
+	GuiControl,, salesPerson, %quoteOwner%
+	GuiControl,, salesManager, %creatorManager%
+	GuiControl,, terms, %paymentTerms%
 Return
 
 !+d:: ; |********** DPS REPORTS **********|

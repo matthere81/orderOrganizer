@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 #include <UIA_Interface>
 #include <UIA_Browser>
 
-getQuoteInfo(ByRef quoteId, ByRef contactName, ByRef contactAddress, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalTax, ByRef totalFreight, ByRef surcharge, ByRef quoteTotal)
+getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalFreight, ByRef surcharge, ByRef totalTax, ByRef quoteTotal, ByRef soldToID, ByRef paymentTerms)
 {
     SetTitleMatchMode 2
 
@@ -16,9 +16,10 @@ getQuoteInfo(ByRef quoteId, ByRef contactName, ByRef contactAddress, ByRef conta
         MsgBox, CANCEL was pressed or no input was given.
         Return
     }
-
+    
     browserExe := "chrome.exe"
     Run, %browserExe% --force-renderer-accessibility "https://tfs-3.lightning.force.com/lightning/page/home"
+    
     cUIA := new UIA_Browser("ahk_exe " browserExe)
     Sleep 2000
     cUIA.WaitElementExistByPath("1.4")
@@ -47,10 +48,10 @@ getQuoteInfo(ByRef quoteId, ByRef contactName, ByRef contactAddress, ByRef conta
     ; -------- Navigate to Edit URL -------- ;
     cUIA.SetURL(editLink, True)
 
-
+    -------- Get Info From Salesforce -------- ;
     cUIA.WaitElementExistByName("Quote Information")
     Sleep 500
-    quoteId := cUIA.FindFirstByNameAndType("Quote ID", "edit")
+    quoteID := cUIA.FindFirstByNameAndType("Quote ID", "edit")
     contactName := cUIA.FindFirstByNameAndType("Contact Name", "edit")
     contactAddress := cUIA.FindFirstByNameAndType("Contact Address", "edit")
     contactEmail := cUIA.FindFirstByNameAndType("Contact Email", "edit")
@@ -63,9 +64,8 @@ getQuoteInfo(ByRef quoteId, ByRef contactName, ByRef contactAddress, ByRef conta
     surcharge := cUIA.FindFirstByNameAndType("Surcharge", "edit")
     totalTax := cUIA.FindFirstByNameAndType("Total Tax / VAT / GST", "edit")
     quoteTotal := cUIA.FindFirstByNameAndType("Quote Total", "edit")
-
-    quoteId := quoteId.Value
-    quoteId := StrReplace(quoteId, "CPQ-")
+    
+    quoteID := quoteID.Value
     contactName :=contactName.Value
     contactAddress := contactAddress.Value
     contactEmail := contactEmail.Value
@@ -78,16 +78,37 @@ getQuoteInfo(ByRef quoteId, ByRef contactName, ByRef contactAddress, ByRef conta
     surcharge := surcharge.Value
     totalTax := totalTax.Value
     quoteTotal := quoteTotal.Value
+
+    quoteID := StrReplace(quoteID, "CPQ-")    
     totalNetAmount := StrReplace(totalNetAmount, "$")
     totalFreight := StrReplace(totalFreight, "$")
     surcharge := StrReplace(surcharge, "$")
     totalTax := StrReplace(totalTax, "$")
     quoteTotal := StrReplace(quoteTotal, "$")
-    MsgBox % totalNetAmount . " is totalNetAmount at end of QuoteInfo.ahk"
-    ; Return quoteId, ;contactName, contactAddress, 
-    ; MsgBox % "Quote# is " . quoteId . "`nContact Name is " . contactName . "`nAddress is " . contactAddress . "`nEmail is " . contactEmail
+
+    ; Customer Details Tab
+    cUIA.FindFirstByName("Customer Details").Click()
+    cUIA.WaitElementExistByName("Sold To ID")
+    soldToID := cUIA.FindFirstByNameAndType("Sold To ID", "edit")
+    soldToID := soldToID.Value
+    soldToID := RegExReplace(soldToID, "^0+", "")
+
+    ; Pricing Details
+    cUIA.WaitElementExistByName("Pricing Details")
+    cUIA.FindFirstByName("Pricing Details").Click()
+    cUIA.WaitElementExistByName("Payment Terms")
+    ; paymentTerms := cUIA.FindFirstByName("Payment Terms")
+    Sleep 500
+    Send {tab}
+    Sleep 250
+    Send ^c
+    Sleep 250
+    paymentTerms := Clipboard
+    paymentTerms := RegExReplace(paymentTerms, "i)days.*", "Days")
+    ; MsgBox % "Quote# is " . quoteID . "`nContact Name is " . contactName . "`nAddress is " . contactAddress . "`nEmail is " . contactEmail
     ;     . "`nPhone is " . contactPhone . "`nCustomer is " . customerName . "`nSalesperson is " . quoteOwner . "`nManager is " . creatorManager
     ;     . "`nFreight is " . totalFreight . "`nsurcharge is " . surcharge . "`ntax is " . totalTax . "`nQuote Total is " . quoteTotal
 
 }
 
+getQuoteInfo(quoteID, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms)
