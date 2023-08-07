@@ -6,14 +6,31 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 ; #Include Order Organizer.ahk
 #include <UIA_Interface>
 #include <UIA_Browser>
-; #include <UIA_Constants>
+#include <UIA_Constants>
 
 browserExe := "chrome.exe"
+Run, %browserExe% --force-renderer-accessibility "https://tfs-3.lightning.force.com/lightning/r/Opportunity/0064z00002CgNdFAAV/view"
 WinWaitActive, ahk_exe %browserExe%
 cUIA := new UIA_Browser("ahk_exe " browserExe)
-WinWait DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
+Sleep 2000
+opportunity := "Orbitrap Exploris 240 IC - NA.schen - Ionis Pharmaceuticals - Hans Gaus - PN-1795317"
 
+cUIA.WaitElementExistByName("WIN Form")
+winFormLink := cUIA.GetCurrentURL()
+winForm := cUIA.FindFirstByName("WIN Form")
+pattern := "Opportunity/(.*)/view"
+RegExMatch(winFormLink, pattern, match)
+match1 := Trim(match1)
+cUIA.SetURL("https://tfs-3--c.vf.force.com/apex/porder_createWIN_p?oppId=" . match1 . "&", True)
+; Sleep 1000
+; winForm := winForm.FindByPath("2,15,1,1,9,1,1,1,4,11,4")
+; winForm := winForm.FindByPath("+1")
+; Sleep 500
 
+; suggestions := cUIA.FindFirstByName("Suggestions")
+; suggestions.SetFocus()
+; suggestions := cUIA.FindFirstByNameAndType(opportunity, "option")
+; suggestions.Highlight()
 Return
 
 ; -------- Status Possibilites --------

@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 #include <UIA_Interface>
 #include <UIA_Browser>
 
-getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalFreight, ByRef surcharge, ByRef totalTax, ByRef quoteTotal, ByRef soldToID, ByRef paymentTerms)
+getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalFreight, ByRef surcharge, ByRef totalTax, ByRef quoteTotal, ByRef soldToID, ByRef paymentTerms, ByRef opportunity)
 {
     SetTitleMatchMode 2
 
@@ -18,7 +18,8 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef conta
     }
     
     browserExe := "chrome.exe"
-    Run, %browserExe% --force-renderer-accessibility "https://tfs-3.lightning.force.com/lightning/page/home"
+    ; Run, %browserExe% --force-renderer-accessibility "https://tfs-3.lightning.force.com/lightning/page/home"
+    Run, %browserExe% --force-renderer-accessibility "https://tfs-3.lightning.force.com/lightning/r/cafsl__Oracle_Quote__c/a5B4z000000ku6hEAA/view"
     
     cUIA := new UIA_Browser("ahk_exe " browserExe)
     Sleep 2000
@@ -48,7 +49,7 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef conta
     ; -------- Navigate to Edit URL -------- ;
     cUIA.SetURL(editLink, True)
 
-    -------- Get Info From Salesforce -------- ;
+    ; -------- Get Info From Salesforce -------- ;
     cUIA.WaitElementExistByName("Quote Information")
     Sleep 500
     quoteID := cUIA.FindFirstByNameAndType("Quote ID", "edit")
@@ -64,6 +65,7 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef conta
     surcharge := cUIA.FindFirstByNameAndType("Surcharge", "edit")
     totalTax := cUIA.FindFirstByNameAndType("Total Tax / VAT / GST", "edit")
     quoteTotal := cUIA.FindFirstByNameAndType("Quote Total", "edit")
+    opportunity := cUIA.FindFirstByNameAndType("Opportunity", "edit")
     
     quoteID := quoteID.Value
     contactName :=contactName.Value
@@ -78,6 +80,7 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef conta
     surcharge := surcharge.Value
     totalTax := totalTax.Value
     quoteTotal := quoteTotal.Value
+    opportunity := opportunity.Value
 
     quoteID := StrReplace(quoteID, "CPQ-")    
     totalNetAmount := StrReplace(totalNetAmount, "$")
@@ -97,7 +100,6 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef conta
     cUIA.WaitElementExistByName("Pricing Details")
     cUIA.FindFirstByName("Pricing Details").Click()
     cUIA.WaitElementExistByName("Payment Terms")
-    ; paymentTerms := cUIA.FindFirstByName("Payment Terms")
     Sleep 500
     Send {tab}
     Sleep 250
@@ -105,10 +107,6 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef conta
     Sleep 250
     paymentTerms := Clipboard
     paymentTerms := RegExReplace(paymentTerms, "i)days.*", "Days")
-    ; MsgBox % "Quote# is " . quoteID . "`nContact Name is " . contactName . "`nAddress is " . contactAddress . "`nEmail is " . contactEmail
-    ;     . "`nPhone is " . contactPhone . "`nCustomer is " . customerName . "`nSalesperson is " . quoteOwner . "`nManager is " . creatorManager
-    ;     . "`nFreight is " . totalFreight . "`nsurcharge is " . surcharge . "`ntax is " . totalTax . "`nQuote Total is " . quoteTotal
-
 }
 
-getQuoteInfo(quoteID, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms)
+getQuoteInfo(quoteID, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
