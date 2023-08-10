@@ -12,7 +12,7 @@ SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docu
 
 salesDirectors := "|Denise Schwartz|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|Sylveer Bergs|N/A"
 
-salesCodes := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|200320|203185|1416|N/A"
+salesCodes := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|200320|203185|1416|203915|N/A"
 
 myinipath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB
 
@@ -36,7 +36,7 @@ Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
 LVArray := []
 
-Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
+Gui Add, Edit, x235 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
 Gui Add, ListView, grid r5 w400 y50 x250 vLV gMyListView, ORDERS:
 
 ; Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch2, ; DDL Search
@@ -51,9 +51,10 @@ GuiControl, hide, LV
 ; Gui Add, DDL, w400 y50 x250 vLV gMyListView, ORDERS:
 ; Loop, % LVArray.MaxIndex()
 ; 	DDLString .= "|" LVArray[A_Index]
-Gui Add, Button, xm+475 ym+10 w70 greadtheini, O&pen
+Gui Add, Button, xm+370 ym+10 w70 greadtheini, O&pen
 Gui Add, Button, x+25 w70 gSaveToIni, &Save
 Gui Add, Button, x+25 w150 grestartScript, &New PO or Reload
+Gui Add, Button, x+25 w150 gClearFields, &Clear Fields
 Gui Add, Tab3, xm ym+30, Order Info|Checklist
 Gui Tab, 1
 Gui Add, Text, Section, CPQ:
@@ -312,6 +313,115 @@ return
 GuiClose:
 Gui destroy
 Return
+
+ClearFields:
+GuiControl,, cpq,
+GuiControl,, po,
+GuiControl,, sot,
+GuiControl,, customer,
+GuiControl,, contact,
+GuiControl,, address,
+GuiControl,, soldTo,
+GuiControl,, terms,
+GuiControl,, system,
+GuiControl,, salesPerson,
+GuiControl,, salesManager,
+GuiControl,, managerCode,
+GuiControl,, salesDirector,
+GuiControl,, directorCode,
+; GuiControl,, software,
+GuiControl,, serialNumber,
+GuiControl,, crd,
+GuiControl,, poDate,
+GuiControl,, sapDate,
+GuiControl,, poValue,
+GuiControl,, tax,
+GuiControl,, freightCost,
+GuiControl,, surcharge,
+GuiControl,, totalCost,
+GuiControl,, endUser,
+GuiControl,, phone,
+GuiControl,, email,
+GuiControl,, endUse,
+GuiControl,, soNumber,
+GuiControl,, notes,
+
+; Clearing checkboxes
+GuiControl,, nameCheck, 0
+GuiControl,, quoteNumberMatch, 0
+GuiControl,, paymentTerms, 0
+GuiControl,, priceMatch, 0
+GuiControl,, bothAddresses, 0
+GuiControl,, pdfQuote, 0
+GuiControl,, arrangeLines, 0
+GuiControl,, soldToIdCheck, 0
+GuiControl,, orderTypeCheck, 0
+GuiControl,, poInfoCheck, 0
+GuiControl,, generateDps, 0
+GuiControl,, orderNoticeSent, 0
+GuiControl,, enteredSot, 0
+GuiControl,, reorderCheck, 0
+GuiControl,, backOrderCheck, 0
+GuiControl,, creditCardCheck, 0
+GuiControl,, shipCompleteCheck, 0
+GuiControl,, mergeLinesCheck, 0
+GuiControl,, shipDateCheck, 0
+GuiControl,, taxCheck, 0
+GuiControl,, freightChargeCheck, 0
+GuiControl,, miscellaneousChargeCheck, 0
+GuiControl,, termsDiscountCheck, 0
+GuiControl,, poAttached, 0
+GuiControl,, quoteAttached, 0
+GuiControl,, dpsAttached, 0
+GuiControl,, orderNoticeAttached, 0
+GuiControl,, crdDateAdded, 0
+GuiControl,, firstDate, 0
+GuiControl,, incoterms, 0
+GuiControl,, volts, 0
+GuiControl,, shipper, 0
+GuiControl,, verifyIncoterms, 0
+GuiControl,, managerCodeCheck, 0
+GuiControl,, directorCodeCheck, 0
+GuiControl,, billtoCheck, 0
+GuiControl,, shiptoCheck, 0
+GuiControl,, contactPersonCheck, 0
+GuiControl,, textsContactCheck, 0
+GuiControl,, finalTotal, 0
+
+; Clearing radio buttons
+GuiControl,, tandcYes, 0
+GuiControl,, tandcNo, 0
+GuiControl,, tandcNa, 0
+GuiControl,, winYes, 0
+GuiControl,, winNo, 0
+GuiControl,, winNa, 0
+GuiControl,, mergeYes, 0
+GuiControl,, mergeNo, 0
+GuiControl,, mergeNa, 0
+GuiControl,, addressTypeBilling, 0
+GuiControl,, addressTypeShipping, 0
+GuiControl,, addressTypeBoth, 0
+GuiControl,, orderTypeStandard, 0
+GuiControl,, orderTypeRush, 0
+GuiControl,, orderTypeBackOrder, 0
+GuiControl,, endUserCheck, 0
+GuiControl,, endUserNA, 0
+GuiControl,, serialYes, 0
+GuiControl,, serialNa, 0
+GuiControl,, endUserCopyBack, 0
+GuiControl,, endUserCopyBackNa, 0
+GuiControl,, shippingYes, 0
+GuiControl,, shippingNa, 0
+GuiControl,, higherLevelLinkingNa, 0
+GuiControl,, higherLevelLinkingYes, 0
+GuiControl,, deliveryGroupsYes, 0
+GuiControl,, deliveryGroupsNa, 0
+GuiControl,, updateDeliveryBlock, 0
+GuiControl,, orderAcceptedNa, 0
+GuiControl,, orderAcceptedYes, 0
+
+
+return
 
 Search:
 ; Loop, % LVArray.MaxIndex()
@@ -1750,6 +1860,13 @@ Send, Merge Report - SO{#} %soNumber%
 Send, {enter} 
 return
 
+#if WinActive("E-Mail Output Distribution List by Recipient")
+{
+	end::Send +{space}{down}
+}
+#if
+return
+
 ^9:: ;Sales Employee 9
 Send, ^+{end}
 Sleep, 500
@@ -1765,14 +1882,7 @@ else
 {
 	Send, s{right 10}{Tab}
 	Clipboard := directorCode
-	Send ^v
-	Sleep 200
-	Send {down}+{Tab}
-	Sleep 200
-	Send, s{right 11}{Tab}
-	Sleep 200
-	Clipboard := managerCode
-	Send, ^v{enter}
+	Send % Clipboard
 }
 Sleep, 500
 Send, ^{PGUP}
@@ -1782,6 +1892,7 @@ return
 #Include QuoteInfo.ahk
 MyButton:  ; Label for the button
 	Gosub goGetQuoteInfo
+	Gosub goGetWinForm
 return
 
 goGetQuoteInfo:
@@ -1805,204 +1916,12 @@ goGetQuoteInfo:
 	GuiControl,, system, %opportunity%
 Return
 
-!+d:: ; |********** DPS REPORTS **********|
-; getDPSReports(cpq,customer,address,contact)
-Return
-
-SetDefaultMouseSpeed, 10
-dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq
-; run, https://hub.thermofisher.com/ip
-; WinWait, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-; WinWaitActive, GTC: Homepage - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-; Sleep 200
-
-; 	Loop, 
-; 	{
-; 		CoordMode, Pixel, Window
-; 		ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, *3 C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\dps.png
-; 		If (ErrorLevel = 0)
-; 		{
-; 			break
-; 		}
-; 	}
-
-; ; MouseClick, WhichButton [, X, Y, ClickCount, Speed, D|U, R]
-; MouseClick, left, 290, 190, 1, 0
-; MouseClick, left, 537, 250, 1, 0
-; WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-; MouseClick, left, 1210, 377
-; Send, TENA-CPQ-%cpq%
-; MouseClick, left, 310, 494
-; Send, %customer%
-; MouseClick, left, 541, 527
-; Send, %address%
-; MouseClick left, 1771, 281
-WinWait, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-Gosub, DPSResults
-Gosub, ReportGenerate
-Gosub, PrintDPS
-
-; Contact DPS Report
-WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-Send, {tab 5}{BackSpace}+{Tab}{BackSpace}%contact%+{tab 7}{enter}
-WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-
-Gosub, DPSResults
-Gosub, ReportGenerate
-Gosub, PrintDPS
-WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-Send, ^w
-return
-
-ReportGenerate:
-generateReport := 0
-Loop
-{
-	; ToolTip, ReportGenerate
-	CoordMode, Pixel, Client
-	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\dateCreated.png
-	If ErrorLevel = 0
-	{
-		MouseClick,, 781, 271
-		; Override success screen
-		;   Tab generate
-		;   Click results
-		Loop 
-		{
-			CoordMode, Pixel, Client
-			ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab7.png
-			if ErrorLevel = 0
-			{
-				; MsgBox Found 7
-				Send {tab 7}{Enter}
-				Break
-			}
-			CoordMode, Pixel, Client
-			ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\tab8.png
-			if ErrorLevel = 0
-			{
-				; MsgBox Found 8
-				Send {tab 8}{Enter}
-				Break
-			}
-			
-		}
-		Break
-	}
-}
-; ToolTip
-Return
-
-PrintDPS:
-ToolTip, PrintDPS
-SetKeyDelay, 50
-WinActivate, DTSSearchResults
-WinWaitActive, DTSSearchResults
-Sleep 500
-Send ^p
-Sleep, 750
-Send {enter}
-WinWaitActive, Save As
-; Clipboard := dpsPath 
-dpsPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs\PO " . po . " " . customer . " - CPQ-" . cpq . "\"
-if FileExist(dpsPath . "DPS - " . customer . ".pdf")
-{
-	dpsContact := dpsPath . "DPS - " . contact
-	Clipboard := dpsContact
-} else 
-{
-	dpsCustomer := dpsPath . "DPS - " . customer
-	Clipboard := dpsCustomer
-}
-Sleep, 200
-WinWaitActive Save As
-Send ^v
-; While, (Clipboard)
-; {
-; 	Sleep 500
-; }
-; Sleep 3000
-; Send !s
-SendMode Event
-SetKeyDelay 400
-Send {tab 3}{enter}
-WinWaitActive, DTSSearchResults
-SetKeyDelay 0
-Send ^w
-ToolTip
-return
-
-DPSResults:
-ToolTip, DPSResults
-Loop
-{   
-	; No records found
-	CoordMode, Pixel, Screen
-	ImageSearch, FoundX, FoundY, 2214, 215, 2866, 380, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\noRecordsFound.png
-    If ErrorLevel = 0
-	{
-		Sleep, 200
-		Send, {tab 2}{enter}
-		Break
-	}
-
-	; No records found / Clear
-	CoordMode, Pixel, Screen
-	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\clear.png
-    If ErrorLevel = 0
-	{
-		Sleep, 200
-		Send, {tab 2}{enter}
-		Break
-	}
-	
-	; Blocked
-	CoordMode, Pixel, Window
-	ImageSearch, FoundX, FoundY, 959, 529, 1292, 617, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\blocked.png
-	If ErrorLevel = 0
-	{
-		MsgBox, 4, Found Records,Records WERE Found`nContinue?
-		If MsgBox No
-		{
-			Break
-		}
-		; Else
-		{
-			WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-			MouseClick, Left, 899, 257,1,, D ; reset tab position to middle of screen
-			Send {tab 2}{enter}
-			Sleep 200
-			Send +{tab}{down 5}{enter}
-			Sleep 200
-			Send {tab 3}{Enter}
-			WinWaitActive, DPS Search - ONESOURCE Global Trade - Google Chrome, Chrome Legacy Window
-			; MsgBox Is Tab -> Enter Correct here?
-			;Need search successfully overridden screenshot
-			; Send {tab}{Enter}
-			; Winwait here?
-			; Need wait for overridden screenshot here?
-			; Overridden
-			CoordMode, Pixel, Client
-			ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\overridden.png
-			If ErrorLevel = 0
-			{
-				Sleep, 200
-				Send, {tab}{enter}
-			}
-			Break
-		}
-	}
-	; Overridden
-	CoordMode, Pixel, Client
-	ImageSearch, FoundX, FoundY, 966, 487, 1241, 566, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\overridden.png
-	If ErrorLevel = 0
-	{
-		Sleep, 200
-		Send, {tab 2}{enter}
-		Break
-	}
-}
-ToolTip
+goGetWinForm:
+	getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
+	GuiControl,, endUser, %endUser%
+	GuiControl,, phone, %endUserPhoneNumber%
+	GuiControl,, email, %endUserEmail%
+	GuiControl,, endUse, %endUse%
 Return
 
 ^6:: ;End User Info

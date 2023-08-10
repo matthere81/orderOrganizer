@@ -8,8 +8,11 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 #include <UIA_Browser>
 #include <UIA_Constants>
 
+SetTitleMatchMode 2
+
 browserExe := "chrome.exe"
-Run, %browserExe% --force-renderer-accessibility "https://tfs-3.lightning.force.com/lightning/r/Opportunity/0064z00002CgNdFAAV/view"
+; Run, %browserExe% --force-renderer-accessibility "https://tfs-3.lightning.force.com/lightning/r/Opportunity/0064z00002CgNdFAAV/view"
+Run, %browserExe% --force-renderer-accessibility "https://tfs-3--c.vf.force.com/apex/porder_createWIN_p?oppId=0064z00002CgNdFAAV&"
 WinWaitActive, ahk_exe %browserExe%
 cUIA := new UIA_Browser("ahk_exe " browserExe)
 Sleep 2000
@@ -21,12 +24,27 @@ winForm := cUIA.FindFirstByName("WIN Form")
 pattern := "Opportunity/(.*)/view"
 RegExMatch(winFormLink, pattern, match)
 match1 := Trim(match1)
-cUIA.SetURL("https://tfs-3--c.vf.force.com/apex/porder_createWIN_p?oppId=" . match1 . "&", True)
-; Sleep 1000
-; winForm := winForm.FindByPath("2,15,1,1,9,1,1,1,4,11,4")
-; winForm := winForm.FindByPath("+1")
-; Sleep 500
+winFormLink := cUIA.SetURL("https://tfs-3--c.vf.force.com/apex/porder_createWIN_p?oppId=" . match1 . "&", True)
+cUIA.WaitPageLoad(winFormLink)
 
+endUser := cUIA.FindFirstByName("End User Contact Name")
+endUser := endUser.FindByPath("+1")
+
+phoneNumber := cUIA.FindFirstByName("End User Phone#")
+phoneNumber := phoneNumber.FindByPath("+1")
+
+email := cUIA.FindFirstByName("End User Email")
+email := email.FindByPath("+1")
+
+endUse := cUIA.FindFirstBy("AutomationID=thepage\:theform\:j_id109")
+
+endUser := endUser.Name
+phoneNumber := phoneNumber.Name
+email := email.Name
+endUse := endUse.Value
+
+
+MsgBox % endUser . "`n" . phoneNumber . "`n" . email . "`n" . endUse
 ; suggestions := cUIA.FindFirstByName("Suggestions")
 ; suggestions.SetFocus()
 ; suggestions := cUIA.FindFirstByNameAndType(opportunity, "option")
