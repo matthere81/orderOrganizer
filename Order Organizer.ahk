@@ -3,11 +3,16 @@
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent starting directory.
 #SingleInstance Force
+#InstallKeybdHook	
+#KeyHistory 50	
+#include <Vis2>	
+#include <UIA_Interface>	
+#include <UIA_Browser>
 
 version := 1.2
 
 salesDirectors := "|Denise Schwartz|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|Sylveer Bergs|N/A"
-salesCodes := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|200320|203185|1416|203915|N/A"
+managerCode := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|200320|203185|1416|203915|N/A"
 
 I_Icon = C:\%A_UserName%\Thermo Fisher Scientificlist_check_checklist_checkmark_icon_181579.ico
 IfExist, %I_Icon%
@@ -38,14 +43,15 @@ orderInfo(){
 Gui destroy
 Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
-Gui Add, Text, x10 y30, ______________________________________________________________
+Gui Add, Text, x10 y30, __________________________________________
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y20 w300 +Left, Order Organizer ; - SO# %soNumber%
 Gui Font
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
-Gui Add, Button, x650 y20 w70 greadtheini, O&pen
+Gui Add, Button, x450 y20 w70 greadtheini, O&pen
 Gui Add, Button, x+25 w70 gSaveToIni, &Save
 Gui Add, Button, x+25 w125 grestartScript, &New PO or Reload
+Gui Add, Button, x+25 w100 gMyButton, Get Quote Info  ; Create a button
 ; Gui Add, Edit, x+25 y22 w175 h20, Search
 
 ;----------- COLUMN 1 ---------------
@@ -54,10 +60,10 @@ Gui Add, Text, Section x50 y70, SOT Line#
 Gui Add, Edit, yp+20 xp-2.5 vsot, %sot%
 Gui Add, Text,, Customer:
 Gui Add, Edit, vcustomer, %customer% 
-Gui Add, Text,, Customer / DPS Contact:
+Gui Add, Text,, Customer Contact:
 Gui Add, Edit, vcontact, %contact% 
-Gui Add, Text,, Customer / DPS Address:
-Gui Add, Edit, vaddress, %address% 
+; Gui Add, Text,, Customer / DPS Address:
+; Gui Add, Edit, vaddress, %address% 
 Gui Add, Text,, Sold To Account:
 Gui Add, Edit, vsoldTo, %soldTo%
 Gui Add, Text,, SO#
@@ -112,16 +118,19 @@ Gui Add, Edit, vtotalCost, %totalCost%
 
 ;----------- COLUMN 4 ---------------
 
-Gui Add, Text, ys x+45 Section, Salesperson:
-Gui Add, DropDownList, yp+22.5 xp-2.5 +Sort vsalesPerson gsubmitSales, % salesPeople
-Gui Add, Text, y+7.5, Sales Manager:
-Gui Add, DDL, Disabled vsalesManager, % salesManagers
-Gui Add, Text, y+10, Sales Manager Code:
-Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
-Gui Add, Text, y+7.5, Sales Director:
-Gui Add, DropDownList, Disabled vsalesDirector, % salesDirectors
-Gui Add, Text, y+10, Sales Director Code:
-Gui Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
+Gui Add, Text, ys x+40 Section, Salesperson:	
+; Gui Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople	
+Gui Add, Edit, yp+20 xp-2.5 vsalesPerson, %salesPerson%	
+Gui Add, Text,, Sales Manager:	
+; ; Gui Add, DDL, Disabled vsalesManager, % salesManagers	
+Gui Add, Edit, vsalesManager gsubmitSales, %salesManager%	
+Gui Add, Text,, Sales Manager Code:	
+Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes	
+Gui Add, Text,, Sales Director:	
+Gui Add, DropDownList, Disabled vsalesDirector, % salesDirectors	
+Gui Add, Text,, Sales Director Code:	
+Gui Add, DropDownList, ReadOnly vdirectorCode, % salesCodes	
+; Gui Add, CheckBox, x220 y430 vsoftware, Software? ;gdongle, Software?
 Gui Add, Text,, Notes:
 Gui Add, Edit, w300 h85 vnotes, %notes%
 
@@ -252,7 +261,7 @@ Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
 
 ; ----------- END SAP -----------------
 
-Gui Show,w1000 h700, Order Organizer ;SO# %soNumber%
+Gui Show,w950 h700, Order Organizer ;SO# %soNumber%
 Gui, Submit, NoHide
 
 ; WinSetTitle, WinTitle, WinText, NewTitle [, ExcludeTitle, ExcludeText]
@@ -887,38 +896,38 @@ Return
 
 #Include QuoteInfo.ahk
 MyButton:  ; Label for the button
-	; Gosub goGetQuoteInfo
-	; Gosub goGetWinForm
+	Gosub goGetQuoteInfo
+	Gosub goGetWinForm
 return
+;  contactAddress, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalFreight, ByRef surcharge, ByRef totalTax, ByRef quoteTotal, ByRef soldToID, ByRef paymentTerms, ByRef opportunity
+goGetQuoteInfo:
+	getQuoteInfo(quoteID, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
+	GuiControl,, cpq, %quoteID%
+	GuiControl,, customer, %customerName%
+	GuiControl,, contact, %contactName%
+	GuiControl,, email, %contactEmail%
+	GuiControl,, phone, %contactPhone%
+	GuiControl,, address, %contactAddress%
+	GuiControl,, soldTo, %soldToID%
+	GuiControl,, salesPerson, %quoteOwner%
+	GuiControl,, poValue, %totalNetAmount%
+	GuiControl,, freightCost, %totalFreight%
+	GuiControl,, surcharge, %surcharge%
+	GuiControl,, tax, %totalTax%
+	GuiControl,, totalCost, %quoteTotal%
+	GuiControl,, salesPerson, %quoteOwner%
+	GuiControl,, salesManager, %creatorManager%
+	GuiControl,, terms, %paymentTerms%
+	GuiControl,, system, %opportunity%
+Return
 
-; goGetQuoteInfo:
-; 	getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
-; 	GuiControl,, cpq, %quoteID%
-; 	GuiControl,, customer, %customerName%
-; 	GuiControl,, contact, %contactName%
-; 	GuiControl,, email, %contactEmail%
-; 	GuiControl,, phone, %contactPhone%
-; 	GuiControl,, address, %contactAddress%
-; 	GuiControl,, soldTo, %soldToID%
-; 	GuiControl,, salesPerson, %quoteOwner%
-; 	GuiControl,, poValue, %totalNetAmount%
-; 	GuiControl,, freightCost, %totalFreight%
-; 	GuiControl,, surcharge, %surcharge%
-; 	GuiControl,, tax, %totalTax%
-; 	GuiControl,, totalCost, %quoteTotal%
-; 	GuiControl,, salesPerson, %quoteOwner%
-; 	GuiControl,, salesManager, %creatorManager%
-; 	GuiControl,, terms, %paymentTerms%
-; 	GuiControl,, system, %opportunity%
-; Return
-
-; goGetWinForm:
-; 	getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
-; 	GuiControl,, endUser, %endUser%
-; 	GuiControl,, phone, %endUserPhoneNumber%
-; 	GuiControl,, email, %endUserEmail%
-; 	GuiControl,, endUse, %endUse%
-; Return
+goGetWinForm:
+	getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
+	GuiControl,, endUser, %endUser%
+	GuiControl,, phone, %endUserPhoneNumber%
+	GuiControl,, email, %endUserEmail%
+	GuiControl,, endUse, %endUse%
+Return
 
 
 
@@ -1137,7 +1146,7 @@ Gui, Show, x%X% y%Y% w300 h300
 return
 
 kellerDropDown:
-	GuiControl, Choose, salesManager, Anjou Keller
+	MsgBox ok	
 	GuiControl, ChooseString, managerCode, 202375
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Denise Schwartz
@@ -1145,44 +1154,23 @@ kellerDropDown:
 	Gui Submit, NoHide
 return
 
-mccormackDropDown:
-	GuiControl, Choose, salesManager, Doug McCormack
+mccormackDropDown:	
 	GuiControl, ChooseString, managerCode, 1261
-	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, Denise Schwartz
-	GuiControl, ChooseString, directorCode, 201020
-	Gui Submit, NoHide
-return
-
-hewittDropDown:
-	GuiControl, Choose, salesManager, Joe Hewitt
-	GuiControl, ChooseString, managerCode, 98866
-	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, Denise Schwartz
-	GuiControl, ChooseString, directorCode, 201020
-	Gui Submit, NoHide
-return
-
-foelsDropDown:
-	GuiControl, Choose, salesManager, Natalie Foels
-	GuiControl, ChooseString, managerCode, 96715
-	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, Denise Schwartz
-	GuiControl, ChooseString, directorCode, 201020
-	Gui Submit, NoHide
-return
-
-secondDropDown:
-	GuiControl, Choose, salesManager, Tonya Second
-	GuiControl, ChooseString, managerCode, 95410
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Maroun El Khoury
 	GuiControl, ChooseString, directorCode, 1076
 	Gui Submit, NoHide
 return
 
-mcfaddenDropDown:
-	GuiControl, Choose, salesManager, Joe McFadden
+hewittDropDown:	
+	GuiControl, ChooseString, managerCode, 98866
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Maroun El Khoury
+	GuiControl, ChooseString, directorCode, 1076
+	Gui Submit, NoHide
+return
+
+mcfaddenDropDown:	
 	GuiControl, ChooseString, managerCode, 202610
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, N/A
@@ -1190,17 +1178,15 @@ mcfaddenDropDown:
 	Gui Submit, NoHide
 return
 
-butlerDropDown:
-	GuiControl, Choose, salesManager, John Butler
+butlerDropDown:	
 	GuiControl, ChooseString, managerCode, 1026
 	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, Maroun El Khoury
-	GuiControl, ChooseString, directorCode, 1076
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 201020
 	Gui Submit, NoHide
 return
 
-kleinDropDown:
-	GuiControl, Choose, salesManager, Richard Klein
+kleinDropDown:	
 	GuiControl, ChooseString, managerCode, 1042
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Maroun El Khoury
@@ -1208,8 +1194,23 @@ kleinDropDown:
 	Gui Submit, NoHide
 return
 
+bennettDropDown:
+	GuiControl, ChooseString, managerCode, 1416
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Maroun El Khoury
+	GuiControl, ChooseString, directorCode, 1076
+	Gui Submit, NoHide
+return
+
+rogersDropDown:
+	GuiControl, ChooseString, managerCode, 203915
+	Gui Submit, NoHide
+	GuiControl, Choose, salesDirector, Denise Schwartz
+	GuiControl, ChooseString, directorCode, 201020
+	Gui Submit, NoHide
+return
+
 nadjieDropDown:
-	GuiControl, Choose, salesManager, Zee Nadjie
 	GuiControl, ChooseString, managerCode, 96695
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Denise Schwartz
@@ -1217,26 +1218,7 @@ nadjieDropDown:
 	Gui Submit, NoHide
 return
 
-chenDropDown:
-	GuiControl, Choose, salesManager, Ray Chen
-	GuiControl, ChooseString, managerCode, 202756
-	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, Jimmy Yuk
-	GuiControl, ChooseString, directorCode, 202611
-	Gui Submit, NoHide
-return
-
-porchDropDown:
-	GuiControl, Choose, salesManager, Randy Porch
-	GuiControl, ChooseString, managerCode, 1041
-	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, Maroun El Khoury
-	GuiControl, ChooseString, directorCode, 1076
-	Gui Submit, NoHide
-return
-
 tollstrupDropDown:
-	GuiControl, Choose, salesManager, Darren Tollstrup
 	GuiControl, ChooseString, managerCode, 200320
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Sylveer Bergs
@@ -1244,17 +1226,7 @@ tollstrupDropDown:
 	Gui Submit, NoHide
 return
 
-gavinoDropDown:
-	GuiControl, Choose, salesManager, Lou Gavino
-	GuiControl, ChooseString, managerCode, 96654
-	Gui Submit, NoHide
-	GuiControl, Choose, salesDirector, Denise Schwartz
-	GuiControl, ChooseString, directorCode, 202375
-	Gui Submit, NoHide
-return
-
 craftsDropDown:
-	GuiControl, Choose, salesManager, Christopher Crafts
 	GuiControl, ChooseString, managerCode, 202625
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Denise Schwartz
@@ -1263,302 +1235,27 @@ craftsDropDown:
 return
 
 findSales:
-;=============== KELLER ===================
-if salesPerson = Julie Sawicki
+;=============== Sales Managers ===================
+if InStr(salesManager, "keller")
 	gosub, kellerDropDown
-if salesPerson = Justin Carder 
-	gosub, kellerDropDown
-if salesPerson = Brent Boyle
-	gosub, kellerDropDown
-if salesPerson = Luke Marty
-	gosub, kellerDropDown
-if salesPerson = Aeron Avakian 
-	gosub, kellerDropDown
-if salesPerson = Jon Needels
-	gosub, kellerDropDown
-if salesPerson = Brian Dowe
-	gosub, kellerDropDown
-if salesPerson = Lisa Kasper
-	gosub, kellerDropDown
-if salesPerson = John Bailey
-	gosub, kellerDropDown
-if salesPerson = Aeron Avakian
-	gosub, kellerDropDown
-if salesPerson = Luke Marty
-	gosub, kellerDropDown
-if salesPerson = Brandon Markle
-	gosub, kellerDropDown
-;=============== END KELLER ===================
-
-;============ NADJIE ================
-if salesPerson = Jawad Pashmi
-	gosub, nadjieDropDown
-if salesPerson = Navette Shirakawa
-	gosub, nadjieDropDown
-if salesPerson = Alicia Arias
-	gosub, nadjieDropDown
-if salesPerson = Gabriel Mendez
-	gosub, nadjieDropDown
-if salesPerson = Rhonda Oesterle
-	gosub, nadjieDropDown
-if salesPerson = Alexander James
-	gosub, nadjieDropDown
-if salesPerson = Shijun (Simon) Sheng
-	gosub, nadjieDropDown
-if salesPerson = Brian Luckenbill
-	gosub, nadjieDropDown
-if salesPerson = Amy Allgower
-	gosub, nadjieDropDown
-if salesPerson = Michael Burnett
-	gosub, nadjieDropDown
-if salesPerson = Karla Esparza
-	gosub, nadjieDropDown
-;============ END NADJIE ================
-
-;========== DOUG MCCORMACK =================
-if salesPerson = Mark Krigbaum
-	gosub, mccormackDropDown
-if salesPerson = Samantha Stikeleather
-	gosub, mccormackDropDown
-if salesPerson = Jeff Weller
-	gosub, mccormackDropDown
-if salesPerson = Jerry Holycross
-	gosub, mccormackDropDown
-if salesPerson = Dan Ciminelli
-	gosub, mccormackDropDown
-if salesPerson = Theresa Borio
-	gosub, mccormackDropDown
-if salesPerson = Cynthia (Cindy) Spittler
-	gosub, mccormackDropDown
-if salesPerson = Fred Simpson
-	gosub, mccormackDropDown
-if salesPerson = Gwyn Trojan
-	gosub, mccormackDropDown
-if salesPerson = Nick Hubbard (Nik)
-	gosub, mccormackDropDown
-if salesPerson = Kristen Luttner
-	gosub, mccormackDropDown
-if salesPerson = Patrick Bohman
-	gosub, mccormackDropDown
-if salesPerson = Eric Norviel
-	gosub, mccormackDropDown
-;========== END DOUG MCCORMACK =================
-
-;=========== HEWITT ============
-if salesPerson = Douglas Sears
+if InStr(salesManager, "hewitt")
 	gosub, hewittDropDown
-if salesPerson = Melissa Chandler
-	gosub, hewittDropDown
-if salesPerson = Hillary Tennant
-	gosub, hewittDropDown
-if salesPerson = Don Rathbauer
-	gosub, hewittDropDown
-if salesPerson = Tucker Lincoln
-	gosub, hewittDropDown
-if salesPerson = Joel Stradtner
-	gosub, hewittDropDown
-if salesPerson = Stephanie Koczur
-	gosub, hewittDropDown
-if salesPerson = Mike Hughes
-	gosub, hewittDropDown
-;=========== END HEWITT ============
-
-;============ FOELS ================
-if salesPerson = Larry Bellan
-	gosub, foelsDropDown
-if salesPerson = Kevin Clodfelter
-	gosub, foelsDropDown
-if salesPerson = Brian Thompson
-	gosub, foelsDropDown
-if salesPerson = Rashila Patel
-	gosub, foelsDropDown
-if salesPerson = Bill Balsanek
-	gosub, foelsDropDown
-if salesPerson = Chuck Costanza
-	gosub, foelsDropDown
-if salesPerson = Karl Kastner
-	gosub, foelsDropDown
-if salesPerson = Bob Riggs
-	gosub, foelsDropDown
-if salesPerson = Drew Smillie
-	gosub, foelsDropDown
-if salesPerson = Crystal Flowers
-	gosub, foelsDropDown
-;============ END FOELS ================
-
-;========= SECOND ==============
-if salesPerson = Helen Sun
-	gosub, secondDropDown
-if salesPerson = Steven Danielson
-	gosub, secondDropDown
-if salesPerson = Dominique Figueroa
-	gosub, secondDropDown
-if salesPerson = Jonathan McNally
-	gosub, secondDropDown
-if salesPerson = Yan Chen
-	gosub, secondDropDown
-if salesPerson = Katianna Pihakari
-	gosub, secondDropDown
-if salesPerson = Timothy Johnson
-	gosub, secondDropDown
-if salesPerson =  Dante Bencivengo 
-	gosub, secondDropDown
-if salesPerson =  Justin Chang 
-	gosub, secondDropDown
-;========= END SECOND ==============
-
-;========= MCFADDEN ==============
-if salesPerson = May Chou
-	gosub, mcfaddenDropDown
-if salesPerson = Steve Boyanoski
-	gosub, mcfaddenDropDown
-if salesPerson = Mark Woodworth
-	gosub, mcfaddenDropDown
-if salesPerson = Murray Fryman
-	gosub, mcfaddenDropDown
-if salesPerson = Lorraine Foglio
-	gosub, mcfaddenDropDown
-if salesPerson = Lauren Fischer
-	gosub, mcfaddenDropDown
-if salesPerson = Douglas McDowell
-	gosub, mcfaddenDropDown
-if salesPerson = Dana Stradtner
-	gosub, mcfaddenDropDown
-if salesPerson = Sarah Jackson
-	gosub, mcfaddenDropDown
-if salesPerson = Loris Fossir
-	gosub, mcfaddenDropDown
-if salesPerson = Mitch Lazaro
-	gosub, mcfaddenDropDown
-;========= END MCFADDEN ==============
-
-;=========== BUTLER ==========
-if salesPerson = Andrew Clark
-	gosub, butlerDropDown
-if salesPerson = Giovanni Pallante
-	gosub, butlerDropDown
-if salesPerson = David Kage
-	gosub, butlerDropDown
-if salesPerson = David Scott
-	gosub, butlerDropDown
-if salesPerson = Susan Gelman
-	gosub, butlerDropDown
-if salesPerson = Cari Randles
-	gosub, butlerDropDown
-if salesPerson = Sean Bennett
-	gosub, butlerDropDown
-if salesPerson = Daniel Quinn
-	gosub, butlerDropDown
-if salesPerson = Robin Sutka
-	gosub, butlerDropDown
-;=========== END BUTLER ==========
-
-;=========== KLEIN ==========
-if salesPerson = Susan Bird
-	gosub, kleinDropDown
-if salesPerson = Jerry Pappas
-	gosub, kleinDropDown
-if salesPerson = Jie Qian
-	gosub, kleinDropDown
-if salesPerson = Joe Bernholz
-	gosub, kleinDropDown
-if salesPerson = Yuriy Dunayevskiy
-	gosub, kleinDropDown
-if salesPerson = Nelson Huang
-	gosub, kleinDropDown
-if salesPerson = Kate Lincoln
-	gosub, kleinDropDown
-if salesPerson = Russ Constantineau
-	gosub, kleinDropDown
-;=========== END KLEIN ==========
-
-;=========== CHEN ==========
-if salesPerson = Haris Dzaferbegovic
-	gosub, chenDropDown
-if salesPerson = Donna Zwirner
+if InStr(salesManager, "mccormack")
 	gosub, mccormackDropDown
-;=========== END CHEN ==========
-
-;=========== PORCH ==========
-if salesPerson = Todd Stoner
-	gosub, porchDropDown
-if salesPerson = Jonathan Ferguson
-	gosub, porchDropDown
-if salesPerson = Nick Duczak
-	gosub, porchDropDown
-if salesPerson = Gerald Koncar
-	gosub, porchDropDown
-if salesPerson = Angelito Nepomuceno
-	gosub, porchDropDown
-if salesPerson = John Venesky
-	gosub, porchDropDown
-if salesPerson = Kristin Roberts
-	gosub, porchDropDown
-if salesPerson = David Kusel 
-	gosub, porchDropDown
-;=========== END PORCH ==========
-
-;========== TOLLSTRUP ==========
-
-if salesPerson = Taylor Graham  
+if InStr(salesManager, "butler")
+	gosub, butlerDropDown
+if InStr(salesManager, "klein")
+	gosub, kleinDropDown
+if InStr(salesManager, "nadjie")
+	gosub, nadjieDropDown
+if InStr(salesManager, "tollstrup")
 	gosub, tollstrupDropDown
-if salesPerson = Jerome Johemko  
-	gosub, tollstrupDropDown
-if salesPerson = Christie Baldizar 
-	gosub, tollstrupDropDown
-
-;========== END TOLLSTRUP ==========
-
-;========== GAVINO ==========
-
-if salesPerson = Christina Guintu  
-	gosub, gavinoDropDown
-if salesPerson = Ross Milam
-	gosub, gavinoDropDown
-if salesPerson = Sunny Chen  
-	gosub, gavinoDropDown
-if salesPerson = David Hill
-	gosub, gavinoDropDown
-if salesPerson = Elaine Miller
-	gosub, gavinoDropDown
-if salesPerson = Gary Scharrer
-	gosub, gavinoDropDown
-if salesPerson = Valerie Bruner
-	gosub, gavinoDropDown
-if salesPerson = Laura Howell
-	gosub, gavinoDropDown
-if salesPerson = Cecilia Snyder
-	gosub, gavinoDropDown
-if salesPerson = Tatiana Valle Melendez
-	gosub, gavinoDropDown
-
-;========== END GAVINO ==========
-
-;======== CRAFTS =======
-
-if salesPerson = Annie Cantelmo
+if InStr(salesManager, "crafts")
 	gosub, craftsDropDown
-if salesPerson = Sitara Chauhan
-	gosub, craftsDropDown
-if salesPerson = Doug Meinhart
-	gosub, craftsDropDown
-if salesPerson = Tori Milioni
-	gosub, craftsDropDown
-if salesPerson = Bob Myers
-	gosub, craftsDropDown
-if salesPerson = Paulette Parker
-	gosub, craftsDropDown
-if salesPerson = Jane-Marie Kowalski
-	gosub, craftsDropDown
-if salesPerson = Ronsar Eid
-	gosub, craftsDropDown
-if salesPerson = Brian Ridley
-	gosub, craftsDropDown 
-if salesPerson = Krystina Simms
-	gosub, craftsDropDown
-
-;======== END CRAFTS =======
-
+if InStr(salesManager, "rogers")
+	gosub, rogersDropDown
+if InStr(salesManager, "bennett")
+	gosub, bennettDropDown
 
 if salesPerson =
 {
@@ -1570,4 +1267,3 @@ if salesPerson =
 	Gui Submit, NoHide
 }
 return
-
