@@ -119,13 +119,11 @@ Gui Add, Edit, vtotalCost, %totalCost%
 ;----------- COLUMN 4 ---------------
 
 Gui Add, Text, ys x+40 Section, Salesperson:	
-; Gui Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople	
 Gui Add, Edit, yp+20 xp-2.5 vsalesPerson, %salesPerson%	
 Gui Add, Text,, Sales Manager:	
-; ; Gui Add, DDL, Disabled vsalesManager, % salesManagers	
 Gui Add, Edit, vsalesManager gsubmitSales, %salesManager%	
 Gui Add, Text,, Sales Manager Code:	
-Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes	
+Gui Add, DropDownList, ReadOnly vmanagerCode, % managerCode	
 Gui Add, Text,, Sales Director:	
 Gui Add, DropDownList, Disabled vsalesDirector, % salesDirectors	
 Gui Add, Text,, Sales Director Code:	
@@ -899,15 +897,15 @@ MyButton:  ; Label for the button
 	Gosub goGetQuoteInfo
 	Gosub goGetWinForm
 return
-;  contactAddress, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalFreight, ByRef surcharge, ByRef totalTax, ByRef quoteTotal, ByRef soldToID, ByRef paymentTerms, ByRef opportunity
+
 goGetQuoteInfo:
-	getQuoteInfo(quoteID, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
+	getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
 	GuiControl,, cpq, %quoteID%
 	GuiControl,, customer, %customerName%
 	GuiControl,, contact, %contactName%
 	GuiControl,, email, %contactEmail%
 	GuiControl,, phone, %contactPhone%
-	GuiControl,, address, %contactAddress%
+	; GuiControl,, address, %contactAddress%
 	GuiControl,, soldTo, %soldToID%
 	GuiControl,, salesPerson, %quoteOwner%
 	GuiControl,, poValue, %totalNetAmount%
@@ -1146,7 +1144,6 @@ Gui, Show, x%X% y%Y% w300 h300
 return
 
 kellerDropDown:
-	MsgBox ok	
 	GuiControl, ChooseString, managerCode, 202375
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Denise Schwartz

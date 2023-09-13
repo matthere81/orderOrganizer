@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 #include <UIA_Interface>
 #include <UIA_Browser>
 
-getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalFreight, ByRef surcharge, ByRef totalTax, ByRef quoteTotal, ByRef soldToID, ByRef paymentTerms, ByRef opportunity)
+getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalFreight, ByRef surcharge, ByRef totalTax, ByRef quoteTotal, ByRef soldToID, ByRef paymentTerms, ByRef opportunity)
 {
     SetTitleMatchMode 2
 
@@ -47,7 +47,7 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef conta
     Sleep 500
     quoteID := cUIA.FindFirstByNameAndType("Quote ID", "edit")
     contactName := cUIA.FindFirstByNameAndType("Contact Name", "edit")
-    contactAddress := cUIA.FindFirstByNameAndType("Contact Address", "edit")
+    ; contactAddress := cUIA.FindFirstByNameAndType("Contact Address", "edit")
     contactEmail := cUIA.FindFirstByNameAndType("Contact Email", "edit")
     contactPhone := cUIA.FindFirstByNameAndType("Contact Phone", "edit")
     customerName := cUIA.FindFirstByNameAndType("Account Name", "edit")
@@ -62,7 +62,7 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactAddress, ByRef conta
     
     quoteID := quoteID.Value
     contactName :=contactName.Value
-    contactAddress := contactAddress.Value
+    ; contactAddress := contactAddress.Value
     contactEmail := contactEmail.Value
     contactPhone := contactPhone.Value
     customerName := customerName.Value
@@ -163,7 +163,7 @@ getWinForm(ByRef opportunity, ByRef winFormLink, ByRef endUser, ByRef endUserPho
     }
 }
 
-getQuoteInfo(quoteID, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
+getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
 
 
 getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
