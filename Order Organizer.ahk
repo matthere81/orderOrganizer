@@ -902,6 +902,44 @@ Menu, Snippets, Add, End User Info, EndUserInfo
 
 Return
 
+
+#Include QuoteInfo.ahk
+MyButton:  ; Label for the button
+	Gosub goGetQuoteInfo
+	Gosub goGetWinForm
+return
+
+; goGetQuoteInfo:
+; 	getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
+; 	GuiControl,, cpq, %quoteID%
+; 	GuiControl,, customer, %customerName%
+; 	GuiControl,, contact, %contactName%
+; 	GuiControl,, email, %contactEmail%
+; 	GuiControl,, phone, %contactPhone%
+; 	GuiControl,, address, %contactAddress%
+; 	GuiControl,, soldTo, %soldToID%
+; 	GuiControl,, salesPerson, %quoteOwner%
+; 	GuiControl,, poValue, %totalNetAmount%
+; 	GuiControl,, freightCost, %totalFreight%
+; 	GuiControl,, surcharge, %surcharge%
+; 	GuiControl,, tax, %totalTax%
+; 	GuiControl,, totalCost, %quoteTotal%
+; 	GuiControl,, salesPerson, %quoteOwner%
+; 	GuiControl,, salesManager, %creatorManager%
+; 	GuiControl,, terms, %paymentTerms%
+; 	GuiControl,, system, %opportunity%
+; Return
+
+; goGetWinForm:
+; 	getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
+; 	GuiControl,, endUser, %endUser%
+; 	GuiControl,, phone, %endUserPhoneNumber%
+; 	GuiControl,, email, %endUserEmail%
+; 	GuiControl,, endUse, %endUse%
+; Return
+
+
+
 SoNumber:
 Clipboard := soNumber
 Send, ^v
