@@ -419,8 +419,6 @@ GuiControl,, deliveryGroupsNa, 0
 GuiControl,, updateDeliveryBlock, 0
 GuiControl,, orderAcceptedNa, 0
 GuiControl,, orderAcceptedYes, 0
-
-
 return
 
 Search:
