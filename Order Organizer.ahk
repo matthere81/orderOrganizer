@@ -43,15 +43,16 @@ orderInfo(){
 Gui destroy
 Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
-Gui Add, Text, x10 y30, __________________________________________
+Gui Add, Text, x10 y30, _________________________________
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y20 w300 +Left, Order Organizer ; - SO# %soNumber%
 Gui Font
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
-Gui Add, Button, x450 y20 w70 greadtheini, O&pen
+Gui Add, Button, x350 y20 w70 greadtheini, O&pen
 Gui Add, Button, x+25 w70 gSaveToIni, &Save
 Gui Add, Button, x+25 w125 grestartScript, &New PO or Reload
 Gui Add, Button, x+25 w100 gMyButton, Get Quote Info  ; Create a button
+Gui Add, Button, x+25 w100 gClearFields, &Clear Fields
 ; Gui Add, Edit, x+25 y22 w175 h20, Search
 
 ;----------- COLUMN 1 ---------------
@@ -178,7 +179,7 @@ Gui Add, Checkbox, gsubmitChecklist varrangeLines, Arrange quote lines (if neede
 Gui Add, Checkbox, gsubmitChecklist vsoldToIdCheck, Sold-To ID (Customer Details Tab)
 Gui Add, Checkbox, gsubmitChecklist vorderTypeCheck, Check order type (Order Tab)
 Gui Add, Checkbox, gsubmitChecklist vpoInfoCheck, Add PO# / Add PO Value / Upload PO (Order Tab)
-Gui Add, Checkbox, gsubmitChecklist vgenerateDps, Generate && Attach DPS Reports (Attachments Tab)
+; Gui Add, Checkbox, gsubmitChecklist vgenerateDps, Generate && Attach DPS Reports (Attachments Tab)
 
 ; ----------- END SALESFORCE -----------------
 
@@ -199,8 +200,8 @@ Gui, Tab, 2
 Gui Add, GroupBox,Section x+15 ys+10 h130 w215, SAP Attachments:
 Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpoAttached, PO
 Gui Add, Checkbox, x+55 gsubmitChecklist vquoteAttached, Quote
-Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vdpsAttached, DPS Reports
-Gui Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
+; Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vdpsAttached, DPS Reports
+Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vorderNoticeAttached, Order Notice
 Gui Add, Text, xs+10 y+10, WIN Form?
 Gui Add, Radio, x+26 gsubmitChecklist vwinYes, Yes
 Gui Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
@@ -329,6 +330,116 @@ return
 GuiClose:
 Gui, destroy
 Return
+
+ClearFields:
+GuiControl,, cpq,
+GuiControl,, po,
+GuiControl,, sot,
+GuiControl,, customer,
+GuiControl,, contact,
+GuiControl,, address,
+GuiControl,, soldTo,
+GuiControl,, terms,
+GuiControl,, system,
+GuiControl,, salesPerson,
+GuiControl,, salesManager,
+GuiControl,, managerCode,
+GuiControl,, salesDirector,
+GuiControl,, directorCode,
+GuiControl,, software,
+GuiControl,, softwareUpgradeLicense
+GuiControl,, serialNumber,
+GuiControl,, softwareUpgradeNo
+GuiControl,, softwareUpgradeYes
+GuiControl,, crd,
+GuiControl,, poDate,
+GuiControl,, sapDate,
+GuiControl,, poValue,
+GuiControl,, tax,
+GuiControl,, freightCost,
+GuiControl,, surcharge,
+GuiControl,, totalCost,
+GuiControl,, endUser,
+GuiControl,, phone,
+GuiControl,, email,
+GuiControl,, endUse,
+GuiControl,, soNumber,
+GuiControl,, notes,
+
+; Clearing checkboxes
+GuiControl,, nameCheck, 0
+GuiControl,, quoteNumberMatch, 0
+GuiControl,, paymentTerms, 0
+GuiControl,, priceMatch, 0
+GuiControl,, bothAddresses, 0
+GuiControl,, pdfQuote, 0
+GuiControl,, arrangeLines, 0
+GuiControl,, soldToIdCheck, 0
+GuiControl,, orderTypeCheck, 0
+GuiControl,, poInfoCheck, 0
+GuiControl,, generateDps, 0
+GuiControl,, orderNoticeSent, 0
+GuiControl,, enteredSot, 0
+GuiControl,, reorderCheck, 0
+GuiControl,, backOrderCheck, 0
+GuiControl,, creditCardCheck, 0
+GuiControl,, shipCompleteCheck, 0
+GuiControl,, mergeLinesCheck, 0
+GuiControl,, shipDateCheck, 0
+GuiControl,, taxCheck, 0
+GuiControl,, freightChargeCheck, 0
+GuiControl,, miscellaneousChargeCheck, 0
+GuiControl,, termsDiscountCheck, 0
+GuiControl,, poAttached, 0
+GuiControl,, quoteAttached, 0
+GuiControl,, dpsAttached, 0
+GuiControl,, orderNoticeAttached, 0
+GuiControl,, crdDateAdded, 0
+GuiControl,, firstDate, 0
+GuiControl,, incoterms, 0
+GuiControl,, volts, 0
+GuiControl,, shipper, 0
+GuiControl,, verifyIncoterms, 0
+GuiControl,, managerCodeCheck, 0
+GuiControl,, directorCodeCheck, 0
+GuiControl,, billtoCheck, 0
+GuiControl,, shiptoCheck, 0
+GuiControl,, contactPersonCheck, 0
+GuiControl,, textsContactCheck, 0
+GuiControl,, finalTotal, 0
+
+; Clearing radio buttons
+GuiControl,, tandcYes, 0
+GuiControl,, tandcNo, 0
+GuiControl,, tandcNa, 0
+GuiControl,, winYes, 0
+GuiControl,, winNo, 0
+GuiControl,, winNa, 0
+GuiControl,, mergeYes, 0
+GuiControl,, mergeNo, 0
+GuiControl,, mergeNa, 0
+GuiControl,, addressTypeBilling, 0
+GuiControl,, addressTypeShipping, 0
+GuiControl,, addressTypeBoth, 0
+GuiControl,, orderTypeStandard, 0
+GuiControl,, orderTypeRush, 0
+GuiControl,, orderTypeBackOrder, 0
+GuiControl,, endUserCheck, 0
+GuiControl,, endUserNA, 0
+GuiControl,, serialYes, 0
+GuiControl,, serialNa, 0
+GuiControl,, endUserCopyBack, 0
+GuiControl,, endUserCopyBackNa, 0
+GuiControl,, shippingYes, 0
+GuiControl,, shippingNa, 0
+GuiControl,, higherLevelLinkingNa, 0
+GuiControl,, higherLevelLinkingYes, 0
+GuiControl,, deliveryGroupsYes, 0
+GuiControl,, deliveryGroupsNa, 0
+GuiControl,, updateDeliveryBlock, 0
+GuiControl,, orderAcceptedNa, 0
+GuiControl,, orderAcceptedYes, 0
+return
 
 restartScript:
 Gosub, SaveToIni
