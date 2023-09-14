@@ -104,13 +104,13 @@ Gui Add, Edit, vsoftwareUpgradeLicense, %softwareUpgradeLicense%
 Gui Add, Text, ys x+40 Section, PO#
 Gui Add, Edit, yp+20 xp-2.5 vpo, %po%
 Gui Add, Text,, PO Value:
-Gui Add, Edit, w135 vpoValue gCalculateTotals, %poValue%
+Gui Add, Edit, w135 vpoValue, %poValue% ;gCalculateTotals
 Gui Add, Text,, Tax:
-Gui Add, Edit, w135 vtax gCalculateTotals, %tax%
+Gui Add, Edit, w135 vtax, %tax% ;gCalculateTotals
 Gui Add, Text,, Freight Cost:
-Gui Add, Edit, w135 vfreightCost gCalculateTotals, %freightCost% 
+Gui Add, Edit, w135 vfreightCost, %freightCost%  ;gCalculateTotals
 Gui Add, Text,, Surcharge:
-Gui Add, Edit, w135 vsurcharge gCalculateTotals, %surcharge%
+Gui Add, Edit, w135 vsurcharge, %surcharge% ;gCalculateTotals
 Gui Add, Text,, Total:
 Gui Add, Edit, vtotalCost, %totalCost% 
 
@@ -265,12 +265,12 @@ Gui, Submit, NoHide
 ; WinSetTitle, WinTitle, WinText, NewTitle [, ExcludeTitle, ExcludeText]
 WinSetTitle, Order Organizer,, Order Organizer - %version%
 
-CalculateTotals:
-Gui Submit, NoHide
-StringReplace, poValue, poValue, `,,, All
-StringReplace, tax, tax, `,,, All
-StringReplace, surcharge, surcharge, `,,, All
-StringReplace, freightCost, freightCost, `,,, All
+; CalculateTotals:
+; Gui Submit, NoHide
+; StringReplace, poValue, poValue, `,,, All
+; StringReplace, tax, tax, `,,, All
+; StringReplace, surcharge, surcharge, `,,, All
+; StringReplace, freightCost, freightCost, `,,, All
 
 
 if (poValue)
