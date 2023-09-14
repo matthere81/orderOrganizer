@@ -1104,6 +1104,7 @@ return
 ; /******** RMA HOTSTRINGS ********/
 ::sjr::PLEASE RETURN THESE ITEMS PREPAID TO:`nTHERMO FISHER SCIENTIFIC`nRMA {#}: XXXXXXX`n355 RIVER OAKS PARKWAY`nSAN JOSE, CA 95134{`n 2}PLEASE INCLUDE A COMPILED DECONTAMINATION FORM & A COPY OF THIS RETURN AUTHORIZATION
 ::rht::ORIGINAL SO{#} XXXXXX`nITEMS CONFIRMED DOWN BY FSE XXXXXXX{`n 2}REPLACEMENT SO{#} XXXXXX
+::memr::PLEASE RETURN THESE ITEMS PREPAID TO:`nTHERMO FISHER SCIENTIFIC`nRMA {#}: XXXXXXX`n5025 Tuggle Rd`nMemphis, TN 38118-7514{`n 2}PLEASE INCLUDE A COMPILED DECONTAMINATION FORM & A COPY OF THIS RETURN AUTHORIZATION
 ;******** END HOTSTRINGS (TEXT EXPANSION) ********
 
 ToAttachments:
@@ -1527,18 +1528,18 @@ return
 	Send, ^+{tab}{left 14}{enter}{down}{enter}
 	gosub, WinWaitImportFile
 	Send, !n
-	Send, d
-	Sleep, 200
-	Send, {down}{enter}
-	Sleep, 2000
-	Send, ^+{tab}{left 14}{enter}
-	Sleep, 200
-	Send, {down}{enter}
-	gosub, WinWaitImportFile
-	Send, !n
-	Send, d
-	Sleep, 200
-	Send, {down 2}{enter}
+	; Send, d
+	; Sleep, 200
+	; Send, {down}{enter}
+	; Sleep, 2000
+	; Send, ^+{tab}{left 14}{enter}
+	; Sleep, 200
+	; Send, {down}{enter}
+	; gosub, WinWaitImportFile
+	; Send, !n
+	; Send, d
+	; Sleep, 200
+	; Send, {down 2}{enter}
 Return
 
 ToSoDocAttachments:
@@ -1886,7 +1887,6 @@ Sleep, 500
 Send, ^{PGUP}
 return
 
-#Include DPS.ahk
 #Include QuoteInfo.ahk
 MyButton:  ; Label for the button
 	Gosub goGetQuoteInfo
@@ -1894,7 +1894,7 @@ MyButton:  ; Label for the button
 return
 
 goGetQuoteInfo:
-	getQuoteInfo(quoteID, contactName, contactAddress, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
+	getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
 	GuiControl,, cpq, %quoteID%
 	GuiControl,, customer, %customerName%
 	GuiControl,, contact, %contactName%
