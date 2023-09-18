@@ -1087,10 +1087,6 @@ Return
 Send, !e2as{Enter}{down 10}{BackSpace 2}
 return
 
-; :O:etid::everytime7Die{!} ; O at the beginning removes trailing space
-; :O:igans::I'vegotanewshirt1996{!} ; O at the beginning removes trailing space
-; ::mttf::matthew.terbeek@thermofisher.com
-
 ::shrug::¯\_(ツ)_/¯ 
 ::winf::
 Send, Hi %salesPerson%^+{left}{delete}{BackSpace},`nGreat order{!} Thank you for filling out the WIN form.`n`nRegards{up 3}{left}
