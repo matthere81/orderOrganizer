@@ -1200,22 +1200,78 @@ return
 
 ; Save OA Checklist
 !#k::
-	SetTitleMatchMode, 3
-	Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist - TEMPLATE.docx
-	WinWaitActive, OA Checklist - TEMPLATE.docx - Word,
-	Send, {f12}
-	SetTitleMatchMode, 2
-	WinWait, Save As, 
-	IfWinNotActive, Save As, , WinActivate, Save As, 
-		WinWaitActive, Save As,
-	Sleep, 1000
-	Send, +{tab 3}{Home}{down 2}
-	Send, {Enter}
-	Send, {tab}{space}
-	Send, {Enter}
-	Send, {tab 2}{End}^{Left}{Left}^+{Left}
-	SendRaw, SO#
-	Send, {Space}
+checklistPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist `- TEMPLATE.docx"
+; Create an instance of Word
+Word := ComObjCreate("Word.Application")
+
+; Open the .docx file
+Doc := Word.Documents.Open(checklistPath)
+Word.Visible := True
+
+; Get the range of the document
+Range := Doc.Content
+
+; Find the text "Sold to:"
+Find := Range.Find
+Find.Text := "Sold to: "
+Find.Execute()
+
+; Highlight the found text
+    ; FoundRange.HighlightColorIndex := 6
+
+; Check if the text was found
+if Find.Found
+{
+    ; Get the range of the found text
+	foundRangeStart := 51
+	foundRangeEnd := 51
+	; Set myRange = ActiveDocument.Range(Start:=pos, End:=pos2)
+	; customerRange.Start := foundRangeStart
+	; customerRange.End := foundRangeEnd
+	customerRange := Word.ActiveDocument.Range(foundRangeStart, foundRangeEnd)
+
+	; Replace the text within the range
+	customerRange.Text := "The Stuff"
+}
+
+; MsgBox here
+
+Sleep 5000
+Doc.Close()
+; Quit Word if it was created by the script
+; if (!ComObjActive("Word.Application"))
+Word.Quit()
+return
+; Go to page 3 of the document
+Word.Selection.GoTo(1, 1, 3)
+
+; Do something on page 3, such as insert text
+Word.Selection.TypeText("This is page 3.")
+
+; Save and close the document
+Doc.Save()
+Doc.Close()
+
+; Quit Word
+Word.Quit()
+
+return
+; SetTitleMatchMode, 3
+; Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist - TEMPLATE.docx
+; WinWaitActive, OA Checklist - TEMPLATE.docx - Word,
+; Send, {f12}
+; SetTitleMatchMode, 2
+; WinWait, Save As, 
+; IfWinNotActive, Save As, , WinActivate, Save As, 
+; 	WinWaitActive, Save As,
+; Sleep, 1000
+; Send, +{tab 3}{Home}{down 2}
+; Send, {Enter}
+; Send, {tab}{space}
+; Send, {Enter}
+; Send, {tab 2}{End}^{Left}{Left}^+{Left}
+; SendRaw, SO#
+; Send, {Space}
 return
 
 ^Numpad4::
@@ -1553,7 +1609,9 @@ IfWinNotActive, Save As, , WinActivate, Save As,
 		WinWaitActive, Save As, 
 return
 
-^8::
+; OAC CHECKLIST
+
+^l::
 ; Create an instance of Outlook
 Outlook := ComObjCreate("Outlook.Application")
 
@@ -1582,37 +1640,11 @@ Mail.Display()
 return
 
 newEmail(Mail, level){
-	soNumber := "myButt"
     ; Set the properties of the mail item
     Mail.Subject := "SO# " . soNumber . " Level " . level . " Approval"
     Mail.Body := "Hi Debbie,`n`nPlease review SO# " . soNumber .  " for level " . level . " approval.`n`nThank you."
     Mail.To := "debbie.erickson@thermofisher.com"
 }
-return
-
-; OAC CHECKLIST
-
-^l::
-SendMode, event
-Setkeydelay 20
-gosub WaitInbox
-Send ^n
-WinWait Untitled
-Clipboard := "debbie.erickson"
-Send % Clipboard
-Sleep 1000
-Send {tab 3}
-Clipboard := "SO{#} " . soNumber . " Level 2 Approval"
-Send % Clipboard
-Sleep 200
-Send {tab}
-Clipboard := "Hi Debbie, `nPlease review SO{#} " . soNumber .  " for level 2 approval.`n`nThank you"
-Send % Clipboard
-Sleep 500
-Send !h 
-Sleep 500
-Send af{enter}
-SetKeyDelay 0
 Return
 
 F15:: ; Copy / Paste - Plant Coding
