@@ -1211,48 +1211,69 @@ Word.Visible := True
 ; Get the range of the document
 Range := Doc.Content
 
-; Find the text "Sold to:"
-Find := Range.Find
-Find.Text := "Sold to: "
-Find.Execute()
+FormatTime, formattedDatePo, %poDate%, MM/dd/yyyy
+FormatTime, formattedDateSap, %sapDate%, MM/dd/yyyy
+FormatTime, formattedCrd, %crd%, MM/dd/yyyy
 
-; Highlight the found text
-    ; FoundRange.HighlightColorIndex := 6
+; Get a reference to the first table in the document
+table := Word.ActiveDocument.Tables(1)
 
-; Check if the text was found
-if Find.Found
-{
-    ; Get the range of the found text
-	foundRangeStart := 51
-	foundRangeEnd := 51
-	; Set myRange = ActiveDocument.Range(Start:=pos, End:=pos2)
-	; customerRange.Start := foundRangeStart
-	; customerRange.End := foundRangeEnd
-	customerRange := Word.ActiveDocument.Range(foundRangeStart, foundRangeEnd)
+; Get a reference to the first cell in the table
+cell := table.Cell(1, 2)
+; Insert text into the cell
+cell.Range.Text := customer
 
-	; Replace the text within the range
-	customerRange.Text := "The Stuff"
-}
+; Get a reference to the first cell in the table
+cell := table.Cell(1, 6)
+; Insert text into the cell
+cell.Range.Text := soNumber
 
-; MsgBox here
+; Get a reference to the first cell in the table
+cell := table.Cell(2, 2)
+; Insert text into the cell
+cell.Range.Text := customer
+
+; Get a reference to the first cell in the table
+cell := table.Cell(2, 4)
+; Insert text into the cell
+cell.Range.Text := formattedDatePo
+
+; Get a reference to the first cell in the table
+cell := table.Cell(2, 6)
+; Insert text into the cell
+cell.Range.Text := formattedDateSap
+
+range := Word.Selection.Range
+
+; formattedCrd := "12/25/2023"
+; paymentTerms := "Net 30"
+
+; Get a reference to the 26th paragraph in the document
+netTerms := Word.ActiveDocument.Range.Paragraphs(40).Range
+; Set the range based on the found range
+netTermsRange := netTerms
+netTermsRange.Move(1,1)
+; Set the text for the text box
+netTermsRange.Text := terms
+
+; Highlight the 26th paragraph
+netTermsRange.Move(4,5)
+netTermsRange.Move(1,1)
+crdRange := netTermsRange
+crdRange.Select
+sleep 2000
+crdRange.Text := formattedCrd
+
 
 Sleep 5000
-Doc.Close()
-; Quit Word if it was created by the script
-; if (!ComObjActive("Word.Application"))
-Word.Quit()
-return
-; Go to page 3 of the document
-Word.Selection.GoTo(1, 1, 3)
-
-; Do something on page 3, such as insert text
-Word.Selection.TypeText("This is page 3.")
-
-; Save and close the document
-Doc.Save()
+Loop, 8 ; Send ^z five times
+{
+    Send ^z
+    Sleep, 100 ; Wait 100 milliseconds between keystrokes
+}
+Sleep 1000
 Doc.Close()
 
-; Quit Word
 Word.Quit()
 
 return
