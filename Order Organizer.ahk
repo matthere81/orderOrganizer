@@ -1208,6 +1208,9 @@ Word := ComObjCreate("Word.Application")
 Doc := Word.Documents.Open(checklistPath)
 Word.Visible := True
 
+; Save the active document with a specific file name and file format
+myChecklistPaths := Word.ActiveDocument.SaveAs("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Level 2 Approvals\OAC SO#" . soNumber . " - " . customer)
+
 ; Get the range of the document
 Range := Doc.Content
 
@@ -1264,14 +1267,6 @@ crdRange.Select
 sleep 2000
 crdRange.Text := formattedCrd
 
-
-Sleep 5000
-Loop, 8 ; Send ^z five times
-{
-    Send ^z
-    Sleep, 100 ; Wait 100 milliseconds between keystrokes
-}
-Sleep 1000
 Doc.Close()
 
 Word.Quit()
