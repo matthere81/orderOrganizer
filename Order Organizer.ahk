@@ -39,7 +39,7 @@ LVArray := []
 Gui Add, Edit, x235 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
 Gui Add, ListView, grid r5 w400 y50 x250 vLV gMyListView, ORDERS:
 
-; Gui Add, Edit, x+20 y19 w125 h27.5 vSearchTerm gSearch2, ; DDL Search
+
 Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
 {
 LV_Add("", A_LoopFileName)
@@ -1209,7 +1209,7 @@ Doc := Word.Documents.Open(checklistPath)
 Word.Visible := True
 
 ; Save the active document with a specific file name and file format
-myChecklistPaths := Word.ActiveDocument.SaveAs("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Level 2 Approvals\OAC SO#" . soNumber . " - " . customer)
+myChecklistPaths := Word.ActiveDocument.SaveAs("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Level 2 Approvals\OAC SO#" . soNumber . " - " . customer . ".docx")
 
 ; Get the range of the document
 Range := Doc.Content
@@ -1641,13 +1641,13 @@ IfMsgBox Yes
 {
     ; Set the properties of the mail item for Level 2
     level := 2
-	newEmail(Mail, level)
+	newEmail(Mail, level, soNumber)
 }
 Else
 {
     ; Set the properties of the mail item for Level 3
 	level := "2 and 3"
-    newEmail(Mail, level)
+    newEmail(Mail, level, soNumber)
 }
 
 ; Display the new mail item
@@ -1655,10 +1655,17 @@ Mail.Display()
 
 return
 
-newEmail(Mail, level){
+newEmail(Mail, level, soNumber){
     ; Set the properties of the mail item
     Mail.Subject := "SO# " . soNumber . " Level " . level . " Approval"
-    Mail.Body := "Hi Debbie,`n`nPlease review SO# " . soNumber .  " for level " . level . " approval.`n`nThank you."
+	if level = 2
+	{
+		Mail.Body := "Hi Debbie,`n`nPlease review SO# " . soNumber .  " for level " . level . " approval.`n`nThank you"
+	}
+    else
+	{
+		Mail.Body := "Hi Debbie,`n`nPlease review SO# " . soNumber .  " and pass for level 3 approval.`n`nThank you"
+	}
     Mail.To := "debbie.erickson@thermofisher.com"
 }
 Return
