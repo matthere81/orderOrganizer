@@ -67,7 +67,7 @@ Gui Add, Text,, Customer:
 Gui Add, Edit, vcustomer, %customer% 
 Gui Add, Text,, Customer / DPS Contact:
 Gui Add, Edit, vcontact, %contact% 
-Gui Add, Text,, Customer / DPS Address:
+Gui Add, Text,, Intercompany? - Entity
 Gui Add, Edit, vaddress, %address% 
 Gui Add, Text,, Sold To Account:
 Gui Add, Edit, vsoldTo, %soldTo%
@@ -1234,7 +1234,14 @@ cell.Range.Text := soNumber
 ; Get a reference to the first cell in the table
 cell := table.Cell(2, 2)
 ; Insert text into the cell
-cell.Range.Text := customer
+if !(address)
+{
+	cell.Range.Text := customer
+}
+else
+{
+	cell.Range.Text := address
+}
 
 ; Get a reference to the first cell in the table
 cell := table.Cell(2, 4)
