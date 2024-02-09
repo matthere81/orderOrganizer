@@ -1075,9 +1075,19 @@ Return
 :O:pftl::
 Send Hi ,`nPlease find the license attached for SO{#} %soNumber%.`n`nThank you^{home}{end}{left}
 Return
-!#p::Pause
-Return
-::-x8::--------  --------
+::lv3::
+MsgBox, 4, , Is this for Rodalyn?
+IfMsgBox, Yes
+{
+    Clipboard := "Hi Rodalyn,`n`nPlease review for level 3 approval.`n`nThank you"
+    Send % Clipboard
+}
+else
+{
+    Clipboard := "Hi Kathy,`n`nPlease review for level 3 approval.`n`nThank you"
+    Send % Clipboard
+}
+; ::-x8::--------  --------
 ;----- End Order keyboard shortcuts -----
 
 ::emlinv::E-MAIL INVOICES TO:{space}
@@ -1358,11 +1368,15 @@ return
 ; ------------------------------------------
 
 !+a:: ; Attach last file inside
-	Send, !e2af{Enter}
+	Send, !e2af
+	Sleep 5000
+	Send {Enter}
 ; return
 
 !#a:: ; Attach last file pop out
-	Send, !haf{Enter}
+	Send, !haf
+	Sleep 5000
+	Send {Enter}
 ; return
 
 ; ***** FUNCTIONS ***** | ***** FUNCTIONS ***** | ***** FUNCTIONS***** | ***** FUNCTIONS ***** 
@@ -1483,7 +1497,7 @@ GetSenderOrToFieldFromOutlook:
 return
 
 ; Find order by PO# in SAP
-!#f::
+!#p::
 	send, {tab 7}{enter}
 return
 

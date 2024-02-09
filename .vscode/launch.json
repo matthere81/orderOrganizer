@@ -19,20 +19,20 @@
                 "/ErrorStdOut=UTF-8"
             ]
         },
-        {
-            "name": "AutoHotkey2 Debug",
-            "type": "autohotkey",
-            "request": "launch",
-            "program": "${file}",
-            "runtime": "v2/AutoHotkey64.exe",
-            // "runtimeArgs_v2": [
-            //     ".ah2"
-            // ],
-            "runtime_v2": "v2/AutoHotkey64.exe",
-            "runtimeArgs": [
-                "/ErrorStdOut=UTF-8"
-            ]
-        },
+        // {
+        //     "name": "AutoHotkey2 Debug",
+        //     "type": "autohotkey",
+        //     "request": "launch",
+        //     "program": "${file}",
+        //     "runtime": "v2/AutoHotkey64.exe",
+        //     // "runtimeArgs_v2": [
+        //     //     ".ah2"
+        //     // ],
+        //     "runtime_v2": "v2/AutoHotkey64.exe",
+        //     "runtimeArgs": [
+        //         "/ErrorStdOut=UTF-8"
+        //     ]
+        // },
         // {
         //     "name": "AutoHotkey2 Debug",
         //     "type": "autohotkey",
