@@ -9,6 +9,7 @@ SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docu
 #include <Vis2>
 #include <UIA_Interface>
 #include <UIA_Browser>
+#include <OrderOrganizerFunctions>
 
 salesDirectors := "|Denise Schwartz|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|Sylveer Bergs|N/A"
 
@@ -1385,6 +1386,9 @@ return
 	; ControlFocus, Button1, Change Standard Order %soNumber%,
 ; }
 ; return
+#!f::
+forwardSoftwareLicense()
+Return
 
 toMiddle() ; To the middle section of SAP Standard Order Page
 {
