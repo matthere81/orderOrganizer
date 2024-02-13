@@ -10,6 +10,7 @@ SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docu
 #include <UIA_Interface>
 #include <UIA_Browser>
 
+
 salesDirectors := "|Denise Schwartz|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|Sylveer Bergs|N/A"
 
 salesCodes := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|200320|203185|1416|203915|N/A"
@@ -236,58 +237,6 @@ Gui Submit, NoHide
 submitChecklist:
 Gui Submit, Nohide
 return
-
-; CalculateTotals:
-; Gui Submit, NoHide
-; StringReplace, poValue, poValue, `,,, All
-; StringReplace, tax, tax, `,,, All
-; StringReplace, surcharge, surcharge, `,,, All
-; StringReplace, freightCost, freightCost, `,,, All
-
-
-if (poValue)
-{
-	totalCost := poValue
-}
-
-if (poValue) && (tax)
-{
-	totalCost := poValue + tax
-}
-
-if (poValue) && (freightCost)
-{
-	totalCost := poValue + freightCost
-}
-
-if (poValue) && (surcharge)
-{
-	totalCost := poValue + surcharge
-}
-
-if (poValue) && (tax) && (freightCost)
-{
-	totalCost := poValue + tax + freightCost
-}
-
-if (poValue) && (tax) && (surcharge)
-{
-	totalCost := poValue + tax + surcharge
-}
-
-if (poValue) && (freightCost) && (surcharge)
-{
-	totalCost := poValue + freightCost + surcharge
-}
-
-if (poValue) && (tax) && (freightCost) && (surcharge)
-{
-	totalCost := poValue + tax + freightCost + surcharge
-}
-
-totalCost := Round(totalCost, 2)
-GuiControl,,totalCost, %totalCost%
-Return
 
 submitSales:
 Gui Submit, NoHide
