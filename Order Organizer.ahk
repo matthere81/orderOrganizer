@@ -1,6 +1,4 @@
 ﻿#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-;~ #Include WatchFolder.ahk
-; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs ; Ensures a consistent starting directory.
 #SingleInstance Force
@@ -11,9 +9,25 @@ SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docu
 #include <UIA_Browser>
 
 
-salesDirectors := "|Denise Schwartz|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|Sylveer Bergs|N/A"
+GetSalesDirectors() {
+    return ["Denise Schwartz", "Joann Purkerson", "Maroun El Khoury", "Jimmy Yuk", "Sylveer Bergs", "N/A"]
+}
+salesDirectors := GetSalesDirectors()
+; for index, director in salesDirectors
+; {
+; 	GuiControl, , SalesDirectorChoice, %director%
+; }
 
-salesCodes := "|201020|202375|96715|1261|98866|96695|96654|202625|202006|1076|95410|202610|1026|1042|202756|202611|1041|200320|203185|1416|203915|N/A"
+GetDirectorCodes() {
+    return [201020, 202375, 96715, 1261, 98866, 96695, 96654, 202625, 202006, 1076, 95410
+			, 202610, 1026, 1042, 202756, 202611, 1041, 200320, 203185, 1416, 203915, "N/A"]
+}
+directorCodes := GetDirectorCodes()
+
+; for index, directorCode in salesCodes
+; {
+; 	GuiControl, , salesCodes, %directorCode%
+; }
 
 myinipath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB
 
@@ -56,7 +70,7 @@ Gui Add, Button, xm+370 ym+10 w70 greadtheini, O&pen
 Gui Add, Button, x+25 w70 gSaveToIni, &Save
 Gui Add, Button, x+25 w150 grestartScript, &New PO or Reload
 Gui Add, Button, x+25 w150 gClearFields, &Clear Fields
-Gui Add, Tab3, xm ym+30, Order Info|Checklist
+Gui Add, Tab3, xm ym+30, Order Info
 Gui Tab, 1
 Gui Add, Text, Section, CPQ:
 Gui Add, Edit, vcpq, %cpq% 
@@ -78,18 +92,24 @@ Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
 Gui Add, Text, x+12.5 y72 Section, System:
 Gui Add, Edit, vsystem, %system% 
 Gui Add, Text,, Salesperson:
-; Gui Add, DropDownList, +Sort vsalesPerson gsubmitSales, % salesPeople
 Gui Add, Edit, vsalesPerson, %salesPerson%
 Gui Add, Text,, Sales Manager:
-; Gui Add, DDL, Disabled vsalesManager, % salesManagers
 Gui Add, Edit, vsalesManager gsubmitSales, %salesManager%
 Gui Add, Text,, Sales Manager Code:
 Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
 Gui Add, Text,, Sales Director:
-Gui Add, DropDownList, Disabled vsalesDirector, % salesDirectors
+Gui, Add, DropDownList, vSalesDirectorChoice
+for index, director in salesDirectors
+{
+    GuiControl, , SalesDirectorChoice, %director%
+}
 Gui Add, Text,, Sales Director Code:
-Gui Add, DropDownList, ReadOnly vdirectorCode, % salesCodes
-Gui Add, CheckBox, x220 y430 vsoftware gdongle, Software?
+Gui Add, DropDownList, vDirectorCodeChoice ;, % salesCodes
+for index, directorCode in directorCodes
+{
+    GuiControl, , DirectorCodeChoice, %directorCode%
+}
+; Gui Add, CheckBox, x220 y430 vsoftware gdongle, Software?
 Gui Add, Text, x190 y435.5 Hidden vserialNumberText, S/N:  ;x187.5 y460.5 h10, S/N: ;x187.5 y437.5
 Gui Add, Edit, x225 y430 w100 Hidden vserialNumber, ; y432.5
 Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
@@ -124,144 +144,144 @@ Gui Add, Edit, vsoNumber, %soNumber%
 Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
 Gui Add, Text, x+12.5 y70 Section, Notes:
 Gui Add, Edit, w215 h120 vnotes, %notes%
-Gui, Add, Button, w200 h30 gMyButton, Get Quote Info  ; Create a button
+; Gui, Add, Button, w200 h30 gMyButton, Get Quote Info  ; Create a button
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
-Gui Tab, 1
+; Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
+; Gui Tab, 1
 
-; ----------- PRE SALESFORCE -----------------
+; ; ----------- PRE SALESFORCE -----------------
 
-Gui Add, GroupBox,Section h175 w250, Pre Salesforce
-Gui Add, Checkbox, xp+10 yp+30 gsubmitChecklist vnameCheck, Check TENA name on PO
-Gui Add, Checkbox, gsubmitChecklist vquoteNumberMatch, Quote number matches on PO && quote
-Gui Add, Checkbox, gsubmitChecklist vpaymentTerms, Payment terms match on PO && quote
-Gui Add, Checkbox, gsubmitChecklist vpriceMatch, Prices match on PO && quote
-Gui Add, Checkbox, gsubmitChecklist vbothAddresses, Bill to && Ship to address on PO
+; Gui Add, GroupBox,Section h175 w250, Pre Salesforce
+; Gui Add, Checkbox, xp+10 yp+30 gsubmitChecklist vnameCheck, Check TENA name on PO
+; Gui Add, Checkbox, gsubmitChecklist vquoteNumberMatch, Quote number matches on PO && quote
+; Gui Add, Checkbox, gsubmitChecklist vpaymentTerms, Payment terms match on PO && quote
+; Gui Add, Checkbox, gsubmitChecklist vpriceMatch, Prices match on PO && quote
+; Gui Add, Checkbox, gsubmitChecklist vbothAddresses, Bill to && Ship to address on PO
 
-; ----------- END PRE SALESFORCE -----------------
+; ; ----------- END PRE SALESFORCE -----------------
 
-; ----------- SALESFORCE -----------------
+; ; ----------- SALESFORCE -----------------
 
-Gui Add, GroupBox, Section ys h175 w325, Salesforce
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpdfQuote, Save PDF of Quote (Document Output Tab)
-Gui Add, Checkbox, gsubmitChecklist varrangeLines, Arrange quote lines (if needed) (Quote Details Tab)
-Gui Add, Checkbox, gsubmitChecklist vsoldToIdCheck, Sold-To ID (Customer Details Tab)
-Gui Add, Checkbox, gsubmitChecklist vorderTypeCheck, Check order type (Order Tab)
-Gui Add, Checkbox, gsubmitChecklist vpoInfoCheck, Add PO# / Add PO Value / Upload PO (Order Tab)
-Gui Add, Checkbox, gsubmitChecklist vgenerateDps, Generate && Attach DPS Reports (Attachments Tab)
+; Gui Add, GroupBox, Section ys h175 w325, Salesforce
+; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpdfQuote, Save PDF of Quote (Document Output Tab)
+; Gui Add, Checkbox, gsubmitChecklist varrangeLines, Arrange quote lines (if needed) (Quote Details Tab)
+; Gui Add, Checkbox, gsubmitChecklist vsoldToIdCheck, Sold-To ID (Customer Details Tab)
+; Gui Add, Checkbox, gsubmitChecklist vorderTypeCheck, Check order type (Order Tab)
+; Gui Add, Checkbox, gsubmitChecklist vpoInfoCheck, Add PO# / Add PO Value / Upload PO (Order Tab)
+; Gui Add, Checkbox, gsubmitChecklist vgenerateDps, Generate && Attach DPS Reports (Attachments Tab)
 
-; ----------- END SALESFORCE -----------------
+; ; ----------- END SALESFORCE -----------------
 
-; ----------- PRE SAP -----------------
+; ; ----------- PRE SAP -----------------
 
-Gui Add, GroupBox, Section ys h175 w275, Pre SAP
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vorderNoticeSent, Order Notice Sent
-Gui Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
-Gui Add, Text, tcs y+10, T&&Cs?
-Gui Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
-Gui Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
+; Gui Add, GroupBox, Section ys h175 w275, Pre SAP
+; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vorderNoticeSent, Order Notice Sent
+; Gui Add, Checkbox, gsubmitChecklist venteredSot, Entered In SOT
+; Gui Add, Text, tcs y+10, T&&Cs?
+; Gui Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
 
-; ---------- END PRE-SAP ----------
+; ; ---------- END PRE-SAP ----------
 
-Gui, Tab, 2
-; ----------- SAP -----------------
+; Gui, Tab, 2
+; ; ----------- SAP -----------------
 
-Gui Add, GroupBox,Section x+15 ys+10 h130 w215, SAP Attachments:
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpoAttached, PO
-Gui Add, Checkbox, x+55 gsubmitChecklist vquoteAttached, Quote
-Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vdpsAttached, DPS Reports
-Gui Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
-Gui Add, Text, xs+10 y+10, WIN Form?
-Gui Add, Radio, x+26 gsubmitChecklist vwinYes, Yes
-Gui Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
-Gui Add, Text, xs+10 y+10, Merge Report?
-Gui Add, Radio, x+10 gsubmitChecklist vmergeYes, Yes
-Gui Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
+; Gui Add, GroupBox,Section x+15 ys+10 h130 w215, SAP Attachments:
+; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vpoAttached, PO
+; Gui Add, Checkbox, x+55 gsubmitChecklist vquoteAttached, Quote
+; Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vdpsAttached, DPS Reports
+; Gui Add, Checkbox, x+5 gsubmitChecklist vorderNoticeAttached, Order Notice
+; Gui Add, Text, xs+10 y+10, WIN Form?
+; Gui Add, Radio, x+26 gsubmitChecklist vwinYes, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vwinNa, N/A
+; Gui Add, Text, xs+10 y+10, Merge Report?
+; Gui Add, Radio, x+10 gsubmitChecklist vmergeYes, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vmergeNa, N/A
 
-Gui Add, GroupBox, Section ys h100 w290, Main Sales Tab
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcrdDateAdded, CRD Date (Req delv date)
-Gui Add, Checkbox, y+10 gsubmitChecklist vfirstDate, First Date Lines Updated (Edit -> Fast Change)
-Gui Add, Checkbox, gsubmitChecklist vincoterms, Incoterms
+; Gui Add, GroupBox, Section ys h100 w290, Main Sales Tab
+; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vcrdDateAdded, CRD Date (Req delv date)
+; Gui Add, Checkbox, y+10 gsubmitChecklist vfirstDate, First Date Lines Updated (Edit -> Fast Change)
+; Gui Add, Checkbox, gsubmitChecklist vincoterms, Incoterms
 
-Gui, Tab, 3
+; Gui, Tab, 3
 
-Gui Add, GroupBox, Section h100 w200, Inside the Order
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vvolts, 110 Volts (Sales Tab)
-Gui Add, Checkbox, gsubmitChecklist vshipper, Shipper (Shipping Tab)
-Gui Add, Checkbox, gsubmitChecklist vverifyIncoterms, Verify Incoterms (Billing Tab)
+; Gui Add, GroupBox, Section h100 w200, Inside the Order
+; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vvolts, 110 Volts (Sales Tab)
+; Gui Add, Checkbox, gsubmitChecklist vshipper, Shipper (Shipping Tab)
+; Gui Add, Checkbox, gsubmitChecklist vverifyIncoterms, Verify Incoterms (Billing Tab)
 
-Gui Add, GroupBox, ys w250 h175 Section, Partners Tab
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vmanagerCodeCheck, Manager Code (Sales Manager)
-Gui Add, Checkbox, gsubmitChecklist vdirectorCodeCheck, Director Code (Sales Employee 9)
-Gui Add, Checkbox, gsubmitChecklist vbilltoCheck, Verify Billing Address
-Gui Add, Checkbox, gsubmitChecklist vshiptoCheck, Verify Shipping Address
-Gui Add, Text,, End User Added
-Gui Add, Radio, x+25 gsubmitChecklist vendUserCheck, Yes
-Gui Add, Radio, x+5 gsubmitChecklist vendUserNA, N/A
-Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vcontactPersonCheck, Contact Person Added
+; Gui Add, GroupBox, ys w250 h175 Section, Partners Tab
+; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vmanagerCodeCheck, Manager Code (Sales Manager)
+; Gui Add, Checkbox, gsubmitChecklist vdirectorCodeCheck, Director Code (Sales Employee 9)
+; Gui Add, Checkbox, gsubmitChecklist vbilltoCheck, Verify Billing Address
+; Gui Add, Checkbox, gsubmitChecklist vshiptoCheck, Verify Shipping Address
+; Gui Add, Text,, End User Added
+; Gui Add, Radio, x+25 gsubmitChecklist vendUserCheck, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vendUserNA, N/A
+; Gui Add, Checkbox, xs+10 y+10 gsubmitChecklist vcontactPersonCheck, Contact Person Added
 
-Gui Add, GroupBox, ys Section h175 w275, Texts Tab
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vtextsContactCheck, Contact Person or End User Info Added
-Gui Add, Text,, Serial/Dongle Number Added To Form Header?
-Gui Add, Radio, xs+25 y+10 gsubmitChecklist vserialYes, Yes
-Gui Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
-Gui Add, Text, xs+10 y+10, End User info added in the partners tab?
-Gui Add, Radio, xs+25 y+10 gsubmitChecklist vendUserCopyBack, Yes
-Gui Add, Radio, x+5 gsubmitChecklist vendUserCopyBackNa, N/A
+; Gui Add, GroupBox, ys Section h175 w275, Texts Tab
+; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vtextsContactCheck, Contact Person or End User Info Added
+; Gui Add, Text,, Serial/Dongle Number Added To Form Header?
+; Gui Add, Radio, xs+25 y+10 gsubmitChecklist vserialYes, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vserialNa, N/A
+; Gui Add, Text, xs+10 y+10, End User info added in the partners tab?
+; Gui Add, Radio, xs+25 y+10 gsubmitChecklist vendUserCopyBack, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vendUserCopyBackNa, N/A
 
-Gui, Tab, 4
+; Gui, Tab, 4
 
-Gui Add, GroupBox,Section h175 w235, Final Steps:
-Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vfinalTotal, Check Net Value
-Gui Add, Text,, Add Shipping?
-Gui Add, Radio, x+50 gsubmitChecklist vshippingYes, Yes
-Gui Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
-Gui Add, Text, xs+10 y+10, Higher Level Linking?
-Gui Add, Radio, x+15 gsubmitChecklist vhigherLevelLinkingYes, Yes
-Gui Add, Radio, x+5 vhigherLevelLinkingNa, N/A
-Gui Add, Text, xs+10 y+10, Delivery Groups?
-Gui Add, Radio, x+39 vdeliveryGroupsYes gsubmitChecklist, Yes
-Gui Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
-Gui Add, Checkbox, xs+10 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
-Gui Add, Text, xs+10 y+10, Order Acceptance
-Gui Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
-Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
+; Gui Add, GroupBox,Section h175 w235, Final Steps:
+; Gui Add, Checkbox, xs+10 ys+25 gsubmitChecklist vfinalTotal, Check Net Value
+; Gui Add, Text,, Add Shipping?
+; Gui Add, Radio, x+50 gsubmitChecklist vshippingYes, Yes
+; Gui Add, Radio, x+5 gsubmitChecklist vshippingNa, N/A
+; Gui Add, Text, xs+10 y+10, Higher Level Linking?
+; Gui Add, Radio, x+15 gsubmitChecklist vhigherLevelLinkingYes, Yes
+; Gui Add, Radio, x+5 vhigherLevelLinkingNa, N/A
+; Gui Add, Text, xs+10 y+10, Delivery Groups?
+; Gui Add, Radio, x+39 vdeliveryGroupsYes gsubmitChecklist, Yes
+; Gui Add, Radio, x+5 vdeliveryGroupsNa gsubmitChecklist, N/A
+; Gui Add, Checkbox, xs+10 y+10 vupdateDeliveryBlock gsubmitChecklist, Update Delivery Block
+; Gui Add, Text, xs+10 y+10, Order Acceptance
+; Gui Add, Radio, x+35 vorderAcceptedYes gsubmitChecklist, Yes
+; Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
 
-; ----------- END SAP -----------------
+; ; ----------- END SAP -----------------
 
 Gui Show,w920, Order Organizer ;SO# %soNumber%
 Gui Submit, NoHide
 
-submitChecklist:
-Gui Submit, Nohide
-return
+; submitChecklist:
+; Gui Submit, Nohide
+; return
 
 submitSales:
 Gui Submit, NoHide
 gosub, findSales
 return
 
-dongle:
-Gui Submit, NoHide
-if (software == 0)
-	{
-		GuiControl, Hide, serialNumber
-		GuiControl, Hide, serialNumberText
-		GuiControl, Move, software, y368
-	}
-if (software == 1)
-	{
-		GuiControl, Move, software, y345
-		GuiControl, Show, serialNumber
-		GuiControl, Show, serialNumberText
-	}
-return
+; dongle:
+; Gui Submit, NoHide
+; if (software == 0)
+; 	{
+; 		GuiControl, Hide, serialNumber
+; 		GuiControl, Hide, serialNumberText
+; 		GuiControl, Move, software, y368
+; 	}
+; if (software == 1)
+; 	{
+; 		GuiControl, Move, software, y345
+; 		GuiControl, Show, serialNumber
+; 		GuiControl, Show, serialNumberText
+; 	}
+; return
 
-GuiClose:
-Gui destroy
-Return
+; GuiClose:
+; Gui destroy
+; Return
 
 ClearFields:
 GuiControl,, cpq,
@@ -397,15 +417,15 @@ For Each, FileName In LVArray
    		
 }
 
-Search2:
-; Loop, Read, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
-; {
-; 	LVArray.Push(A_LoopFileName)
-; }
-; MsgBox, %LVArray%
-; Gui Add, DropDownList, vLV h250 w400 y50 x250 gMyListView, %DDLString% 
-Gui Submit, NoHide
-Return
+; Search2:
+; ; Loop, Read, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
+; ; {
+; ; 	LVArray.Push(A_LoopFileName)
+; ; }
+; ; MsgBox, %LVArray%
+; ; Gui Add, DropDownList, vLV h250 w400 y50 x250 gMyListView, %DDLString% 
+; Gui Submit, NoHide
+; Return
 
 MyListView:
 if (A_GuiEvent = "DoubleClick")
@@ -782,1204 +802,1203 @@ Return
 
 orderInfo()
 
+; ;-------- START TEXT SNIPPET MENU --------
 
-;-------- START TEXT SNIPPET MENU --------
+; ; Create the popup menu by adding some items to it.
+; Menu, Snippets, Add, SAP SO#, SoNumber
+; Menu, Snippets, Add, CPQ or Quote#, Quote
+; Menu, Snippets, Add, PO, PO
+; Menu, Snippets, Add, Order Notice, OrderNotice
+; Menu, Snippets, Add, Customer Name, CustomerName
+; Menu, Snippets, Add, Customer Contact, ContactName
+; Menu, Snippets, Add, Customer Sold To Acct#, SoldTo
+; Menu, Snippets, Add, CRD, Crd
+; Menu, Snippets, Add  ; Add a separator line.
+; Menu, Snippets, Add, SalesPerson, SalesPerson
 
-; Create the popup menu by adding some items to it.
-Menu, Snippets, Add, SAP SO#, SoNumber
-Menu, Snippets, Add, CPQ or Quote#, Quote
-Menu, Snippets, Add, PO, PO
-Menu, Snippets, Add, Order Notice, OrderNotice
-Menu, Snippets, Add, Customer Name, CustomerName
-Menu, Snippets, Add, Customer Contact, ContactName
-Menu, Snippets, Add, Customer Sold To Acct#, SoldTo
-Menu, Snippets, Add, CRD, Crd
-Menu, Snippets, Add  ; Add a separator line.
-Menu, Snippets, Add, SalesPerson, SalesPerson
+; ; Menu, Snippets, Add, Saleserson Code, SalesPersonCode
+; Menu, Snippets, Add, Sales Manager, SalesManager
+; Menu, Snippets, Add, Sales Manager Code, SalesManagerCode
+; Menu, Snippets, Add, Sales Director, SalesDirector
+; Menu, Snippets, Add, Sales Director Code, SalesDirectorCode
 
-; Menu, Snippets, Add, Saleserson Code, SalesPersonCode
-Menu, Snippets, Add, Sales Manager, SalesManager
-Menu, Snippets, Add, Sales Manager Code, SalesManagerCode
-Menu, Snippets, Add, Sales Director, SalesDirector
-Menu, Snippets, Add, Sales Director Code, SalesDirectorCode
+; Menu, Snippets, Add  ; Add a separator line.
+; Menu, Snippets, Add, PO Value, PoValue
+; Menu, Snippets, Add, Freight Cost, FreightCost
+; Menu, Snippets, Add, Total Cost, TotalCost
 
-Menu, Snippets, Add  ; Add a separator line.
-Menu, Snippets, Add, PO Value, PoValue
-Menu, Snippets, Add, Freight Cost, FreightCost
-Menu, Snippets, Add, Total Cost, TotalCost
+; ; Menu, Snippets, Add, Surcharge, Surcharge
 
-; Menu, Snippets, Add, Surcharge, Surcharge
+; Menu, Snippets, Add  ; Add a separator line.
+; Menu, Snippets, Add, End User, EndUser
+; Menu, Snippets, Add, Phone#, Phone
+; Menu, Snippets, Add, Email, Email
+; Menu, Snippets, Add, End User Info, EndUserInfo
 
-Menu, Snippets, Add  ; Add a separator line.
-Menu, Snippets, Add, End User, EndUser
-Menu, Snippets, Add, Phone#, Phone
-Menu, Snippets, Add, Email, Email
-Menu, Snippets, Add, End User Info, EndUserInfo
+; SoNumber:
+; Clipboard := soNumber
+; Send, ^v
+; Return
 
-SoNumber:
-Clipboard := soNumber
-Send, ^v
-Return
+; Quote:
+; Clipboard := cpq
+; Send, ^v
+; return
 
-Quote:
-Clipboard := cpq
-Send, ^v
-return
-
-PO:
-Clipboard := po
-Send, ^v
-return
-
-CustomerName:
-Clipboard := customer
-Send, ^v
-return
-
-OrderNotice:
-Clipboard := "Order Notice - " . customer . " - $" . poValue
-Send, ^v
-Return
-
-SoldTo:
-Clipboard := soldTo
-Send, ^v
-return
-
-SalesPerson:
-Clipboard := salesPerson
-Send, ^v
-return
-
-SalesManager:
-Clipboard := salesManager
-Send, ^v
-Return
-
-SalesManagerCode:
-Clipboard := managerCode
-Send, ^v
-return
-
-; SalesPersonCode
+; PO:
 ; Clipboard := po
 ; Send, ^v
 ; return
 
-SalesDirector:
-Clipboard := salesDirector
-Send, ^v
-return
+; CustomerName:
+; Clipboard := customer
+; Send, ^v
+; return
 
-SalesDirectorCode:
-Clipboard := directorCode
-Send, ^v
-return
+; OrderNotice:
+; Clipboard := "Order Notice - " . customer . " - $" . poValue
+; Send, ^v
+; Return
 
-ContactName:
-Clipboard := contact
-Send, ^v
-return
+; SoldTo:
+; Clipboard := soldTo
+; Send, ^v
+; return
 
-PoValue:
-Clipboard := poValue
-Send, ^v
-return
+; SalesPerson:
+; Clipboard := salesPerson
+; Send, ^v
+; return
 
-Crd:
-FormatTime, TimeString, %crd%, MM/dd/yyyy
-Clipboard := crd
-Send, ^v
-return
+; SalesManager:
+; Clipboard := salesManager
+; Send, ^v
+; Return
 
-FreightCost:
-Clipboard := freightCost
-Send, ^v
-return
+; SalesManagerCode:
+; Clipboard := managerCode
+; Send, ^v
+; return
 
-TotalCost:
-Clipboard := totalCost
-Send, ^v
-return
+; ; SalesPersonCode
+; ; Clipboard := po
+; ; Send, ^v
+; ; return
 
-EndUser:
-Clipboard := endUser
-Send, ^v
-return
+; SalesDirector:
+; Clipboard := salesDirector
+; Send, ^v
+; return
 
-Phone:
-Clipboard := phone
-Send, ^v
-return
+; SalesDirectorCode:
+; Clipboard := directorCode
+; Send, ^v
+; return
 
-Email:
-Clipboard := email
-Send, ^v
-return
+; ContactName:
+; Clipboard := contact
+; Send, ^v
+; return
 
-EndUserInfo:
-endUserInfo := "END USER: " . endUser . "`nPH: " . phone . "`nEMAIL: " . email . "`n`nCPQ-" . cpq . "`n`nEND USE: " . endUseDeescaped
-StringUpper, endUserInfo, endUserInfo
-Clipboard := endUserInfo
-Send, ^v
-return
+; PoValue:
+; Clipboard := poValue
+; Send, ^v
+; return
 
-#z::Menu, Snippets, Show  ; i.e. press the Win-Z hotkey to show the menu.
+; Crd:
+; FormatTime, TimeString, %crd%, MM/dd/yyyy
+; Clipboard := crd
+; Send, ^v
+; return
 
-;******** HOTSTRINGS (TEXT EXPANSION) ********
-#c::run calc.exe ; Run calculator
-+PrintScreen::Send, +{F7} ; Next line in item Conditions SAP SOs
-;----- Order keyboard shortcuts -----
+; FreightCost:
+; Clipboard := freightCost
+; Send, ^v
+; return
 
-; Alt::LWin
-; LWin::Alt
-; RWin::Alt
+; TotalCost:
+; Clipboard := totalCost
+; Send, ^v
+; return
 
+; EndUser:
+; Clipboard := endUser
+; Send, ^v
+; return
 
+; Phone:
+; Clipboard := phone
+; Send, ^v
+; return
 
-; RAlt::RWin
-; RWin::RAlt
+; Email:
+; Clipboard := email
+; Send, ^v
+; return
 
-^Numpad7::
-SendMode Event
-Setkeydelay 80
-Send ISURCHARGE{Tab}1{Tab}EA{Enter}
-Sleep 1000
-Gosub, WaitBeam
-Send {Tab 5}{Up}{End}{BackSpace}0[{Enter}
-Sleep 1000
-Gosub, WaitBeam
-Send {Up}^{Tab}{Tab 9}{Enter}
-Gosub, WaitBeam
-Sleep 1000
-Send ^{End}
-Sleep 500
-Send PR00
-SetKeyDelay 120
-Send {Tab}^v{Home}{Delete}{Enter}
-Gosub, WaitBeam
-Send {F3}
-Return
-::zpo::
-Send, %po%
-return
-::zpoz::
-Send, PO %po%
-return
-::zso::
-Send, %soNumber%
-Return
-::zsoz::
-Send, SO{#}{Space}%soNumber%
-return
-::zpq::
-Send, %cpq%
-return
-::zpqz::
-Send, CPQ-%cpq%
-return
-::zval::
-Send, %poValue%
-return
-::zsal::
-Send, %salesPerson%
-return
-::zcust::
-Send, %customer%
-return
-::zcon::
-Send, %contact%
-return
-::zem::
-Send, %email%
-return
-::zsys::
-Send, %system%
-return
-::zenu::
-Send, %endUser%
-return
-::zph::
-Send, %phone%
-return
-::zuse::
-Send, %endUse%
-return
-::zadd::
-Send, %address%
-return
-::zsot::
-Send, %sot% ;^{Left}{BackSpace}
-return
-:O:zcod::Close Out Document
-::zcem::Contracts Email - 
-::zwin::
-Send WIN Form - CPQ-%cpq%
-return
-::ejim::10246281
-:O:gsod::
-Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs"
-Send ^v{Down}{enter}
-Return
-:O:pftl::
-Send Hi ,`nPlease find the license attached for SO{#} %soNumber%.`n`nThank you^{home}{end}{left}
-Return
-::lv3::
-MsgBox, 4, , Is this for Rodalyn?
-IfMsgBox, Yes
-{
-    Clipboard := "Hi Rodalyn,`n`nPlease review for level 3 approval.`n`nThank you"
-    Send % Clipboard
-}
-else
-{
-    Clipboard := "Hi Kathy,`n`nPlease review for level 3 approval.`n`nThank you"
-    Send % Clipboard
-}
-; ::-x8::--------  --------
-;----- End Order keyboard shortcuts -----
+; EndUserInfo:
+; endUserInfo := "END USER: " . endUser . "`nPH: " . phone . "`nEMAIL: " . email . "`n`nCPQ-" . cpq . "`n`nEND USE: " . endUseDeescaped
+; StringUpper, endUserInfo, endUserInfo
+; Clipboard := endUserInfo
+; Send, ^v
+; return
 
-::emlinv::E-MAIL INVOICES TO:{space}
-::sontc::Hi ,`nPlease see the SO notification below.`n`nThanks{up 4}{left}
-; ::tenaa::THERMO ELECTRON NORTH AMERICA LLC
-::zsig:: ; Default Email Signature
-Send, !e2as{Enter}{down 10}{BackSpace 2}
-return
+; #z::Menu, Snippets, Show  ; i.e. press the Win-Z hotkey to show the menu.
 
-::shrug::¯\_(ツ)_/¯ 
-::winf::
-Send, Hi %salesPerson%^+{left}{delete}{BackSpace},`nGreat order{!} Thank you for filling out the WIN form.`n`nRegards{up 3}{left}
-return
-::sohu::Hi ,`nThe SO has been updated.`n`nThanks{up 3}{left}
-::orn::
-Send, Order Notice - %customer% - $%poValue%
-return
+; ;******** HOTSTRINGS (TEXT EXPANSION) ********
+; #c::run calc.exe ; Run calculator
+; +PrintScreen::Send, +{F7} ; Next line in item Conditions SAP SOs
+; ;----- Order keyboard shortcuts -----
+
+; ; Alt::LWin
+; ; LWin::Alt
+; ; RWin::Alt
 
 
-; /******** RMA HOTSTRINGS ********/
-::sjr::PLEASE RETURN THESE ITEMS PREPAID TO:`nTHERMO FISHER SCIENTIFIC`nRMA {#}: XXXXXXX`n355 RIVER OAKS PARKWAY`nSAN JOSE, CA 95134{`n 2}PLEASE INCLUDE A COMPILED DECONTAMINATION FORM & A COPY OF THIS RETURN AUTHORIZATION
-::rht::ORIGINAL SO{#} XXXXXX`nITEMS CONFIRMED DOWN BY FSE XXXXXXX{`n 2}REPLACEMENT SO{#} XXXXXX
-::memr::PLEASE RETURN THESE ITEMS PREPAID TO:`nTHERMO FISHER SCIENTIFIC`nRMA {#}: XXXXXXX`n5025 Tuggle Rd`nMemphis, TN 38118-7514{`n 2}PLEASE INCLUDE A COMPILED DECONTAMINATION FORM & A COPY OF THIS RETURN AUTHORIZATION
-;******** END HOTSTRINGS (TEXT EXPANSION) ********
 
-ToAttachments:
-	gosub,ToDisplaySap
-	Send, ^+{Tab}!{down}
-Return
+; ; RAlt::RWin
+; ; RWin::RAlt
 
-if WinActive("Change Standard Order")
-{
-	PrintScreen::+F7
-}
+; ^Numpad7::
+; SendMode Event
+; Setkeydelay 80
+; Send ISURCHARGE{Tab}1{Tab}EA{Enter}
+; Sleep 1000
+; Gosub, WaitBeam
+; Send {Tab 5}{Up}{End}{BackSpace}0[{Enter}
+; Sleep 1000
+; Gosub, WaitBeam
+; Send {Up}^{Tab}{Tab 9}{Enter}
+; Gosub, WaitBeam
+; Sleep 1000
+; Send ^{End}
+; Sleep 500
+; Send PR00
+; SetKeyDelay 120
+; Send {Tab}^v{Home}{Delete}{Enter}
+; Gosub, WaitBeam
+; Send {F3}
+; Return
+; ::zpo::
+; Send, %po%
+; return
+; ::zpoz::
+; Send, PO %po%
+; return
+; ::zso::
+; Send, %soNumber%
+; Return
+; ::zsoz::
+; Send, SO{#}{Space}%soNumber%
+; return
+; ::zpq::
+; Send, %cpq%
+; return
+; ::zpqz::
+; Send, CPQ-%cpq%
+; return
+; ::zval::
+; Send, %poValue%
+; return
+; ::zsal::
+; Send, %salesPerson%
+; return
+; ::zcust::
+; Send, %customer%
+; return
+; ::zcon::
+; Send, %contact%
+; return
+; ::zem::
+; Send, %email%
+; return
+; ::zsys::
+; Send, %system%
+; return
+; ::zenu::
+; Send, %endUser%
+; return
+; ::zph::
+; Send, %phone%
+; return
+; ::zuse::
+; Send, %endUse%
+; return
+; ::zadd::
+; Send, %address%
+; return
+; ::zsot::
+; Send, %sot% ;^{Left}{BackSpace}
+; return
+; :O:zcod::Close Out Document
+; ::zcem::Contracts Email - 
+; ::zwin::
+; Send WIN Form - CPQ-%cpq%
+; return
+; ::ejim::10246281
+; :O:gsod::
+; Clipboard := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\SO Docs"
+; Send ^v{Down}{enter}
+; Return
+; :O:pftl::
+; Send Hi ,`nPlease find the license attached for SO{#} %soNumber%.`n`nThank you^{home}{end}{left}
+; Return
+; ::lv3::
+; MsgBox, 4, , Is this for Rodalyn?
+; IfMsgBox, Yes
+; {
+;     Clipboard := "Hi Rodalyn,`n`nPlease review for level 3 approval.`n`nThank you"
+;     Send % Clipboard
+; }
+; else
+; {
+;     Clipboard := "Hi Kathy,`n`nPlease review for level 3 approval.`n`nThank you"
+;     Send % Clipboard
+; }
+; ; ::-x8::--------  --------
+; ;----- End Order keyboard shortcuts -----
+
+; ::emlinv::E-MAIL INVOICES TO:{space}
+; ::sontc::Hi ,`nPlease see the SO notification below.`n`nThanks{up 4}{left}
+; ; ::tenaa::THERMO ELECTRON NORTH AMERICA LLC
+; ::zsig:: ; Default Email Signature
+; Send, !e2as{Enter}{down 10}{BackSpace 2}
+; return
+
+; ::shrug::¯\_(ツ)_/¯ 
+; ::winf::
+; Send, Hi %salesPerson%^+{left}{delete}{BackSpace},`nGreat order{!} Thank you for filling out the WIN form.`n`nRegards{up 3}{left}
+; return
+; ::sohu::Hi ,`nThe SO has been updated.`n`nThanks{up 3}{left}
+; ::orn::
+; Send, Order Notice - %customer% - $%poValue%
+; return
 
 
-^\:: ;To main attachments Button in SAP
-	Gosub, ToAttachments
-return
+; ; /******** RMA HOTSTRINGS ********/
+; ::sjr::PLEASE RETURN THESE ITEMS PREPAID TO:`nTHERMO FISHER SCIENTIFIC`nRMA {#}: XXXXXXX`n355 RIVER OAKS PARKWAY`nSAN JOSE, CA 95134{`n 2}PLEASE INCLUDE A COMPILED DECONTAMINATION FORM & A COPY OF THIS RETURN AUTHORIZATION
+; ::rht::ORIGINAL SO{#} XXXXXX`nITEMS CONFIRMED DOWN BY FSE XXXXXXX{`n 2}REPLACEMENT SO{#} XXXXXX
+; ::memr::PLEASE RETURN THESE ITEMS PREPAID TO:`nTHERMO FISHER SCIENTIFIC`nRMA {#}: XXXXXXX`n5025 Tuggle Rd`nMemphis, TN 38118-7514{`n 2}PLEASE INCLUDE A COMPILED DECONTAMINATION FORM & A COPY OF THIS RETURN AUTHORIZATION
+; ;******** END HOTSTRINGS (TEXT EXPANSION) ********
 
-#F3:: ; Search SOT by line#
-	Send, ^g
-	Sleep, 750
-	Send, ^a{BackSpace}a%sot%{Enter}
-return
+; ToAttachments:
+; 	gosub,ToDisplaySap
+; 	Send, ^+{Tab}!{down}
+; Return
 
-!2:: ; Forward SW Licenses
-	Send, Hi%firstname%`nPlease find the license attached for SO{#}{Space}%soNumber%.`n`nThanks{pgup}
-return
+; if WinActive("Change Standard Order")
+; {
+; 	PrintScreen::+F7
+; }
 
-^!v:: ; Show/Hide Order Info GUI
-	DetectHiddenWindows, on
-	; WinActivate, [ WinTitle, WinText, ExcludeTitle, ExcludeText]
-	if !WinActive(Order Organizer, "Order Organizer")
-	{
-		WinActivate, Order Organizer, Order Organizer, ClipAngel
-		return
-	}
-	else if WinActive(Order Organizer, "Order Organizer", ClipAngel)
-	{
-		WinMinimize
-		return
-	}
-return
 
-!#t:: ; Search Outlook Tasks
-	Send, ^e
-	KeyWait, enter, down
-	Send, !js2f
-return
+; ^\:: ;To main attachments Button in SAP
+; 	Gosub, ToAttachments
+; return
 
-^!s:: ;Save to SO Docs
-	gosub, SaveToSoDocs
-return
+; #F3:: ; Search SOT by line#
+; 	Send, ^g
+; 	Sleep, 750
+; 	Send, ^a{BackSpace}a%sot%{Enter}
+; return
 
-#5:: ; -------- Navigate to Exped Def 5 Day ---------
-	Send, fah{left 12}
-return
+; !2:: ; Forward SW Licenses
+; 	Send, Hi%firstname%`nPlease find the license attached for SO{#}{Space}%soNumber%.`n`nThanks{pgup}
+; return
 
-!':: ; Seach SAP By PO#
-	Send, {down 6}
-	Send, {Tab}{Enter}
-return
+; ^!v:: ; Show/Hide Order Info GUI
+; 	DetectHiddenWindows, on
+; 	; WinActivate, [ WinTitle, WinText, ExcludeTitle, ExcludeText]
+; 	if !WinActive(Order Organizer, "Order Organizer")
+; 	{
+; 		WinActivate, Order Organizer, Order Organizer, ClipAngel
+; 		return
+; 	}
+; 	else if WinActive(Order Organizer, "Order Organizer", ClipAngel)
+; 	{
+; 		WinMinimize
+; 		return
+; 	}
+; return
 
-!#u:: ; Update Order Status
-	SetTitleMatchMode, 2
-	Send, !ghs
-	WinWait, Header Data, 
-	IfWinNotActive, Header Data, , WinActivate, Header Data, 
-		WinWaitActive, Header Data,
-	Send, ^{tab 4}{enter}
-	WinWait, Change Status, 
-	IfWinNotActive, Change Status, , WinActivate, Change Status, 
-		WinWaitActive, Change Status,
-	Send, ^{tab 4}{Down}{Space}
-return
+; !#t:: ; Search Outlook Tasks
+; 	Send, ^e
+; 	KeyWait, enter, down
+; 	Send, !js2f
+; return
 
-!#h:: ;CSH Removal
-	SendMode, Event
-	SetKeyDelay, 200
-	gosub WaitInbox
-	gosub, GetSubjectFromOutlook
-	ClipWait, 1
-	RegExMatch(Clipboard, "(\d{7})", cshSoNumber)
-	Sleep, 500
-	Clipboard := cshSoNumber
-	gosub, OpenSAPWindowForCsh
-	WinActivate, Order %cshSoNumber%,,ClipAngel,
-	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
-	Sleep, 1000
-	Send ^{tab 7}{down}{tab}{Delete}{Enter}
-	gosub, WaitCshSO
-	Sleep, 2000
-	gosub, WaitInbox
-	SetKeyDelay 0
-	Send, ^+r
-	gosub, GetSenderOrToFieldFromOutlook
-	Send, Hi%firstname%,`nThe hold has been removed.`n`nThank you ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
-return
+; ^!s:: ;Save to SO Docs
+; 	gosub, SaveToSoDocs
+; return
 
-; Save OA Checklist
-!#k::
-checklistPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist `- TEMPLATE.docx"
-; Create an instance of Word
-Word := ComObjCreate("Word.Application")
+; #5:: ; -------- Navigate to Exped Def 5 Day ---------
+; 	Send, fah{left 12}
+; return
 
-; Open the .docx file
-Doc := Word.Documents.Open(checklistPath)
-Word.Visible := True
+; !':: ; Seach SAP By PO#
+; 	Send, {down 6}
+; 	Send, {Tab}{Enter}
+; return
 
-; Save the active document with a specific file name and file format
-myChecklistPaths := Word.ActiveDocument.SaveAs("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Level 2 Approvals\OAC SO#" . soNumber . " - " . customer . ".docx")
+; !#u:: ; Update Order Status
+; 	SetTitleMatchMode, 2
+; 	Send, !ghs
+; 	WinWait, Header Data, 
+; 	IfWinNotActive, Header Data, , WinActivate, Header Data, 
+; 		WinWaitActive, Header Data,
+; 	Send, ^{tab 4}{enter}
+; 	WinWait, Change Status, 
+; 	IfWinNotActive, Change Status, , WinActivate, Change Status, 
+; 		WinWaitActive, Change Status,
+; 	Send, ^{tab 4}{Down}{Space}
+; return
 
-; Get the range of the document
-Range := Doc.Content
+; !#h:: ;CSH Removal
+; 	SendMode, Event
+; 	SetKeyDelay, 200
+; 	gosub WaitInbox
+; 	gosub, GetSubjectFromOutlook
+; 	ClipWait, 1
+; 	RegExMatch(Clipboard, "(\d{7})", cshSoNumber)
+; 	Sleep, 500
+; 	Clipboard := cshSoNumber
+; 	gosub, OpenSAPWindowForCsh
+; 	WinActivate, Order %cshSoNumber%,,ClipAngel,
+; 	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
+; 	Sleep, 1000
+; 	Send ^{tab 7}{down}{tab}{Delete}{Enter}
+; 	gosub, WaitCshSO
+; 	Sleep, 2000
+; 	gosub, WaitInbox
+; 	SetKeyDelay 0
+; 	Send, ^+r
+; 	gosub, GetSenderOrToFieldFromOutlook
+; 	Send, Hi%firstname%,`nThe hold has been removed.`n`nThank you ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
+; return
 
-FormatTime, formattedDatePo, %poDate%, MM/dd/yyyy
-FormatTime, formattedDateSap, %sapDate%, MM/dd/yyyy
-FormatTime, formattedCrd, %crd%, MM/dd/yyyy
+; ; Save OA Checklist
+; !#k::
+; checklistPath := "C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist `- TEMPLATE.docx"
+; ; Create an instance of Word
+; Word := ComObjCreate("Word.Application")
 
-; Get a reference to the first table in the document
-table := Word.ActiveDocument.Tables(1)
+; ; Open the .docx file
+; Doc := Word.Documents.Open(checklistPath)
+; Word.Visible := True
 
-; Get a reference to the first cell in the table
-cell := table.Cell(1, 2)
-; Insert text into the cell
-cell.Range.Text := customer
+; ; Save the active document with a specific file name and file format
+; myChecklistPaths := Word.ActiveDocument.SaveAs("C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Level 2 Approvals\OAC SO#" . soNumber . " - " . customer . ".docx")
 
-; Get a reference to the first cell in the table
-cell := table.Cell(1, 6)
-; Insert text into the cell
-cell.Range.Text := soNumber
+; ; Get the range of the document
+; Range := Doc.Content
 
-; Get a reference to the first cell in the table
-cell := table.Cell(2, 2)
-; Insert text into the cell
-if !(address)
-{
-	cell.Range.Text := customer
-}
-else
-{
-	cell.Range.Text := address
-}
+; FormatTime, formattedDatePo, %poDate%, MM/dd/yyyy
+; FormatTime, formattedDateSap, %sapDate%, MM/dd/yyyy
+; FormatTime, formattedCrd, %crd%, MM/dd/yyyy
 
-; Get a reference to the first cell in the table
-cell := table.Cell(2, 4)
-; Insert text into the cell
-cell.Range.Text := formattedDatePo
+; ; Get a reference to the first table in the document
+; table := Word.ActiveDocument.Tables(1)
 
-; Get a reference to the first cell in the table
-cell := table.Cell(2, 6)
-; Insert text into the cell
-cell.Range.Text := formattedDateSap
+; ; Get a reference to the first cell in the table
+; cell := table.Cell(1, 2)
+; ; Insert text into the cell
+; cell.Range.Text := customer
 
-range := Word.Selection.Range
+; ; Get a reference to the first cell in the table
+; cell := table.Cell(1, 6)
+; ; Insert text into the cell
+; cell.Range.Text := soNumber
 
-; formattedCrd := "12/25/2023"
-; paymentTerms := "Net 30"
+; ; Get a reference to the first cell in the table
+; cell := table.Cell(2, 2)
+; ; Insert text into the cell
+; if !(address)
+; {
+; 	cell.Range.Text := customer
+; }
+; else
+; {
+; 	cell.Range.Text := address
+; }
 
-; Get a reference to the 26th paragraph in the document
-netTerms := Word.ActiveDocument.Range.Paragraphs(40).Range
-; Set the range based on the found range
-netTermsRange := netTerms
-netTermsRange.Move(1,1)
-; Set the text for the text box
-netTermsRange.Text := terms
+; ; Get a reference to the first cell in the table
+; cell := table.Cell(2, 4)
+; ; Insert text into the cell
+; cell.Range.Text := formattedDatePo
 
-; Highlight the 26th paragraph
-netTermsRange.Move(4,5)
-netTermsRange.Move(1,1)
-crdRange := netTermsRange
-crdRange.Select
-sleep 2000
-crdRange.Text := formattedCrd
+; ; Get a reference to the first cell in the table
+; cell := table.Cell(2, 6)
+; ; Insert text into the cell
+; cell.Range.Text := formattedDateSap
 
-Doc.Close()
+; range := Word.Selection.Range
 
-Word.Quit()
+; ; formattedCrd := "12/25/2023"
+; ; paymentTerms := "Net 30"
 
-return
-; SetTitleMatchMode, 3
-; Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist - TEMPLATE.docx
-; WinWaitActive, OA Checklist - TEMPLATE.docx - Word,
-; Send, {f12}
-; SetTitleMatchMode, 2
+; ; Get a reference to the 26th paragraph in the document
+; netTerms := Word.ActiveDocument.Range.Paragraphs(40).Range
+; ; Set the range based on the found range
+; netTermsRange := netTerms
+; netTermsRange.Move(1,1)
+; ; Set the text for the text box
+; netTermsRange.Text := terms
+
+; ; Highlight the 26th paragraph
+; netTermsRange.Move(4,5)
+; netTermsRange.Move(1,1)
+; crdRange := netTermsRange
+; crdRange.Select
+; sleep 2000
+; crdRange.Text := formattedCrd
+
+; Doc.Close()
+
+; Word.Quit()
+
+; return
+; ; SetTitleMatchMode, 3
+; ; Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Order Checklists\OA Checklist - TEMPLATE.docx
+; ; WinWaitActive, OA Checklist - TEMPLATE.docx - Word,
+; ; Send, {f12}
+; ; SetTitleMatchMode, 2
+; ; WinWait, Save As, 
+; ; IfWinNotActive, Save As, , WinActivate, Save As, 
+; ; 	WinWaitActive, Save As,
+; ; Sleep, 1000
+; ; Send, +{tab 3}{Home}{down 2}
+; ; Send, {Enter}
+; ; Send, {tab}{space}
+; ; Send, {Enter}
+; ; Send, {tab 2}{End}^{Left}{Left}^+{Left}
+; ; SendRaw, SO#
+; ; Send, {Space}
+; return
+
+; ^Numpad4::
+; 	gosub, CopySOFromSubjectInOutlook
+; return
+
+; !#w:: ; Save from Word to SO Docs
+; 	Send, {f12}
+; 	WinWait, Save As, 
+; 	IfWinNotActive, Save As, , WinActivate, Save As, 
+; 		WinWaitActive, Save As,
+; 	Sleep, 1000
+; 	Send, +{tab 3}{Home}{down 2}
+; 	Send, {Enter}
+; 	Sleep, 500
+; 	Send, {tab}{space}
+; return
+
+; WaitSaveAs:
+; 	; WinWait, Save As, 
+; 	; IfWinNotActive, Save As, , WinActivate, Save As, 
+; 		WinWaitActive, Save As,
+; return
+
+; ;~ JS / Chrome Test
+; ;~ WinActivate, ahk_exe chrome.exe
+
+; OpenEmailAttachments:
+; 	Emails := ComObjActive("Outlook.Application").ActiveExplorer.Selection
+; 	for Email in Emails
+; 		for Attachment in Email.Attachments
+; 		if !(Attachment.FileName ~= "^image\d+") ; exlude image files often created by embedded images in email signatures
+; 	{
+; 		Attachment.SaveAsFile(A_Temp "\" Attachment.FileName)
+; 		Run, % A_Temp "\" Attachment.FileName
+; 	}
+; 	WinWaitActive, % Attachment.Filename
+; return
+
+; ;/******** MONTIOR COUNT ********/
+
+; SysGet, MonitorCount, MonitorCount
+; SysGet, MonitorPrimary, MonitorPrimary
+; MsgBox, Monitor Count:`t%MonitorCount%`nPrimary Monitor:`t%MonitorPrimary%
+; Loop, %MonitorCount%
+; {
+; 	SysGet, MonitorName, MonitorName, %A_Index%
+; 	SysGet, Monitor, Monitor, %A_Index%
+; 	SysGet, MonitorWorkArea, MonitorWorkArea, %A_Index%
+; 	MsgBox, Monitor:`t#%A_Index%`nName:`t%MonitorName%`nLeft:`t%MonitorLeft% (%MonitorWorkAreaLeft% work)`nTop:`t%MonitorTop% (%MonitorWorkAreaTop% work)`nRight:`t%MonitorRight% (%MonitorWorkAreaRight% work)`nBottom:`t%MonitorBottom% (%MonitorWorkAreaBottom% work)
+; }
+
+; X := 250, Y := 250 ; Starting position for the Gui on your main monitor
+; CoordMode, Mouse, Screen
+; MouseGetPos, MX, MY
+; If (MX > A_ScreenWidth)
+; 	X += A_ScreenWidth
+; Gui Show, x%X% y%Y% w300 h300
+; return
+
+; ; ------------------------------------------
+
+; !+a:: ; Attach last file inside
+; 	Send, !e2af
+; 	Sleep 1500
+; 	Send {Enter}
+; ; return
+
+; !#a:: ; Attach last file pop out
+; 	Send, !haf
+; 	Sleep 1500
+; 	Send {Enter}
+; ; return
+
+; ; ***** FUNCTIONS ***** | ***** FUNCTIONS ***** | ***** FUNCTIONS***** | ***** FUNCTIONS ***** 
+; ; orderFocus() ; Display documents button on SAP Standard Order Page
+; ; {
+; 	; ControlFocus, Button1, Change Standard Order %soNumber%,
+; ; }
+; ; return
+
+; toMiddle() ; To the middle section of SAP Standard Order Page
+; {
+; 	orderWindowActivate()
+; 	Send, ^{Tab 3}
+; }
+; return
+
+; orderWindowActivate() ; Activate SAP Change Order Window
+; {
+; 	WinActivate, Change Standard Order %soNumber%, 
+; }
+; return
+
+; ; ***** END FUNCTIONS ***** | ***** END FUNCTIONS ***** | ***** END FUNCTIONS***** | ***** END FUNCTIONS ***** 
+
+; ; ***** LABELS ***** | ***** LABELS ***** | ***** LABELS ***** | ***** LABELS ***** 
+
+
+; WaitSpin:
+; 	Loop, ;Wait for mouse to not spin
+; 	{
+; 		if (A_Cursor = "AppStarting")
+; 		{
+; 			Loop, 
+; 			{
+; 				; MsgBox, In the loop
+; 				if !(A_Cursor = "AppStarting")
+; 					Break
+; 			}
+; 		}
+; 	}
+; Return
+
+; WaitArrow:
+; 	Loop, ;Wait for mouse to be arrow
+; 	{
+; 		Sleep, 500
+; 		if (A_Cursor = "Arrow")
+; 			Break
+; 	}
+; return
+
+; WaitBeam:
+; 	Loop, ;Wait for mouse to be arrow
+; 	{
+; 		Sleep, 750
+; 		if (A_Cursor = "IBeam")|| (A_Cursor = "Arrow")
+; 			Break
+; 	}
+; return
+
+; OrderFocus:
+; 	ControlFocus, Button1, Change Standard Order %soNumber%,
+; return
+
+; toMiddle:
+; 	gosub, OrderWindowActivate
+; 	Send, ^{Tab 3}
+; return
+
+; OrderWindowActivate:
+; 	WinActivate, Change Standard Order %soNumber%, 
+; return
+
+; ToDisplaySap:
+; 	ControlFocus, Button1, Standard Order
+; return
+
+; CopySOFromSubjectInOutlook:
+; 	gosub, GetSubjectFromOutlook
+; 	ClipWait, 1
+; 	RegExMatch(Clipboard, "(\d{7})", soFromOutlook)
+; 	Clipboard := soFromOutlook
+; return
+
+; ForwardEmail:
+; 	WinActivate, Outlook
+; 	olApp := ComObjCreate("Outlook.Application")
+; 	olForward := olApp.ActiveExplorer.Selection.Item(1)
+; 	olForward := olForward.Forward
+; 	olForward.Display ; Remove to work in background
+; return
+
+; SaveToSoDocs: ; Go to SO Docs
+; 	Send, {f12}
+; 	WinWaitActive, Save As,
+; 	Send, !d+{tab 10}{Home}{down 2}{ENTER}{Tab 3}
+; return
+
+; GetSubjectFromOutlook:
+; 	; Get the subject of the active item in Outlook. Works in both the main window and
+; 	; if the email is open in its own window.
+; 	olApp := ComObjActive("Outlook.Application")
+; 	olNamespace := olApp.GetNamespace("MAPI")
+; 	; Get the active window so we can determine if an Explorer or Inspector window is active.
+; 	Window := olApp.ActiveWindow 
+; 	if (Window.Class = 34) { ; 34 = An Explorer object. (The Outlook main window)
+; 		Selection := Window.Selection
+; 		if (Selection.Count > 0)
+; 			Clipboard := Selection.Item(1).Subject
+; 		return
+; 	}
+; 	else
+; 		return
+
+; GetSenderOrToFieldFromOutlook:
+; 	Clipboard := % COMObjActive("Outlook.Application").ActiveExplorer.Selection.Item(1).SenderName
+; 	RegExMatch(Clipboard, "\s([a-zA-Z]*)", firstName)
+; return
+
+; ; Find order by PO# in SAP
+; !#p::
+; 	send, {tab 7}{enter}
+; return
+
+; WaitOrderSO:
+; 	SetTitleMatchMode, 2
+; 	WinActivate, Order %soNumber%,,ClipAngel,
+; 	WinWaitActive, Order %soNumber%,,ClipAngel,
+; return
+
+; WaitCshSO:
+; 	WinActivate, Order %cshSoNumber%,,ClipAngel,
+; 	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
+; Return
+
+; WaitHeaderData:
+; 	SetTitleMatchMode, 2
+; 	WinWait, Change Standard Order %soNumber%: Header Data,,ClipAngel,
+; 	IfWinNotActive, Change Standard Order %soNumberso%: Header Data,,ClipAngel, WinActivate, Change Standard Order %soNumber%: Header Data, 
+; 		WinWaitActive, Change Standard Order %soNumber%: Header Data,,ClipAngel,
+; return
+
+; WaitStandardOrder:
+; 	SetTitleMatchMode, 2
+; 	WinWait, Change Standard Order %soNumber%: Overview, 
+; 	IfWinNotActive, Change Standard Order %soNumber%: Overview, , WinActivate,Change Standard Order %soNumber%: Overview, 
+; 		WinWaitActive, Change Standard Order %soNumber%: Overview,
+; return
+
+; addAttachment: ; Add Attachment
+; 	Send, !{down}
+; 	Sleep, 1000
+; 	Send, a
+; 	Sleep, 2000
+; 	Send, ^+{tab 3}{left 14}{enter}{down}{enter}
+; 	Sleep, 500
+; 	Send ^4
+; 	Sleep, 500
+; 	Send, !#s
+; return
+
+; WaitInbox:
+; 	; WinWait, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
+; 	IfWinNotActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, , WinActivate, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
+; 		WinWaitActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
+; return
+
+; ; ***** END LABELS ***** | ***** END LABELS ***** | ***** END LABELS ***** | ***** END LABELS ***** 
+
+; ^1:: ; Create Attachment
+; 	Gosub, OpenSAPWindow
+; 	Gosub, ToAttachments
+; 	Sleep, 500
+; 	Send, c{Enter}
+; 	Gosub, WinWaitImportFile
+; 	Gosub, ToSoDocAttachments
+; 	Send, !n
+; 	Send, po{Space}%po%
+; 	Sleep, 500
+; 	Send, {Down}{Enter}
+; 	Sleep, 1000
+; 	Send, po
+; 	Sleep, 500
+; 	Send, {Down}{Enter}
+; 	Sleep, 1000 
+; 	Send, ^{tab 3}
+; 	Sleep, 1500
+; 	Send, !{Down}
+; 	Sleep, 500
+; 	Send, {down}a
+; 	gosub, WinWaitAttachmentList
+; 	Send, ^+{tab 3}{left 14}{enter}{down}{enter}
+; 	WinWaitActive, Import file
+; 	Send, !n
+; 	gosub, WinWaitImportFile
+; 	Send, cpq{Down}{enter}
+; 	Sleep, 2000
+; 	Send, ^+{tab}{left 14}{enter}{down}{enter}
+; 	gosub, WinWaitImportFile
+; 	Send, !n
+; 	; Send, d
+; 	; Sleep, 200
+; 	; Send, {down}{enter}
+; 	; Sleep, 2000
+; 	; Send, ^+{tab}{left 14}{enter}
+; 	; Sleep, 200
+; 	; Send, {down}{enter}
+; 	; gosub, WinWaitImportFile
+; 	; Send, !n
+; 	; Send, d
+; 	; Sleep, 200
+; 	; Send, {down 2}{enter}
+; Return
+
+; ToSoDocAttachments:
+; 	WinWaitActive, Import file
+; 	ControlFocus, ToolbarWindow322, Import file
+; 	Send {space}
+; 	Sleep 1000
+; 	Send {tab}so{Enter}
+; 	Sleep, 500
+; Return
+
+
+; WinWaitImportFile:
+; 	WinWait, Import file, 
+; 	WinActivate, Import file, 
+; 	WinWaitActive, Import file,
+; return
+
+; WinWaitAttachmentList:
+; 	WinWait, Service: Attachment list, 
+; 	IfWinNotActive, Service: Attachment list, , WinActivate, Service: Attachment list, 
+; 		WinWaitActive, Service: Attachment list, 
+; return
+
+; GetSOFromSubject:
+; 	gosub, GetSubjectFromOutlook
+; 	ClipWait, 1
+; 	RegExMatch(Clipboard, "(\d{7})", so)
+; return
+
+; !#i:: ; Get Invoice - Not finished
+; WinWait, Change Billing Document, 
+; IfWinNotActive, Change Billing Document, , WinActivate, Change Billing Document, 
+; 	WinWaitActive, Change Billing Document, 
+; Sleep, 100
+; Send, {ALTDOWN}{ALTUP}u
+; WinWait, Output output, 
+; IfWinNotActive, Output output, , WinActivate, Output output, 
+; 	WinWaitActive, Output output, 
+; Send, {DOWN}{SHIFTDOWN}{SPACE}{SHIFTUP}{TAB 4}{ENTER}
+; WinWait, Print:, 
+; IfWinNotActive, Print:, , WinActivate, Print:, 
+; 	WinWaitActive, Print:, 
+; Send, {CTRLDOWN}{SHIFTDOWN}{TAB}{SHIFTUP}{CTRLUP}{TAB}{ENTER}
+; WinWait, Print Preview, 
+; IfWinNotActive, Print Preview, , WinActivate, Print Preview, 
+; 	WinWaitActive, Print Preview,
+; MouseClick, left, 1807, 170
+; WinWait,, Nitro Pro, 
+; IfWinNotActive,, Nitro Pro, WinActivate,,Nitro Pro,
+; 	WinWaitActive,, Nitro Pro, 
+; Send, ^s
 ; WinWait, Save As, 
 ; IfWinNotActive, Save As, , WinActivate, Save As, 
-; 	WinWaitActive, Save As,
-; Sleep, 1000
-; Send, +{tab 3}{Home}{down 2}
-; Send, {Enter}
-; Send, {tab}{space}
-; Send, {Enter}
-; Send, {tab 2}{End}^{Left}{Left}^+{Left}
-; SendRaw, SO#
-; Send, {Space}
-return
-
-^Numpad4::
-	gosub, CopySOFromSubjectInOutlook
-return
-
-!#w:: ; Save from Word to SO Docs
-	Send, {f12}
-	WinWait, Save As, 
-	IfWinNotActive, Save As, , WinActivate, Save As, 
-		WinWaitActive, Save As,
-	Sleep, 1000
-	Send, +{tab 3}{Home}{down 2}
-	Send, {Enter}
-	Sleep, 500
-	Send, {tab}{space}
-return
-
-WaitSaveAs:
-	; WinWait, Save As, 
-	; IfWinNotActive, Save As, , WinActivate, Save As, 
-		WinWaitActive, Save As,
-return
-
-;~ JS / Chrome Test
-;~ WinActivate, ahk_exe chrome.exe
-
-OpenEmailAttachments:
-	Emails := ComObjActive("Outlook.Application").ActiveExplorer.Selection
-	for Email in Emails
-		for Attachment in Email.Attachments
-		if !(Attachment.FileName ~= "^image\d+") ; exlude image files often created by embedded images in email signatures
-	{
-		Attachment.SaveAsFile(A_Temp "\" Attachment.FileName)
-		Run, % A_Temp "\" Attachment.FileName
-	}
-	WinWaitActive, % Attachment.Filename
-return
-
-;/******** MONTIOR COUNT ********/
-
-SysGet, MonitorCount, MonitorCount
-SysGet, MonitorPrimary, MonitorPrimary
-MsgBox, Monitor Count:`t%MonitorCount%`nPrimary Monitor:`t%MonitorPrimary%
-Loop, %MonitorCount%
-{
-	SysGet, MonitorName, MonitorName, %A_Index%
-	SysGet, Monitor, Monitor, %A_Index%
-	SysGet, MonitorWorkArea, MonitorWorkArea, %A_Index%
-	MsgBox, Monitor:`t#%A_Index%`nName:`t%MonitorName%`nLeft:`t%MonitorLeft% (%MonitorWorkAreaLeft% work)`nTop:`t%MonitorTop% (%MonitorWorkAreaTop% work)`nRight:`t%MonitorRight% (%MonitorWorkAreaRight% work)`nBottom:`t%MonitorBottom% (%MonitorWorkAreaBottom% work)
-}
-
-X := 250, Y := 250 ; Starting position for the Gui on your main monitor
-CoordMode, Mouse, Screen
-MouseGetPos, MX, MY
-If (MX > A_ScreenWidth)
-	X += A_ScreenWidth
-Gui Show, x%X% y%Y% w300 h300
-return
-
-; ------------------------------------------
-
-!+a:: ; Attach last file inside
-	Send, !e2af
-	Sleep 1500
-	Send {Enter}
+; 		WinWaitActive, Save As, 
 ; return
 
-!#a:: ; Attach last file pop out
-	Send, !haf
-	Sleep 1500
-	Send {Enter}
-; return
+; ; OAC CHECKLIST
 
-; ***** FUNCTIONS ***** | ***** FUNCTIONS ***** | ***** FUNCTIONS***** | ***** FUNCTIONS ***** 
-; orderFocus() ; Display documents button on SAP Standard Order Page
+; ^l::
+; ; Create an instance of Outlook
+; Outlook := ComObjCreate("Outlook.Application")
+
+; ; Create a new mail item
+; Mail := Outlook.CreateItem(0)
+
+; ; Ask the user to select a level
+; MsgBox, 4, Which Level?, Is this for Level 2?, 
+
+; IfMsgBox Yes
 ; {
-	; ControlFocus, Button1, Change Standard Order %soNumber%,
+;     ; Set the properties of the mail item for Level 2
+;     level := 2
+; 	newEmail(Mail, level, soNumber)
+; }
+; Else
+; {
+;     ; Set the properties of the mail item for Level 3
+; 	level := "2 and 3"
+;     newEmail(Mail, level, soNumber)
+; }
+
+; ; Display the new mail item
+; Mail.Display()
+
+; return
+
+; newEmail(Mail, level, soNumber){
+;     ; Set the properties of the mail item
+;     Mail.Subject := "SO# " . soNumber . " Level " . level . " Approval"
+; 	if level = 2
+; 	{
+; 		Mail.Body := "Hi Debbie,`n`nPlease review SO# " . soNumber .  " for level " . level . " approval.`n`nThank you"
+; 	}
+;     else
+; 	{
+; 		Mail.Body := "Hi Debbie,`n`nPlease review SO# " . soNumber .  " and pass for level 3 approval.`n`nThank you"
+; 	}
+;     Mail.To := "debbie.erickson@thermofisher.com"
+; }
+; Return
+
+; F15:: ; Copy / Paste - Plant Coding
+; 	Sleep, 200
+; 	Send, +{Home}+{Backspace}
+; 	Send, ^v
+; 	Send, {Down} 
+; 	Send, {esc}{down}
+; return
+
+; +F15:: ; Delete coding
+; 	Send, {End}+{Home}{backspace}{Esc}{Down}
+; return
+
+; !#s:: ;CPQ
+; 	Send, !n
+; 	sleep, 1000
+; 	Send, cpq-{Down}{enter}
+; 	Sleep, 2000
+; 	Send, !d
+; 	Sleep, 1000
+; return
+
+; #IfWinNotActive, Insert Hyperlink
+; {
+; 	!x::
+; 	Send +{F10},F,C ; Find related email in Outlook
+; 	Return
 ; }
 ; return
 
-toMiddle() ; To the middle section of SAP Standard Order Page
-{
-	orderWindowActivate()
-	Send, ^{Tab 3}
-}
-return
+; ^2:: ; Add'l Attachment
+; 	Send, ^+{tab}{Home}{enter}{down}{enter}
+; 	WinWait, Import file, 
+; 	IfWinNotActive, Import file, , WinActivate, Import file, 
+; 		WinWaitActive, Import file, 
+; 	Send, !n
+; return
 
-orderWindowActivate() ; Activate SAP Change Order Window
-{
-	WinActivate, Change Standard Order %soNumber%, 
-}
-return
+; ^+u:: ;---- To UPPERCASE ----
+; 	Clipboard:= ""
+; 	Sleep, 500
+; 	Send, ^c ; copies selected text
+; 	ClipWait, 1
+; 	StringUpper Clipboard, Clipboard
+; 	Send {Insert}
+; 	Sleep 400
+; 	Send ^v
+; 	Sleep 400
+; 	Send {Insert}
+; return
 
-; ***** END FUNCTIONS ***** | ***** END FUNCTIONS ***** | ***** END FUNCTIONS***** | ***** END FUNCTIONS ***** 
+; !+g:: ;---- Delete GSA Price --------
+; 	Send, {tab}{tab}{del}{enter}
+; 	Sleep, 500
+; 	Send, +{F7}
+; return
 
-; ***** LABELS ***** | ***** LABELS ***** | ***** LABELS ***** | ***** LABELS ***** 
-
-
-WaitSpin:
-	Loop, ;Wait for mouse to not spin
-	{
-		if (A_Cursor = "AppStarting")
-		{
-			Loop, 
-			{
-				; MsgBox, In the loop
-				if !(A_Cursor = "AppStarting")
-					Break
-			}
-		}
-	}
-Return
-
-WaitArrow:
-	Loop, ;Wait for mouse to be arrow
-	{
-		Sleep, 500
-		if (A_Cursor = "Arrow")
-			Break
-	}
-return
-
-WaitBeam:
-	Loop, ;Wait for mouse to be arrow
-	{
-		Sleep, 750
-		if (A_Cursor = "IBeam")|| (A_Cursor = "Arrow")
-			Break
-	}
-return
-
-OrderFocus:
-	ControlFocus, Button1, Change Standard Order %soNumber%,
-return
-
-toMiddle:
-	gosub, OrderWindowActivate
-	Send, ^{Tab 3}
-return
-
-OrderWindowActivate:
-	WinActivate, Change Standard Order %soNumber%, 
-return
-
-ToDisplaySap:
-	ControlFocus, Button1, Standard Order
-return
-
-CopySOFromSubjectInOutlook:
-	gosub, GetSubjectFromOutlook
-	ClipWait, 1
-	RegExMatch(Clipboard, "(\d{7})", soFromOutlook)
-	Clipboard := soFromOutlook
-return
-
-ForwardEmail:
-	WinActivate, Outlook
-	olApp := ComObjCreate("Outlook.Application")
-	olForward := olApp.ActiveExplorer.Selection.Item(1)
-	olForward := olForward.Forward
-	olForward.Display ; Remove to work in background
-return
-
-SaveToSoDocs: ; Go to SO Docs
-	Send, {f12}
-	WinWaitActive, Save As,
-	Send, !d+{tab 10}{Home}{down 2}{ENTER}{Tab 3}
-return
-
-GetSubjectFromOutlook:
-	; Get the subject of the active item in Outlook. Works in both the main window and
-	; if the email is open in its own window.
-	olApp := ComObjActive("Outlook.Application")
-	olNamespace := olApp.GetNamespace("MAPI")
-	; Get the active window so we can determine if an Explorer or Inspector window is active.
-	Window := olApp.ActiveWindow 
-	if (Window.Class = 34) { ; 34 = An Explorer object. (The Outlook main window)
-		Selection := Window.Selection
-		if (Selection.Count > 0)
-			Clipboard := Selection.Item(1).Subject
-		return
-	}
-	else
-		return
-
-GetSenderOrToFieldFromOutlook:
-	Clipboard := % COMObjActive("Outlook.Application").ActiveExplorer.Selection.Item(1).SenderName
-	RegExMatch(Clipboard, "\s([a-zA-Z]*)", firstName)
-return
-
-; Find order by PO# in SAP
-!#p::
-	send, {tab 7}{enter}
-return
-
-WaitOrderSO:
-	SetTitleMatchMode, 2
-	WinActivate, Order %soNumber%,,ClipAngel,
-	WinWaitActive, Order %soNumber%,,ClipAngel,
-return
-
-WaitCshSO:
-	WinActivate, Order %cshSoNumber%,,ClipAngel,
-	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
-Return
-
-WaitHeaderData:
-	SetTitleMatchMode, 2
-	WinWait, Change Standard Order %soNumber%: Header Data,,ClipAngel,
-	IfWinNotActive, Change Standard Order %soNumberso%: Header Data,,ClipAngel, WinActivate, Change Standard Order %soNumber%: Header Data, 
-		WinWaitActive, Change Standard Order %soNumber%: Header Data,,ClipAngel,
-return
-
-WaitStandardOrder:
-	SetTitleMatchMode, 2
-	WinWait, Change Standard Order %soNumber%: Overview, 
-	IfWinNotActive, Change Standard Order %soNumber%: Overview, , WinActivate,Change Standard Order %soNumber%: Overview, 
-		WinWaitActive, Change Standard Order %soNumber%: Overview,
-return
-
-addAttachment: ; Add Attachment
-	Send, !{down}
-	Sleep, 1000
-	Send, a
-	Sleep, 2000
-	Send, ^+{tab 3}{left 14}{enter}{down}{enter}
-	Sleep, 500
-	Send ^4
-	Sleep, 500
-	Send, !#s
-return
-
-WaitInbox:
-	; WinWait, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
-	IfWinNotActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, , WinActivate, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
-		WinWaitActive, Inbox - matthew.terbeek@thermofisher.com - Outlook, 
-return
-
-; ***** END LABELS ***** | ***** END LABELS ***** | ***** END LABELS ***** | ***** END LABELS ***** 
-
-^1:: ; Create Attachment
-	Gosub, OpenSAPWindow
-	Gosub, ToAttachments
-	Sleep, 500
-	Send, c{Enter}
-	Gosub, WinWaitImportFile
-	Gosub, ToSoDocAttachments
-	Send, !n
-	Send, po{Space}%po%
-	Sleep, 500
-	Send, {Down}{Enter}
-	Sleep, 1000
-	Send, po
-	Sleep, 500
-	Send, {Down}{Enter}
-	Sleep, 1000 
-	Send, ^{tab 3}
-	Sleep, 1500
-	Send, !{Down}
-	Sleep, 500
-	Send, {down}a
-	gosub, WinWaitAttachmentList
-	Send, ^+{tab 3}{left 14}{enter}{down}{enter}
-	WinWaitActive, Import file
-	Send, !n
-	gosub, WinWaitImportFile
-	Send, cpq{Down}{enter}
-	Sleep, 2000
-	Send, ^+{tab}{left 14}{enter}{down}{enter}
-	gosub, WinWaitImportFile
-	Send, !n
-	; Send, d
-	; Sleep, 200
-	; Send, {down}{enter}
-	; Sleep, 2000
-	; Send, ^+{tab}{left 14}{enter}
-	; Sleep, 200
-	; Send, {down}{enter}
-	; gosub, WinWaitImportFile
-	; Send, !n
-	; Send, d
-	; Sleep, 200
-	; Send, {down 2}{enter}
-Return
-
-ToSoDocAttachments:
-	WinWaitActive, Import file
-	ControlFocus, ToolbarWindow322, Import file
-	Send {space}
-	Sleep 1000
-	Send {tab}so{Enter}
-	Sleep, 500
-Return
-
-
-WinWaitImportFile:
-	WinWait, Import file, 
-	WinActivate, Import file, 
-	WinWaitActive, Import file,
-return
-
-WinWaitAttachmentList:
-	WinWait, Service: Attachment list, 
-	IfWinNotActive, Service: Attachment list, , WinActivate, Service: Attachment list, 
-		WinWaitActive, Service: Attachment list, 
-return
-
-GetSOFromSubject:
-	gosub, GetSubjectFromOutlook
-	ClipWait, 1
-	RegExMatch(Clipboard, "(\d{7})", so)
-return
-
-!#i:: ; Get Invoice - Not finished
-WinWait, Change Billing Document, 
-IfWinNotActive, Change Billing Document, , WinActivate, Change Billing Document, 
-	WinWaitActive, Change Billing Document, 
-Sleep, 100
-Send, {ALTDOWN}{ALTUP}u
-WinWait, Output output, 
-IfWinNotActive, Output output, , WinActivate, Output output, 
-	WinWaitActive, Output output, 
-Send, {DOWN}{SHIFTDOWN}{SPACE}{SHIFTUP}{TAB 4}{ENTER}
-WinWait, Print:, 
-IfWinNotActive, Print:, , WinActivate, Print:, 
-	WinWaitActive, Print:, 
-Send, {CTRLDOWN}{SHIFTDOWN}{TAB}{SHIFTUP}{CTRLUP}{TAB}{ENTER}
-WinWait, Print Preview, 
-IfWinNotActive, Print Preview, , WinActivate, Print Preview, 
-	WinWaitActive, Print Preview,
-MouseClick, left, 1807, 170
-WinWait,, Nitro Pro, 
-IfWinNotActive,, Nitro Pro, WinActivate,,Nitro Pro,
-	WinWaitActive,, Nitro Pro, 
-Send, ^s
-WinWait, Save As, 
-IfWinNotActive, Save As, , WinActivate, Save As, 
-		WinWaitActive, Save As, 
-return
-
-; OAC CHECKLIST
-
-^l::
-; Create an instance of Outlook
-Outlook := ComObjCreate("Outlook.Application")
-
-; Create a new mail item
-Mail := Outlook.CreateItem(0)
-
-; Ask the user to select a level
-MsgBox, 4, Which Level?, Is this for Level 2?, 
-
-IfMsgBox Yes
-{
-    ; Set the properties of the mail item for Level 2
-    level := 2
-	newEmail(Mail, level, soNumber)
-}
-Else
-{
-    ; Set the properties of the mail item for Level 3
-	level := "2 and 3"
-    newEmail(Mail, level, soNumber)
-}
-
-; Display the new mail item
-Mail.Display()
-
-return
-
-newEmail(Mail, level, soNumber){
-    ; Set the properties of the mail item
-    Mail.Subject := "SO# " . soNumber . " Level " . level . " Approval"
-	if level = 2
-	{
-		Mail.Body := "Hi Debbie,`n`nPlease review SO# " . soNumber .  " for level " . level . " approval.`n`nThank you"
-	}
-    else
-	{
-		Mail.Body := "Hi Debbie,`n`nPlease review SO# " . soNumber .  " and pass for level 3 approval.`n`nThank you"
-	}
-    Mail.To := "debbie.erickson@thermofisher.com"
-}
-Return
-
-F15:: ; Copy / Paste - Plant Coding
-	Sleep, 200
-	Send, +{Home}+{Backspace}
-	Send, ^v
-	Send, {Down} 
-	Send, {esc}{down}
-return
-
-+F15:: ; Delete coding
-	Send, {End}+{Home}{backspace}{Esc}{Down}
-return
-
-!#s:: ;CPQ
-	Send, !n
-	sleep, 1000
-	Send, cpq-{Down}{enter}
-	Sleep, 2000
-	Send, !d
-	Sleep, 1000
-return
-
-#IfWinNotActive, Insert Hyperlink
-{
-	!x::
-	Send +{F10},F,C ; Find related email in Outlook
-	Return
-}
-return
-
-^2:: ; Add'l Attachment
-	Send, ^+{tab}{Home}{enter}{down}{enter}
-	WinWait, Import file, 
-	IfWinNotActive, Import file, , WinActivate, Import file, 
-		WinWaitActive, Import file, 
-	Send, !n
-return
-
-^+u:: ;---- To UPPERCASE ----
-	Clipboard:= ""
-	Sleep, 500
-	Send, ^c ; copies selected text
-	ClipWait, 1
-	StringUpper Clipboard, Clipboard
-	Send {Insert}
-	Sleep 400
-	Send ^v
-	Sleep 400
-	Send {Insert}
-return
-
-!+g:: ;---- Delete GSA Price --------
-	Send, {tab}{tab}{del}{enter}
-	Sleep, 500
-	Send, +{F7}
-return
-
-!0:: ; Maximie all windows except Order Organizer & Sticky Notes
-WinGet, MyCount, Count
-GroupAdd, temp1,,,,Order Organizer
-GroupAdd, AllWindows, ahk_group temp1,,,Sticky Notes
-; GroupAdd, GroupName, WinTitle [, WinText, Label, ExcludeTitle, ExcludeText]
-Loop, %MyCount%    {
-	WinMaximize ahk_group AllWindows
-  	Send !{tab}
-}
-
-OpenSAPWindow:
-	SetTitleMatchMode, 2
-	if WinExist("Change Standard Order") {
-		WinActivate, Change Standard Order, Organizer ClipAngel
-		WinWaitActive, Change Standard Order,, Organizer ClipAngel
-		Send, {F3}{BackSpace}
-		Sleep, 500
-		Send, %soNumber%
-		Sleep, 500
-		Send, {Enter}
-		Sleep, 500
-		Send, {Tab}{Enter}
-		WinActivate, Change Standard Order, Organizer ClipAngel
-		WinWaitActive, Change Standard Order,, Organizer ClipAngel
-	} else if WinExist("Change Sales Order") {
-		WinActivate, Change Sales Order, Organizer ClipAngel
-		WinWaitActive, Change Sales Order,, Organizer ClipAngel
-		Sleep, 200
-		Send, {end}+{Home}{BackSpace}%soNumber%{Enter}
-		Sleep, 500
-		Send, {Tab}{Enter}
-		WinActivate, Change Standard Order, Organizer ClipAngel
-		WinWaitActive, Change Standard Order,, Organizer ClipAngel
-	} else if WinExist("SAP Easy Access") {
-		IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-			WinWaitActive, SAP Easy Access,
-		WinActivate
-		MouseClick, left, 90, 66
-		Send, va02{enter}
-		WinWait, SAP Easy Access, 
-		WinWaitActive, Change Sales Order,, Organizer ClipAngel
-		Send, %soNumber%{enter}
-		WinActivate, Change Standard Order, Organizer ClipAngel
-		WinWaitActive, Change Standard Order,, Organizer ClipAngel
-	}
-return
-
-OpenSAPWindowForCsh:
-if WinExist("Change Standard Order") {
-	WinActivate, Change Standard Order,
-	WinWaitActive, Change Standard Order,
-	Send, {F3}{BackSpace}
-	Sleep, 500
-	Send, ^v
-	Sleep, 500
-	Send, {Enter}
-	Sleep, 500
-	Send, {Tab}{Enter}
-	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-		WinWaitActive, Change Standard Order,
-} else if WinExist("Change Sales Order") {
-	WinActivate, Change Sales Order,
-	WinWaitActive, Change Sales Order,
-	Sleep, 200
-	Send, {end}+{Home}{BackSpace}^v{Enter}
-	Sleep, 500
-	Send, {Tab}{Enter}
-	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-		WinWaitActive, Change Standard Order,
-	WinActivate ; use the window found above
-} else if WinExist("SAP Easy Access") {
-	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-		WinWaitActive, SAP Easy Access,
-	WinActivate
-	MouseClick, left, 90, 66
-	Send, va02{enter}
-	WinWait, SAP Easy Access, 
-	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access, 
-		WinWaitActive, SAP Easy Access, 
-	Send, ^v{enter}
-	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
-		WinWaitActive, Change Standard Order,
-	WinActivate ; use the window found above
-}
-Sleep 1000
-return
-
-WaitSAPEasyAccess:
-ifWinExist, SAP Easy Access
-{
-	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
-		WinWaitActive, SAP Easy Access,
-	WinActivate
-	return
-} else
-{
-	MsgBox, Win Doesn't Exist
-	return
-}
-return
-
-!c:: ;DocuSign
-Send, %customer%
-KeyWait, F13, d
-Send, {tab 2}{down}
-Send, {tab 2}{down}{Tab}
-Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%soNumber%{Tab}c{Tab}n{tab}n{Tab}NET30{tab 3}
-FormatTime, TimeString, %crd%, MM/dd/yyyy
-Send, %TimeString%{tab}%contact% - %email%
-return
-
-!1:: ; CRD Date
-FormatTime, TimeString, %crd%, MM/dd/yyyy
-gosub, OrderFocus
-gosub, ToMiddle
-Send, {tab}%TimeString%{Enter}
-Sleep, 1000
-Loop, 10
-{
-	CoordMode, Pixel, Window
-	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211013092931.png
-	If (ErrorLevel = 0)
-	{
-		Send, {Enter}
-		WinWaitActive, Information
-		WinWaitNotActive, Information
-		break
-	}
-	Sleep, 500
-}
-WinWaitNotActive, Information
-Sleep, 2000
-Send, ^{tab}
-Send, {tab 4}{enter}
-Sleep, 2000
-Send, !e
-Send, st
-WinWait, Change Delivery Date
-; Loop, {
-; 	IfWinActive, Change Delivery Date,
-; 		ControlSend, Button2, {enter}, Change Delivery Date
-; 	IfWinNotActive, Change Delivery Date, 
-; 		break
+; !0:: ; Maximie all windows except Order Organizer & Sticky Notes
+; WinGet, MyCount, Count
+; GroupAdd, temp1,,,,Order Organizer
+; GroupAdd, AllWindows, ahk_group temp1,,,Sticky Notes
+; ; GroupAdd, GroupName, WinTitle [, WinText, Label, ExcludeTitle, ExcludeText]
+; Loop, %MyCount%    {
+; 	WinMaximize ahk_group AllWindows
+;   	Send !{tab}
 ; }
+
+; OpenSAPWindow:
+; 	SetTitleMatchMode, 2
+; 	if WinExist("Change Standard Order") {
+; 		WinActivate, Change Standard Order, Organizer ClipAngel
+; 		WinWaitActive, Change Standard Order,, Organizer ClipAngel
+; 		Send, {F3}{BackSpace}
+; 		Sleep, 500
+; 		Send, %soNumber%
+; 		Sleep, 500
+; 		Send, {Enter}
+; 		Sleep, 500
+; 		Send, {Tab}{Enter}
+; 		WinActivate, Change Standard Order, Organizer ClipAngel
+; 		WinWaitActive, Change Standard Order,, Organizer ClipAngel
+; 	} else if WinExist("Change Sales Order") {
+; 		WinActivate, Change Sales Order, Organizer ClipAngel
+; 		WinWaitActive, Change Sales Order,, Organizer ClipAngel
+; 		Sleep, 200
+; 		Send, {end}+{Home}{BackSpace}%soNumber%{Enter}
+; 		Sleep, 500
+; 		Send, {Tab}{Enter}
+; 		WinActivate, Change Standard Order, Organizer ClipAngel
+; 		WinWaitActive, Change Standard Order,, Organizer ClipAngel
+; 	} else if WinExist("SAP Easy Access") {
+; 		IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
+; 			WinWaitActive, SAP Easy Access,
+; 		WinActivate
+; 		MouseClick, left, 90, 66
+; 		Send, va02{enter}
+; 		WinWait, SAP Easy Access, 
+; 		WinWaitActive, Change Sales Order,, Organizer ClipAngel
+; 		Send, %soNumber%{enter}
+; 		WinActivate, Change Standard Order, Organizer ClipAngel
+; 		WinWaitActive, Change Standard Order,, Organizer ClipAngel
+; 	}
+; return
+
+; OpenSAPWindowForCsh:
+; if WinExist("Change Standard Order") {
+; 	WinActivate, Change Standard Order,
+; 	WinWaitActive, Change Standard Order,
+; 	Send, {F3}{BackSpace}
+; 	Sleep, 500
+; 	Send, ^v
+; 	Sleep, 500
+; 	Send, {Enter}
+; 	Sleep, 500
+; 	Send, {Tab}{Enter}
+; 	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
+; 		WinWaitActive, Change Standard Order,
+; } else if WinExist("Change Sales Order") {
+; 	WinActivate, Change Sales Order,
+; 	WinWaitActive, Change Sales Order,
+; 	Sleep, 200
+; 	Send, {end}+{Home}{BackSpace}^v{Enter}
+; 	Sleep, 500
+; 	Send, {Tab}{Enter}
+; 	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
+; 		WinWaitActive, Change Standard Order,
+; 	WinActivate ; use the window found above
+; } else if WinExist("SAP Easy Access") {
+; 	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
+; 		WinWaitActive, SAP Easy Access,
+; 	WinActivate
+; 	MouseClick, left, 90, 66
+; 	Send, va02{enter}
+; 	WinWait, SAP Easy Access, 
+; 	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access, 
+; 		WinWaitActive, SAP Easy Access, 
+; 	Send, ^v{enter}
+; 	IfWinNotActive, Change Standard Order, , WinActivate, Change Standard Order,
+; 		WinWaitActive, Change Standard Order,
+; 	WinActivate ; use the window found above
+; }
+; Sleep 1000
+; return
+
+; WaitSAPEasyAccess:
+; ifWinExist, SAP Easy Access
+; {
+; 	IfWinNotActive, SAP Easy Access, , WinActivate, SAP Easy Access,
+; 		WinWaitActive, SAP Easy Access,
+; 	WinActivate
+; 	return
+; } else
+; {
+; 	MsgBox, Win Doesn't Exist
+; 	return
+; }
+; return
+
+; !c:: ;DocuSign
+; Send, %customer%
+; KeyWait, F13, d
+; Send, {tab 2}{down}
+; Send, {tab 2}{down}{Tab}
+; Send, %manager%{tab}%salesPerson%{Tab}{Down}{Tab}%po%{Tab}%poValue%{Tab}{down}{Tab}CPQ-%cpq%{Tab}%soNumber%{Tab}c{Tab}n{tab}n{Tab}NET30{tab 3}
+; FormatTime, TimeString, %crd%, MM/dd/yyyy
+; Send, %TimeString%{tab}%contact% - %email%
+; return
+
+; !1:: ; CRD Date
+; FormatTime, TimeString, %crd%, MM/dd/yyyy
+; gosub, OrderFocus
+; gosub, ToMiddle
+; Send, {tab}%TimeString%{Enter}
+; Sleep, 1000
+; Loop, 10
+; {
+; 	CoordMode, Pixel, Window
+; 	ImageSearch, FoundX, FoundY, 0, 0, 1920, 1080, C:\Users\matthew.terbeek\AppData\Roaming\MacroCreator\Screenshots\Screen_20211013092931.png
+; 	If (ErrorLevel = 0)
+; 	{
+; 		Send, {Enter}
+; 		WinWaitActive, Information
+; 		WinWaitNotActive, Information
+; 		break
+; 	}
+; 	Sleep, 500
+; }
+; WinWaitNotActive, Information
 ; Sleep, 2000
-WinWaitNotActive, Standard Order: Availability Control
-WinWaitActive, Change Standard Order %soNumber%: Overview,,ClipAngel,
-Sleep, 2000
-Send, +{F4} ; Go to Sales Header
-WinWait, Change Standard Order %soNumber%: Header Data,,ClipAngel,
-Send, ^{Tab}{Tab 2}{Down 2}{Right 2}{Enter} ; Sets 110 volts on sales tab
-Sleep, 1000
-Send, ^{pgdn}
-return
+; Send, ^{tab}
+; Send, {tab 4}{enter}
+; Sleep, 2000
+; Send, !e
+; Send, st
+; WinWait, Change Delivery Date
+; ; Loop, {
+; ; 	IfWinActive, Change Delivery Date,
+; ; 		ControlSend, Button2, {enter}, Change Delivery Date
+; ; 	IfWinNotActive, Change Delivery Date, 
+; ; 		break
+; ; }
+; ; Sleep, 2000
+; WinWaitNotActive, Standard Order: Availability Control
+; WinWaitActive, Change Standard Order %soNumber%: Overview,,ClipAngel,
+; Sleep, 2000
+; Send, +{F4} ; Go to Sales Header
+; WinWait, Change Standard Order %soNumber%: Header Data,,ClipAngel,
+; Send, ^{Tab}{Tab 2}{Down 2}{Right 2}{Enter} ; Sets 110 volts on sales tab
+; Sleep, 1000
+; Send, ^{pgdn}
+; return
 
-!#m:: ;Merge Report
-FormatTime, TimeString, %sapDate%, MM/dd/yyyy
-sleep, 500
-gosub, WaitSAPEasyAccess
-Send, ^/
-SendMode, event
-SetKeyDelay, 70
-Send, ZSOMRG{enter}
-WinWait, IOLS Merge Drop Ship Report
-Send, %soNumber%{tab 3}0020 ;{Down 9}
-;~ Send, %TimeString%{enter}
-;~ Send, {up 10}
-;~ Send, +{end}^c
-Send, {f8}
-Sleep, 1000
-Send, !l
-Sleep, 750
-Send, e
-Sleep, 750
-Send, a
-Sleep, 750
-Send, !n
-Send, Merge Report - SO{#} %soNumber%
-Send, {enter} 
-return
+; !#m:: ;Merge Report
+; FormatTime, TimeString, %sapDate%, MM/dd/yyyy
+; sleep, 500
+; gosub, WaitSAPEasyAccess
+; Send, ^/
+; SendMode, event
+; SetKeyDelay, 70
+; Send, ZSOMRG{enter}
+; WinWait, IOLS Merge Drop Ship Report
+; Send, %soNumber%{tab 3}0020 ;{Down 9}
+; ;~ Send, %TimeString%{enter}
+; ;~ Send, {up 10}
+; ;~ Send, +{end}^c
+; Send, {f8}
+; Sleep, 1000
+; Send, !l
+; Sleep, 750
+; Send, e
+; Sleep, 750
+; Send, a
+; Sleep, 750
+; Send, !n
+; Send, Merge Report - SO{#} %soNumber%
+; Send, {enter} 
+; return
 
-#if WinActive("E-Mail Output Distribution List by Recipient")
-{
-	end::Send +{space}{down}
-}
-#if
-return
+; #if WinActive("E-Mail Output Distribution List by Recipient")
+; {
+; 	end::Send +{space}{down}
+; }
+; #if
+; return
 
-^9:: ;Sales Employee 9
-Send, ^+{end}
-Sleep, 500
-Send, +{tab}
+; ^9:: ;Sales Employee 9
+; Send, ^+{end}
+; Sleep, 500
+; Send, +{tab}
 
-if (directorCode = "N/A")
-{
-	Send, s{right 11}{Tab}
-	Sleep 200
-	Send, %managerCode%{enter}
-}
-else 
-{
-	Send, s{right 10}{Tab}
-	Clipboard := directorCode
-	Send % Clipboard
-}
-Sleep, 500
-Send, ^{PGUP}
-return
+; if (directorCode = "N/A")
+; {
+; 	Send, s{right 11}{Tab}
+; 	Sleep 200
+; 	Send, %managerCode%{enter}
+; }
+; else 
+; {
+; 	Send, s{right 10}{Tab}
+; 	Clipboard := directorCode
+; 	Send % Clipboard
+; }
+; Sleep, 500
+; Send, ^{PGUP}
+; return
 
-#Include QuoteInfo.ahk
-MyButton:  ; Label for the button
-	Gosub goGetQuoteInfo
-	Gosub goGetWinForm
-return
+; #Include QuoteInfo.ahk
+; MyButton:  ; Label for the button
+; 	Gosub getQuoteInfo
+; 	Gosub getWinForm
+; return
 
-goGetQuoteInfo:
-	getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
-	GuiControl,, cpq, %quoteID%
-	GuiControl,, customer, %customerName%
-	GuiControl,, contact, %contactName%
-	GuiControl,, email, %contactEmail%
-	GuiControl,, phone, %contactPhone%
-	GuiControl,, address, %contactAddress%
-	GuiControl,, soldTo, %soldToID%
-	GuiControl,, salesPerson, %quoteOwner%
-	GuiControl,, poValue, %totalNetAmount%
-	GuiControl,, freightCost, %totalFreight%
-	GuiControl,, surcharge, %surcharge%
-	GuiControl,, tax, %totalTax%
-	GuiControl,, totalCost, %quoteTotal%
-	GuiControl,, salesPerson, %quoteOwner%
-	GuiControl,, salesManager, %creatorManager%
-	GuiControl,, terms, %paymentTerms%
-	GuiControl,, system, %opportunity%
-Return
+; goGetQuoteInfo:
+; 	getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
+; 	GuiControl,, cpq, %quoteID%
+; 	GuiControl,, customer, %customerName%
+; 	GuiControl,, contact, %contactName%
+; 	GuiControl,, email, %contactEmail%
+; 	GuiControl,, phone, %contactPhone%
+; 	GuiControl,, address, %contactAddress%
+; 	GuiControl,, soldTo, %soldToID%
+; 	GuiControl,, salesPerson, %quoteOwner%
+; 	GuiControl,, poValue, %totalNetAmount%
+; 	GuiControl,, freightCost, %totalFreight%
+; 	GuiControl,, surcharge, %surcharge%
+; 	GuiControl,, tax, %totalTax%
+; 	GuiControl,, totalCost, %quoteTotal%
+; 	GuiControl,, salesPerson, %quoteOwner%
+; 	GuiControl,, salesManager, %creatorManager%
+; 	GuiControl,, terms, %paymentTerms%
+; 	GuiControl,, system, %opportunity%
+; Return
 
-goGetWinForm:
-	getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
-	GuiControl,, endUser, %endUser%
-	GuiControl,, phone, %endUserPhoneNumber%
-	GuiControl,, email, %endUserEmail%
-	GuiControl,, endUse, %endUse%
-Return
+; goGetWinForm:
+; 	getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
+; 	GuiControl,, endUser, %endUser%
+; 	GuiControl,, phone, %endUserPhoneNumber%
+; 	GuiControl,, email, %endUserEmail%
+; 	GuiControl,, endUse, %endUse%
+; Return
 
-^6:: ;End User Info
-	endUserInfo = END USER: %endUser%`nPHONE: %phone%`nEMAIL: %email%`n`nEND USE: %endUse%`n`nCPQ-%cpq%
-	StringUpper, endUserInfo, endUserInfo
-	Clipboard := % endUserInfo
-	gosub, WaitHeaderData
-	Send, ^+{tab 3}{Right}{Enter} ; Navigate to texts tab
-	Sleep, 1000
-	MouseClick, left, 90,320
-	Sleep, 1000
-	Send, {PGDN}
-	Sleep, 200
-	Send, {Down 3} ; Navigate to End User Tab
-	Sleep, 200 
-	Send, ^{tab 2}{enter}
-	Sleep, 500
-	Send, %endUserInfo% ; Navigate to Entry textbox and paste
-	Sleep, 200
-	Send, {Up 4}{End}+{PGUP 3}^c
-	ClipWait, 1
-	Send, {F3}
-	gosub, WaitStandardOrder
-	Send, !g
-	Sleep, 200
-	Send, hp ; back to the partners tab
-	gosub, WaitHeaderData
-	Send, ^{end} ; back to end user
-	Sleep, 500
-	Send, {F2}
-	Sleep, 200
-	Send, {tab 3}{Enter}
-	Sleep, 500
-	Send, {tab 2}^v{Enter}
-	Sleep, 500
-	Send, ^{PGUP}
-return
+; ^6:: ;End User Info
+; 	endUserInfo = END USER: %endUser%`nPHONE: %phone%`nEMAIL: %email%`n`nEND USE: %endUse%`n`nCPQ-%cpq%
+; 	StringUpper, endUserInfo, endUserInfo
+; 	Clipboard := % endUserInfo
+; 	gosub, WaitHeaderData
+; 	Send, ^+{tab 3}{Right}{Enter} ; Navigate to texts tab
+; 	Sleep, 1000
+; 	MouseClick, left, 90,320
+; 	Sleep, 1000
+; 	Send, {PGDN}
+; 	Sleep, 200
+; 	Send, {Down 3} ; Navigate to End User Tab
+; 	Sleep, 200 
+; 	Send, ^{tab 2}{enter}
+; 	Sleep, 500
+; 	Send, %endUserInfo% ; Navigate to Entry textbox and paste
+; 	Sleep, 200
+; 	Send, {Up 4}{End}+{PGUP 3}^c
+; 	ClipWait, 1
+; 	Send, {F3}
+; 	gosub, WaitStandardOrder
+; 	Send, !g
+; 	Sleep, 200
+; 	Send, hp ; back to the partners tab
+; 	gosub, WaitHeaderData
+; 	Send, ^{end} ; back to end user
+; 	Sleep, 500
+; 	Send, {F2}
+; 	Sleep, 200
+; 	Send, {tab 3}{Enter}
+; 	Sleep, 500
+; 	Send, {tab 2}^v{Enter}
+; 	Sleep, 500
+; 	Send, ^{PGUP}
+; return
 
-^!z::
-	Send, ^s
-	reload
-return
+; ^!z::
+; 	Send, ^s
+; 	reload
+; return
 
 kellerDropDown:	
 	GuiControl, ChooseString, managerCode, 202375
@@ -2103,44 +2122,44 @@ if salesPerson =
 }
 return
 
-!/::
-Reload
-Return
+; !/::
+; Reload
+; Return
 
-;======== KEYBOARD SHORTCUTS ========
-; Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
-; LV_ModifyCol(1,190)
-; ;~ LV_ModifyCol(2, 115)
-; LV_Add(Col1, "CPQ (zpq)") ;"zpq")
-; ;~ Gui Add, Text,, CPQ - zpq
-; LV_Add(Col1, "PO# (zpo)") ;,"zpo")
-; ;~ Gui Add, Text, y+5, PO# - zpo
-; LV_Add(Col1, "SO# (zso)") ;,"zso")
-; ;~ Gui Add, Text, y+5, SO# - zso
-; LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
-; ;~ Gui Add, Text, y+5, SOT Line# - zsot
-; LV_Add(Col1, "Customer (zcust)") ;,"zcust")
-; ;~ Gui Add, Text, y+5, Customer - zcust
-; LV_Add(Col1, "PO Value (zval)") ;,"zval")
-; ;~ Gui Add, Text, y+5, PO Value - zval
-; LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
-; ;~ Gui Add, Text, y+5, Salesperson - zsal
-; LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
-; ;~ Gui Add, Text, x775 y225, Customer Contact -
-; ;~ Gui Add, Text, y+5, zcon
-; LV_Add(Col1, "Cust Email (zem)")
-; ;~ Gui Add, Text, y+5, Customer Email - 
-; ;~ Gui Add, Text, y+5, zem
-; LV_Add(Col1, "System (zsys)")
-; ;~ Gui Add, Text, y+5, System - zsys
-; LV_Add(Col1, "End User (zenu)")
-; ;~ Gui Add, Text, y+5, End User - zenu
-; LV_Add(Col1, "End User Phone (zph)")
-; ;~ Gui Add, Text, y+5, Phone - zph
-; LV_Add(Col1, "End Use (zuse)")
-; ;~ Gui Add, Text, y+5, End Use - zuse
+; ;======== KEYBOARD SHORTCUTS ========
+; ; Gui Add, Listview, y+10 w215 h235 R13 grid ReadOnly, Value (Keyboard Shortcut)
+; ; LV_ModifyCol(1,190)
+; ; ;~ LV_ModifyCol(2, 115)
+; ; LV_Add(Col1, "CPQ (zpq)") ;"zpq")
+; ; ;~ Gui Add, Text,, CPQ - zpq
+; ; LV_Add(Col1, "PO# (zpo)") ;,"zpo")
+; ; ;~ Gui Add, Text, y+5, PO# - zpo
+; ; LV_Add(Col1, "SO# (zso)") ;,"zso")
+; ; ;~ Gui Add, Text, y+5, SO# - zso
+; ; LV_Add(Col1, "SOT Line# (zsot)") ;,"zsot")
+; ; ;~ Gui Add, Text, y+5, SOT Line# - zsot
+; ; LV_Add(Col1, "Customer (zcust)") ;,"zcust")
+; ; ;~ Gui Add, Text, y+5, Customer - zcust
+; ; LV_Add(Col1, "PO Value (zval)") ;,"zval")
+; ; ;~ Gui Add, Text, y+5, PO Value - zval
+; ; LV_Add(Col1, "Salesperson (zsal)") ;,"zsal")
+; ; ;~ Gui Add, Text, y+5, Salesperson - zsal
+; ; LV_Add(Col1, "Cust Contact (zcon)") ;,"zcon")
+; ; ;~ Gui Add, Text, x775 y225, Customer Contact -
+; ; ;~ Gui Add, Text, y+5, zcon
+; ; LV_Add(Col1, "Cust Email (zem)")
+; ; ;~ Gui Add, Text, y+5, Customer Email - 
+; ; ;~ Gui Add, Text, y+5, zem
+; ; LV_Add(Col1, "System (zsys)")
+; ; ;~ Gui Add, Text, y+5, System - zsys
+; ; LV_Add(Col1, "End User (zenu)")
+; ; ;~ Gui Add, Text, y+5, End User - zenu
+; ; LV_Add(Col1, "End User Phone (zph)")
+; ; ;~ Gui Add, Text, y+5, Phone - zph
+; ; LV_Add(Col1, "End Use (zuse)")
+; ; ;~ Gui Add, Text, y+5, End Use - zuse
 
-;======== END KEYBOARD SHORTCUTS ========
+; ;======== END KEYBOARD SHORTCUTS ========
 
 
-NumpadClear::Pause
+; NumpadClear::Pause
