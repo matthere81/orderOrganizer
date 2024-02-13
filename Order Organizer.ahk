@@ -1369,13 +1369,13 @@ return
 
 !+a:: ; Attach last file inside
 	Send, !e2af
-	Sleep 5000
+	Sleep 1500
 	Send {Enter}
 ; return
 
 !#a:: ; Attach last file pop out
 	Send, !haf
-	Sleep 5000
+	Sleep 1500
 	Send {Enter}
 ; return
 
