@@ -423,51 +423,34 @@ GuiControl,, orderAcceptedYes, 0
 return
 
 Search:
-; Loop, % LVArray.MaxIndex()
-; 	DDLString .= "|" LVArray[A_Index]
 GuiControlGet, SearchTerm
-If SearchTerm =
-{
-	GuiControl, Hide, LV
-}
-	
-; GuiControl, -Redraw, LV
-LV_Delete()
-For Each, FileName In LVArray
-{
-   If (SearchTerm != "")
-   {
-	   	GuiControl, Show, LV
-		
-		If InStr(FileName, SearchTerm) ; for overall matching
-	   		LV_Add("", FileName)
-		; DDLString .= "|" LVArray[A_Index]
-   } Else
-   {
-	   LV_Add("", FileName)
-   }
-   		
+LV_Delete() ; Clear the ListView
+
+; If SearchTerm is empty, add all files to the ListView
+; Otherwise, only add files that contain the SearchTerm
+for Each, FileName in LVArray {
+    if (SearchTerm = "" or InStr(FileName, SearchTerm)) {
+        LV_Add("", FileName)
+    }
 }
 
-Search2:
-; Loop, Read, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
-; {
-; 	LVArray.Push(A_LoopFileName)
-; }
-; MsgBox, %LVArray%
-; Gui Add, DropDownList, vLV h250 w400 y50 x250 gMyListView, %DDLString% 
-Gui Submit, NoHide
-Return
+; Hide the ListView if no SearchTerm is entered, otherwise show it and bring the GUI to the top
+if (SearchTerm = "") {
+    GuiControl, Hide, LV
+} else {
+    GuiControl, Show, LV
+	; Gui, +AlwaysOnTop ; Add the AlwaysOnTop property when the ListView is shown
+}
+return
 
 MyListView:
-if (A_GuiEvent = "DoubleClick")
-{
-	LV_GetText(RowText, A_EventInfo)  ; Get the text from the row's first field.
-	SelectedFile := myinipath . "\" . RowText
-	Send +{tab}{BackSpace}
-	Gosub, readtheini
+if (A_GuiEvent = "DoubleClick") {
+    LV_GetText(RowText, A_EventInfo)  ; Get the text from the row's first field.
+    SelectedFile := myinipath . "\" . RowText
+    Send +{tab}{BackSpace}
+    Gosub, readtheini
 }
-Return
+return
 
 restartScript:
 Gosub, SaveToIni
@@ -1188,7 +1171,7 @@ return
 
 !#h:: ;CSH Removal
 	SendMode, Event
-	SetKeyDelay, 200
+	SetKeyDelay, 50
 	gosub WaitInbox
 	gosub, GetSubjectFromOutlook
 	ClipWait, 1
@@ -1196,9 +1179,8 @@ return
 	Sleep, 500
 	Clipboard := cshSoNumber
 	gosub, OpenSAPWindowForCsh
-	WinActivate, Order %cshSoNumber%,,ClipAngel,
 	WinWaitActive, Order %cshSoNumber%,,ClipAngel,
-	Sleep, 1000
+	Sleep, 100
 	Send ^{tab 7}{down}{tab}{Delete}{Enter}
 	gosub, WaitCshSO
 	Sleep, 2000
@@ -1206,7 +1188,7 @@ return
 	SetKeyDelay 0
 	Send, ^+r
 	gosub, GetSenderOrToFieldFromOutlook
-	Send, Hi%firstname%,`nThe hold has been removed.`n`nThank you ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
+	Send, Hi%firstname%,`n`nThe hold has been removed.`n`nThank you ; ^{Home}^{Right}^+{Right}+{F3 2}{Right}
 return
 
 ; Save OA Checklist
@@ -1386,9 +1368,9 @@ return
 	; ControlFocus, Button1, Change Standard Order %soNumber%,
 ; }
 ; return
-#!f::
-forwardSoftwareLicense()
-Return
+; #!f::
+; forwardSoftwareLicense()
+; Return
 
 toMiddle() ; To the middle section of SAP Standard Order Page
 {
@@ -1835,7 +1817,7 @@ if WinExist("Change Standard Order") {
 		WinWaitActive, Change Standard Order,
 	WinActivate ; use the window found above
 }
-Sleep 1000
+Sleep 200
 return
 
 WaitSAPEasyAccess:
