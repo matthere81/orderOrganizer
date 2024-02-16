@@ -7,21 +7,31 @@ SetWorkingDir, %A_ScriptDir%
 #include <UIA_Interface>
 #include <UIA_Browser>
 
-forwardSoftwareLicense() {
-    outlookApp := ComObjActive("Outlook.Application") ; Get running instance of Outlook
-    namespace := outlookApp.GetNamespace("MAPI") ; Get MAPI namespace
+forwardSoftwareLicense()
+{
+    MsgBox, In order functions
+    ; Get running instance of Outlook
+    outlookApp := ComObjActive("Outlook.Application")                           
     
-    ; folder := namespace.GetDefaultFolder(6).Folders("SW Licenses") ; 6 corresponds to the Inbox
-    folder := namespace.GetDefaultFolder(6).Folders("Test")
+    ; Get MAPI namespace 
+    namespace := outlookApp.GetNamespace("MAPI")                                
     
-    unreadEmails := folder.Items.Restrict("[Unread] = true") ; Get all unread emails
+    ; 6 corresponds to the Inbox
+    folder := namespace.GetDefaultFolder(6).Folders("Test")                     
     
-    for email in unreadEmails {
-        body := email.Body ; Get the body of the email
-        subject := email.Subject ; Get the subject of the email
-        RegExMatch(body, "SO/PO:\s*([a-zA-Z0-9]+)", match) ; Find the alphanumeric string after "SO/PO:"
-        ; salesPersonName := getSalesOrderInfo(match1)
-        ; forwardEmail(email, salesOrder, salesEmail, firstName)
+    ; Get all unread emails
+    unreadEmails := folder.Items.Restrict("[Unread] = true")                    
+    
+    for email in unreadEmails
+    {
+        ; Get the body of the email
+        body := email.Body                                                      
+        
+        ; Get the subject of the email
+        subject := email.Subject                                                
+        
+        ; Find the alphanumeric string after "SO/PO:"
+        RegExMatch(body, "SO/PO:\s*([a-zA-Z0-9]+)", match)                      
         salesInfo := getSalesOrderInfo(match1)
 
         ; MsgBox, % match1 . "`n" . salesInfo[1] . "`n" . salesInfo[2] . "`n" . salesInfo[3]
@@ -29,6 +39,15 @@ forwardSoftwareLicense() {
         salesEmail := salesInfo[2]
         firstName := salesInfo[3]
         forwardEmail(email, salesOrderOrPurchaseOrder, salesEmail, firstName)
+        
+        ; Display a message box with Yes and No buttons
+        MsgBox, 4,, Send Email?
+        IfMsgBox Yes
+        {
+            ; email.Send() ; Send the email
+            email.UnRead := false ; Mark the email as read
+        }
+        email.UnRead := false ; Mark the email as read                                     
     }
 }
 
@@ -103,4 +122,3 @@ pasteEmailBody(myBodyOne, myBodyTwo, myBodyThree)
     Send %Clipboard%
 }
 
-forwardSoftwareLicense()
