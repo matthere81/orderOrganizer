@@ -5,27 +5,35 @@ SetBatchLines, -1
 SetWorkingDir, %A_ScriptDir%
 
 
-; ;**** Opens the Change Sales Order in SAP (VA02) ****
-; openChangeSalesOrder() {
-;     SetTitleMatchMode, 3
-;     IfWinExist Change Sales Order: Initial Screen
-;         {
-;             WinActivate Change Sales Order: Initial Screen
-;         } 
-;     else IfWinNotExist Change Sales Order: Initial Screen
-;         {
-;             WinActivate SAP Easy Access
-;             WinWaitActive SAP Easy Access
-;             ControlFocus Edit1, SAP Easy Access
-;             Clipboard := "VA02"
-;             Send %Clipboard%{Enter}
-;         }
-; }
-; Return
-
-forwardSoftwareLicense()
+SearchFilesFunction(SearchBox)
 {
-    msgbox, "Forwarding Software License"
+    Gui, Submit, NoHide
+    searchTerm := SearchBox
+
+    ; If the search box is empty, hide the ListView and return
+    if (searchTerm = "")
+    {
+        GuiControl, Hide, FileList
+        Gui, Show, NoActivate  ; Re-draw the GUI
+        return
+    }
+    else
+    {
+        GuiControl, Show, FileList
+        Gui, Show, NoActivate  ; Re-draw the GUI
+    }
+
+    ; Clear the ListView before adding new items
+    LV_Delete()
+
+    Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
+    {
+        If InStr(A_LoopFileName, searchTerm)
+        {
+            ; Add the file name to the ListView
+            LV_Add("", A_LoopFileName)
+        }
+    }
 }
 
 ; from copilot:

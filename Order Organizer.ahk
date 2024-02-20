@@ -7,6 +7,7 @@ SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docu
 #include <Vis2>
 #include <UIA_Interface>
 #include <UIA_Browser>
+#include OrderOrganizerFunctions.ahk
 
 myinipath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB
 
@@ -32,17 +33,17 @@ GetDirectorCodes() {
 directorCodes := GetDirectorCodes()
 
 ;----------- Function to add text fields ---------------
-AddTextField(label, variable, value = "", yOffset = 10, xOffset = 10, section = "")
+AddTextField(label, variable, value = "", xOffset = 10, yOffset = 10, section = "")
 {
     if (section != "")
-	{
+    {
         Gui Add, Text, Section, %section%:
     }
-	Else
-	{
-		Gui Add, Text, x%xOffset% y%yOffset%, %label%:
-    	Gui Add, Edit, x%xOffset% y%yOffset%+10, %value%
-	} 
+    Else
+    {
+        Gui Add, Text, xm, %label%:
+		Gui Add, Edit, xm w150 v%variable%, %value%
+    } 
 }
 
 
@@ -50,36 +51,58 @@ orderInfo(){
 global
 ;/******** GUI START ********\
 Gui destroy
+Gui +Resize
 Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
-Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y-2 w300 h33 +0x200 +Left, Order Organizer ; - SO# %soNumber%
+Gui Add, Text, Section hWndhTxtOrderOrganizer23 x10 y10 w300 h33, Order Organizer ; +Left ;+0x200 +Left, Order Organizer
+Gui, Add, Text, x5 y40 w900 h1 +Border
 Gui Font
 Gui Color, 79b8d1
+Gui Font, s10 w600 cBlack, Tahoma
+Gui Add, Text, xm ym+50, Search:
 Gui Font, S9, Segoe UI Semibold
-LVArray := []
+Gui Add, Edit, vSearchBox xm+60 ym+50 w220 h20 gSearchFiles
 
-; Gui Add, Edit, x235 y19 w125 h27.5 vSearchTerm gSearch, ; LV Search
-; Gui Add, ListView, grid r5 w400 y50 x250 vLV gMyListView, ORDERS:
+; Add a ListView below the search box
+Gui Add, ListView, vFileList xm+275 ym+30 w320 h100, FILES
+Gui Font
+
+; /-------- BUTTONS ------------\
+
+Gui Add, Button, xm+340 ym+48 w70 greadtheini, O&pen
+Gui Add, Button, x+25 w70 gSaveToIni, &Save
+Gui Add, Button, x+25 w150 grestartScript, &New PO or Reload
+Gui Add, Button, x+25 w150 gClearFields, &Clear Fields
+
+; \-------- END BUTTONS ------------/
+
+; /-------- GUI ELEMENTS ------------\
+Gui Font, s9 w600 cblack, Tahoma
+; AddTextField("Order Info",orderInfo, "orderInfo", 50, 50, "Order Info")
+Gui Add, Text, Section x15 y95, Order Info:
+Gui Font, S9, Segoe UI Semibold
+AddTextField("CPQ",cpq, "", 0, 125, "")
+AddTextField("PO",po, "", 0, 155, "")
+AddTextField("SOT Line#",sot, "", 0, 185, "")
+AddTextField("Customer",customer, "", 0, 215, "")
+AddTextField("Customer Contact",contact, "", 0, 245, "")
+
+; \-------- END GUI ELEMENTS ------------/
+
+Gui Show, w920, Order Organizer ;SO# %soNumber%
+Gui Submit, NoHide
+
+;/-------- GoSubs ------------\
+SearchFiles:
+	Gui, Submit, NoHide
+	SearchFilesFunction(SearchBox)
 
 
-; Loop, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
-; {
-; LV_Add("", A_LoopFileName)
-; LVArray.Push(A_LoopFileName)
-; }
-; GuiControl, hide, LV
+Return
 
 
-; Gui Add, DDL, w400 y50 x250 vLV gMyListView, ORDERS:
-; Loop, % LVArray.MaxIndex()
-; 	DDLString .= "|" LVArray[A_Index]
-; Gui Add, Button, xm+370 ym+10 w70 greadtheini, O&pen
-; Gui Add, Button, x+25 w70 gSaveToIni, &Save
-; Gui Add, Button, x+25 w150 grestartScript, &New PO or Reload
-; Gui Add, Button, x+25 w150 gClearFields, &Clear Fields
-
-Gui Font, s12 w600 Italic cBlack, Tahoma
-AddTextField("Order Info",orderInfo, "orderInfo", 50, 50, "Order Info")
+Gui Font, s10 w600 cBlack, Tahoma
+; AddTextField("Order Info",orderInfo, "orderInfo", 50, 50, "Order Info")
 ; (label, variable, value = "", yOffset = 10, xOffset = "xm", section = "")
 
 Gui Font, S9, Segoe UI Semibold
@@ -265,8 +288,8 @@ Gui Font, S9, Segoe UI Semibold
 
 ; ; ----------- END SAP -----------------
 
-Gui Show,w920, Order Organizer ;SO# %soNumber%
-Gui Submit, NoHide
+; Gui Show,w920, Order Organizer ;SO# %soNumber%
+; Gui Submit, NoHide
 
 ; submitChecklist:
 ; Gui Submit, Nohide
@@ -404,52 +427,6 @@ GuiControl,, orderAcceptedNa, 0
 GuiControl,, orderAcceptedYes, 0
 return
 
-Search:
-; Loop, % LVArray.MaxIndex()
-; 	DDLString .= "|" LVArray[A_Index]
-GuiControlGet, SearchTerm
-If SearchTerm =
-{
-	GuiControl, Hide, LV
-}
-	
-; GuiControl, -Redraw, LV
-LV_Delete()
-For Each, FileName In LVArray
-{
-   If (SearchTerm != "")
-   {
-	   	GuiControl, Show, LV
-		
-		If InStr(FileName, SearchTerm) ; for overall matching
-	   		LV_Add("", FileName)
-		; DDLString .= "|" LVArray[A_Index]
-   } Else
-   {
-	   LV_Add("", FileName)
-   }
-   		
-}
-
-; Search2:
-; ; Loop, Read, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\*.*
-; ; {
-; ; 	LVArray.Push(A_LoopFileName)
-; ; }
-; ; MsgBox, %LVArray%
-; ; Gui Add, DropDownList, vLV h250 w400 y50 x250 gMyListView, %DDLString% 
-; Gui Submit, NoHide
-; Return
-
-MyListView:
-if (A_GuiEvent = "DoubleClick")
-{
-	LV_GetText(RowText, A_EventInfo)  ; Get the text from the row's first field.
-	SelectedFile := myinipath . "\" . RowText
-	Send +{tab}{BackSpace}
-	Gosub, readtheini
-}
-Return
 
 restartScript:
 Gosub, SaveToIni
@@ -815,6 +792,19 @@ Return
 }
 
 orderInfo()
+
+#IfWinActive, ahk_class AutoHotkeyGUI
+Enter::
+    ; Get the row number of the selected item
+    selectedRow := LV_GetNext()
+
+    ; Get the text of the selected item
+    LV_GetText(selectedItem, selectedRow)
+
+    ; Open the selected file
+    Run, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB\%selectedItem%
+return
+#IfWinActive
 
 ; ;-------- START TEXT SNIPPET MENU --------
 
