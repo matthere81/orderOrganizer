@@ -9,7 +9,7 @@ SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docu
 #include <UIA_Browser>
 #include OrderOrganizerFunctions.ahk
 
-myinipath = C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB
+myinipath := "C:\Users\" . A_UserName . "\OneDrive - Thermo Fisher Scientific\Documents\Order Docs\Info DB"
 
 I_Icon = C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico
 IfExist, %I_Icon%
@@ -19,7 +19,7 @@ Menu, FileMenu, Add
 
 SetTitleMatchMode, 2
 
-;----------- Functions ---------------
+; |----------- FUNCTIONS ---------------|
 
 GetSalesDirectors() {
     return ["Denise Schwartz", "Joann Purkerson", "Maroun El Khoury", "Jimmy Yuk", "Sylveer Bergs", "N/A"]
@@ -32,156 +32,201 @@ GetDirectorCodes() {
 }
 directorCodes := GetDirectorCodes()
 
-;----------- Function to add text fields ---------------
-AddTextField(label, variable, value = "", xOffset = 10, yOffset = 10, section = "")
-{
-    if (section != "")
-    {
-        Gui Add, Text, Section, %section%:
-    }
-    Else
-    {
-        Gui Add, Text, xm, %label%:
-		Gui Add, Edit, xm w150 v%variable%, %value%
-    } 
-}
-
-
 orderInfo(){
 global
-;/******** GUI START ********\
+
+;|----------- GUI START ---------------|
 Gui destroy
-Gui +Resize
+Gui +Resize -AlwaysOnTop
 Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
-Gui Add, Text, Section hWndhTxtOrderOrganizer23 x10 y10 w300 h33, Order Organizer ; +Left ;+0x200 +Left, Order Organizer
-Gui, Add, Text, x5 y40 w900 h1 +Border
+Gui Add, Text, Section hWndhTxtOrderOrganizer23 x10 y10 w300 h33, Order Organizer
 Gui Font
 Gui Color, 79b8d1
+
+;|----------- BORDER ---------------|
+
+Gui Add, Text, x10 y35 w135 h1 +Border ; Order Organizer
+
+;|----------- END BORDER ---------------|
+
+;|----------- SEARCH BOX ---------------|
+
 Gui Font, s10 w600 cBlack, Tahoma
-Gui Add, Text, xm ym+50, Search:
-Gui Font, S9, Segoe UI Semibold
-Gui Add, Edit, vSearchBox xm+60 ym+50 w220 h20 gSearchFiles
-
-; Add a ListView below the search box
-Gui Add, ListView, vFileList xm+275 ym+30 w320 h100, FILES
+Gui Add, Text, xm+325 ym+3, Search:
 Gui Font
+Gui Add, Edit, vSearchBox xm+390 ym+2 w220 h20 gSearchFiles
 
-; /-------- BUTTONS ------------\
+;|----------- END SEARCH BOX ---------------|
 
-Gui Add, Button, xm+340 ym+48 w70 greadtheini, O&pen
+;|----------- BUTTONS ---------------|
+Gui Font
+Gui Add, Button, xm+680 ym w70 greadtheini, O&pen
 Gui Add, Button, x+25 w70 gSaveToIni, &Save
-Gui Add, Button, x+25 w150 grestartScript, &New PO or Reload
-Gui Add, Button, x+25 w150 gClearFields, &Clear Fields
+Gui Add, Button, x+25 w70 grestartScript, &Reload
 
-; \-------- END BUTTONS ------------/
+;|----------- END BUTTONS ---------------|
 
-; /-------- GUI ELEMENTS ------------\
+;|----------- GUI TEXT/EDIT ELEMENTS ---------------|
+;|----------- GUI TEXT/EDIT ELEMENTS ---------------|
+
 Gui Font, s9 w600 cblack, Tahoma
-; AddTextField("Order Info",orderInfo, "orderInfo", 50, 50, "Order Info")
-Gui Add, Text, Section x15 y95, Order Info:
-Gui Font, S9, Segoe UI Semibold
-AddTextField("CPQ",cpq, "", 0, 125, "")
-AddTextField("PO",po, "", 0, 155, "")
-AddTextField("SOT Line#",sot, "", 0, 185, "")
-AddTextField("Customer",customer, "", 0, 215, "")
-AddTextField("Customer Contact",contact, "", 0, 245, "")
 
-; \-------- END GUI ELEMENTS ------------/
+;|----------- FIRST COLUMN ---------------|
 
-Gui Show, w920, Order Organizer ;SO# %soNumber%
-Gui Submit, NoHide
+Gui Add, Text, Section x15 ym+40, ;Order Info:
+Gui Font, s9, Segoe UI Semibold
 
-;/-------- GoSubs ------------\
+Gui Add, Text, x15 ym+45, CPQ:
+Gui Add, Edit, x15 ym+65 w150 vcpq,
+
+Gui Add, Text, x15 ym+95, PO:
+Gui Add, Edit, x15 ym+115 w150 vpo,
+
+Gui Add, Text, x15 ym+145, SOT Line#:
+Gui Add, Edit, x15 ym+165 w150 vsot,
+
+Gui Add, Text, x15 ym+195, Customer:
+Gui Add, Edit, x15 ym+215 w150 vcustomer,
+
+Gui Add, Text, x15 ym+245, Customer Contact:
+Gui Add, Edit, x15 ym+265 w150 vcontact,
+
+Gui Add, Text, x15 ym+295, Intercompany Entity:
+Gui Add, Edit, x15 ym+315 w150 vintercompanyEntity,
+
+Gui Add, Text, x15 ym+345, Sold To Account:
+Gui Add, Edit, x15 ym+365 w150 vsoldTo,
+
+Gui Add, Text, x15 ym+395, Payment Terms:
+Gui Add, Edit, x15 ym+415 w150 vterms,
+
+Gui Add, Progress, x187.5 y85 w1 h350 Backgroundced3d6
+
+;|----------- END FIRST COLUMN ---------------|
+
+;|-------- SECOND COLUMN ------------|
+
+Gui Add, Text, Section x200 ym+40, ;Second Column
+Gui Font, s9, Segoe UI Semibold
+
+Gui Add, Text, x210 ym+45, System:
+Gui Add, Edit, x210 ym+65 w150 vsystem,
+
+Gui Add, Text, x210 ym+95, Salesperson:
+Gui Add, Edit, x210 ym+115 w150 vsalesPerson,
+
+Gui Add, Text, x210 ym+145, Sales Manager:
+Gui Add, Edit, x210 ym+165 w150 vsalesManager gFindSales,
+
+Gui Add, Text, x210 ym+195, Sales Manager Code:
+Gui Add, DropDownList, x210 ym+215 w150 vmanagerCode, % salesCodes
+
+Gui Add, Text, x210 ym+245, Sales Director:
+Gui, Add, DropDownList, x210 ym+265 w150 vSalesDirectorChoice
+    for index, director in salesDirectors
+    {
+        GuiControl, , SalesDirectorChoice, %director%
+    }
+
+Gui Add, Text, x210 ym+295, Sales Director Code:
+Gui Add, DropDownList, x210 ym+315 w150 vDirectorCodeChoice ;, % salesCodes
+    for index, directorCode in directorCodes
+    {
+        GuiControl, , DirectorCodeChoice, %directorCode%
+    }
+
+Gui Add, CheckBox, x210 ym+345 vsoftware, Software?
+Gui Add, Progress, x387.5 ym+85 w1 h350 Backgroundced3d6
+
+;|-------- END SECOND COLUMN ------------|
+
+;|-------- THIRD COLUMN ------------|
+
+Gui Add, Text, Section x400 ym+40, ;Third Column
+Gui Font, s9, Segoe UI Semibold
+
+Gui Add, Text, x410 ym+45, CRD:
+Gui Add, DateTime, x410 ym+65 w150 vcrd,
+
+Gui Add, Text, x410 ym+95, PO Date:
+Gui Add, DateTime, x410 ym+115 w150 vpoDate,
+
+Gui Add, Text, x410 ym+145, SAP Date:
+Gui Add, DateTime, x410 ym+165 w150 vsapDate,
+
+Gui Add, Text, x410 ym+195, PO Value:
+Gui Add, Edit, x410 ym+215 w150 vpoValue,
+
+Gui Add, Text, x410 ym+245, Tax:
+Gui Add, Edit, x410 ym+265 w150 vtax,
+
+Gui Add, Text, x410 ym+295, Freight Cost:
+Gui Add, Edit, x410 ym+315 w150 vfreightCost,
+
+Gui Add, Text, x410 ym+345, Surcharge:
+Gui Add, Edit, x410 ym+365 w150 vsurcharge,
+
+Gui Add, Text, x410 ym+395, Total:
+Gui Add, Edit, x410 ym+415 w150 vtotalCost,
+
+Gui, Add, Progress, x587.5 ym+85 w1 h350 Backgroundced3d6
+
+;|-------- END THIRD COLUMN ------------|
+
+;|-------- FOURTH COLUMN ------------|
+
+Gui Add, Text, Section x600 ym+40, ;Fourth Column
+Gui Font, s9, Segoe UI Semibold
+
+Gui Add, Text, x610 ym+45, End User:
+Gui Add, Edit, x610 ym+65 w150 vendUser,
+
+Gui Add, Text, x610 ym+95, Phone:
+Gui Add, Edit, x610 ym+115 w150 vphone,
+
+Gui Add, Text, x610 ym+145, Email:
+Gui Add, Edit, x610 ym+165 w150 vemail,
+
+Gui Add, Text, x610 ym+195, End Use:
+Gui Add, Edit, x610 ym+215 w150 h78 vendUse,
+
+Gui Add, Text, x610 ym+295, SO#:
+Gui Add, Edit, x610 ym+315 w150 vsoNumber, %soNumber%
+
+Gui, Add, Progress, x787.5 ym+85 w1 h350 Backgroundced3d6
+
+;|-------- END FOURTH COLUMN ------------|
+
+;|-------- FIFTH COLUMN ------------|
+
+Gui Add, Text, Section x800 ym+100, ;Fifth Column
+
+Gui Add, Text, x810 ym+45, Notes:
+Gui Add, Edit, x810 ym+65 w150 h120 vnotes, %notes%
+
+;|-------- END FIFTH COLUMN ------------|
+
+;|-------- END GUI TEXT/EDIT ELEMENTS ------------|
+;|-------- END GUI TEXT/EDIT ELEMENTS ------------|
+
+;|-------- IMPORTANT KEEPS FILELIST ON TOP! ------------|
+Gui Add, ListView, vFileList xm+300 ym+30 w350 h100, Orders
 SearchFiles:
 	Gui, Submit, NoHide
 	SearchFilesFunction(SearchBox)
+;|-------- IMPORTANT KEEPS FILELIST ON TOP! ------------|
+
+Gui Show, w1000, Order Organizer ;SO# %soNumber%
+Gui Submit, NoHide
+
+;/-------- GoSubs ------------\
+
 
 
 Return
 
 
-Gui Font, s10 w600 cBlack, Tahoma
-; AddTextField("Order Info",orderInfo, "orderInfo", 50, 50, "Order Info")
-; (label, variable, value = "", yOffset = 10, xOffset = "xm", section = "")
-
-Gui Font, S9, Segoe UI Semibold
-
-; Gui Add, Tab3, xm ym+30, Order Info
-; Gui Tab, 1
-; Gui Add, Text, Section, CPQ:
-; Gui Add, Edit, vcpq, %cpq% 
-; Gui Add, Text,, PO:
-; Gui Add, Edit, vpo, %po%
-; Gui Add, Text,, SOT Line#
-; Gui Add, Edit, vsot, %sot%
-; Gui Add, Text,, Customer:
-; Gui Add, Edit, vcustomer, %customer% 
-; Gui Add, Text,, Customer / DPS Contact:
-; Gui Add, Edit, vcontact, %contact% 
-; Gui Add, Text,, Intercompany? - Entity
-; Gui Add, Edit, vaddress, %address% 
-; Gui Add, Text,, Sold To Account:
-; Gui Add, Edit, vsoldTo, %soldTo%
-; Gui Add, Text,, Payment Terms
-; Gui Add, Edit, vterms, %terms% 
-; Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
-; Gui Add, Text, x+12.5 y72 Section, System:
-; Gui Add, Edit, vsystem, %system% 
-; Gui Add, Text,, Salesperson:
-; Gui Add, Edit, vsalesPerson, %salesPerson%
-; Gui Add, Text,, Sales Manager:
-; Gui Add, Edit, vsalesManager gsubmitSales, %salesManager%
-; Gui Add, Text,, Sales Manager Code:
-; Gui Add, DropDownList, ReadOnly vmanagerCode, % salesCodes
-; Gui Add, Text,, Sales Director:
-; Gui, Add, DropDownList, vSalesDirectorChoice
-; for index, director in salesDirectors
-; {
-;     GuiControl, , SalesDirectorChoice, %director%
-; }
-; Gui Add, Text,, Sales Director Code:
-; Gui Add, DropDownList, vDirectorCodeChoice ;, % salesCodes
-; for index, directorCode in directorCodes
-; {
-;     GuiControl, , DirectorCodeChoice, %directorCode%
-; }
-; ; Gui Add, CheckBox, x220 y430 vsoftware gdongle, Software?
-; Gui Add, Text, x190 y435.5 Hidden vserialNumberText, S/N:  ;x187.5 y460.5 h10, S/N: ;x187.5 y437.5
-; Gui Add, Edit, x225 y430 w100 Hidden vserialNumber, ; y432.5
-; Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
-; Gui Add, Text, x+12.5 y70 Section, CRD:
-; Gui Add, DateTime, w135 vcrd, %crd%
-; Gui Add, Text,, PO Date:
-; Gui Add, DateTime, w135 vpoDate, %poDate% 
-; Gui Add, Text,, SAP Date:
-; Gui Add, DateTime, w135 vsapDate, %sapDate%
-; Gui Add, Text,, PO Value:
-; Gui Add, Edit, vpoValue, %poValue%
-; Gui Add, Text,, Tax:
-; Gui Add, Edit, vtax, %tax%
-; Gui Add, Text,, Freight Cost:
-; Gui Add, Edit, vfreightCost, %freightCost% 
-; Gui Add, Text,, Surcharge:
-; Gui Add, Edit, w135 vsurcharge, %surcharge%
-; Gui Add, Text,, Total:
-; Gui Add, Edit, vtotalCost, %totalCost% 
-; Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
-; Gui Add, Text, x+12.5 y95 +center Section, END USER INFO:
-; Gui Add, Text,, End User:
-; Gui Add, Edit, vendUser
-; Gui Add, Text,, Phone:
-; Gui Add, Edit, vphone
-; Gui Add, Text,, Email:
-; Gui Add, Edit, vemail
-; Gui Add, Text,, End Use:
-; Gui Add, Edit, w135 h78 vendUse
-; Gui Add, Text,, SO#
-; Gui Add, Edit, vsoNumber, %soNumber% 
-; Gui Add, GroupBox, x+12.5 y100 w1 h400 ; vertical line
-; Gui Add, Text, x+12.5 y70 Section, Notes:
-; Gui Add, Edit, w215 h120 vnotes, %notes%
-; Gui, Add, Button, w200 h30 gMyButton, Get Quote Info  ; Create a button
 
 ;----------- START CHECKLISTS ---------------
 
@@ -295,10 +340,6 @@ Gui Font, S9, Segoe UI Semibold
 ; Gui Submit, Nohide
 ; return
 
-submitSales:
-Gui Submit, NoHide
-gosub, findSales
-return
 
 ; dongle:
 ; Gui Submit, NoHide
@@ -2004,7 +2045,7 @@ return
 ; 	reload
 ; return
 
-kellerDropDown:	
+kellerDropDown:
 	GuiControl, ChooseString, managerCode, 202375
 	Gui Submit, NoHide
 	GuiControl, Choose, salesDirector, Denise Schwartz
@@ -2092,7 +2133,8 @@ craftsDropDown:
 	Gui Submit, NoHide
 return
 
-findSales:
+FindSales:
+Gui Submit, NoHide
 ;=============== Sales Managers ===================
 if InStr(salesManager, "keller")
 	gosub, kellerDropDown
