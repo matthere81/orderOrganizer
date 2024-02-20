@@ -9,7 +9,7 @@ SetWorkingDir, %A_ScriptDir%
 
 forwardSoftwareLicense()
 {
-    MsgBox, In order functions
+    ; MsgBox, In order functions
     ; Get running instance of Outlook
     outlookApp := ComObjActive("Outlook.Application")                           
     
@@ -17,7 +17,8 @@ forwardSoftwareLicense()
     namespace := outlookApp.GetNamespace("MAPI")                                
     
     ; 6 corresponds to the Inbox
-    folder := namespace.GetDefaultFolder(6).Folders("Test")                     
+    ; folder := namespace.GetDefaultFolder(6).Folders("Test") ; Test folder
+    folder := namespace.GetDefaultFolder(6).Folders("SW Licenses")
     
     ; Get all unread emails
     unreadEmails := folder.Items.Restrict("[Unread] = true")                    
@@ -31,46 +32,72 @@ forwardSoftwareLicense()
         subject := email.Subject                                                
         
         ; Find the alphanumeric string after "SO/PO:"
-        RegExMatch(body, "SO/PO:\s*([a-zA-Z0-9]+)", match)                      
+        RegExMatch(body, "SO/PO:\s*([a-zA-Z0-9-]+)", match)                 
         salesInfo := getSalesOrderInfo(match1)
 
-        ; MsgBox, % match1 . "`n" . salesInfo[1] . "`n" . salesInfo[2] . "`n" . salesInfo[3]
+        ; If there was an error getting the data, continue to the next email
+        if (salesInfo = "error")
+            {
+                MsgBox, % "There was an error getting the data. `n`nPO or SO# is " . match 
+                . "`n`nThis may mean there are multiple orders with the same number. Please check manually."
+                continue
+            }
+
         salesOrderOrPurchaseOrder := salesInfo[1]
         salesEmail := salesInfo[2]
         firstName := salesInfo[3]
-        forwardEmail(email, salesOrderOrPurchaseOrder, salesEmail, firstName)
+        shippingCustomer := salesInfo[4]
+        salesOrderNumber := salesInfo[5]
+
+        forwardEmail(email, salesOrderOrPurchaseOrder, salesEmail, firstName, shippingCustomer, salesOrderNumber)
         
         ; Display a message box with Yes and No buttons
+        Sleep 1500
         MsgBox, 4,, Send Email?
         IfMsgBox Yes
         {
-            ; email.Send() ; Send the email
             email.UnRead := false ; Mark the email as read
+            ; email.Send() ; Send the email
+            Send !s ; Send the email
         }
-        email.UnRead := false ; Mark the email as read                                     
+        else
+        {
+            ; Do nothing
+        }
     }
 }
 
 getSalesOrderInfo(mySalesOrder) {
     browserExe := "chrome.exe"
-    Run, %browserExe% --force-renderer-accessibility "https://customer-insights.thermofisher.com/cockpit/order"
+    orderInfoAddress := "https://customer-insights.thermofisher.com/cockpit/order"
+    cockpitAddress := "customer-insights.thermofisher.com/cockpit/order"
+    Run, %browserExe% --force-renderer-accessibility %orderInfoAddress%
     cUIA := new UIA_Browser("ahk_exe " browserExe)
     Sleep 2000
+    cUIA.WaitPageLoad()
     cUIA.WaitElementExistByPath("1.4")
-        ; if link := https://customer-insights.thermofisher.com/cockpit/exception/multipleData
-        ; {
-            
-        ; }
     poSearch := cUIA.WaitElementExistByNameAndType("Search by SO/PO", "Edit")
     poSearch.Click()
     Clipboard := mySalesOrder
     Send, ^v{enter}
     cUIA.WaitPageLoad()
+    sleep 500
+    url := cUIA.FindFirstByName("Address and search bar")
+    url := url.Value
+    
+    ; Check if the title matches the expected title
+    if (url != cockpitAddress)
+        {
+            ; MsgBox, There was an error pulling the info - please check manually.
+            Send ^w ; Close the tab
+            return "error" ; Return from the function to move on to the next email
+        }
+    
+    ; Find the sales person's name
     salesPersonName := cUIA.FindByPath("1,23")
     salesPersonName := salesPersonName.Name
 
     ; Convert the sales person's name to lowercase
-    ; StringLower, OutputVar, InputVar , T
     StringLower, salesPersonName, salesPersonName
 
     ; Find the first and last name using regex
@@ -79,12 +106,24 @@ getSalesOrderInfo(mySalesOrder) {
 
     ; Create the email address
     salesEmail := match1 "." match2 "@thermofisher.com"
-    
-    salesInfo := [mySalesOrder, salesEmail, firstName]
+
+    ; Find the customer name
+    shippingCustomer := cUIA.FindByPath("1,27")
+    shippingCustomer := shippingCustomer.Name
+    shippingCustomer := formatText(shippingCustomer)
+
+    ; Find the SO#
+    salesOrderNumber := cUIA.FindByPath("1,25")
+    salesOrderNumber := salesOrderNumber.Name
+    salesOrderNumber := RegExReplace(salesOrderNumber, "^000", "")
+
+
+    salesInfo := [mySalesOrder, salesEmail, firstName, shippingCustomer, salesOrderNumber]
+    Send ^w ; Close the tab
     return salesInfo
 }
 
-forwardEmail(email, salesOrder, salesEmail, firstName)
+forwardEmail(email, salesOrder, salesEmail, firstName, shippingCustomer, salesOrderNumber)
 {
     ; Forward the email
     forward := email.Forward()
@@ -93,11 +132,14 @@ forwardEmail(email, salesOrder, salesEmail, firstName)
 
     ; Set the email properties
     forward.To := salesEmail 
-    forward.Subject := "Software License for SO# " salesOrder
-
+    forward.Subject := "Software License for " shippingCustomer " SO# " salesOrderNumber
+    sleep 100
     myBodyOne := "Hi " . firstName . ","
-    myBodyTwo := "Please find the license attached for SO{#} " . salesOrder . "."
+    sleep 100
+    myBodyTwo := "Please find the license attached for " shippingCustomer " - SO{#} " . salesOrderNumber . "."
+    sleep 100
     myBodyThree := "Thank you"
+    sleep 100
     ; forward.Body := myBody . forward.Body
 
     ; Set focus on the body element
@@ -108,17 +150,58 @@ pasteEmailBody(myBodyOne, myBodyTwo, myBodyThree)
 {
     SetTitleMatchMode, 2
     ControlFocus, _WwG1, Message (HTML), Message
-    Clipboard := myBodyOne
-    Sleep 250
-    Clipwait 1
-    Send %Clipboard%
-    Send {Enter 2}
-    Clipboard := myBodyTwo
-    Clipwait 1
-    Send %Clipboard%
-    Send {Enter 2}
-    Clipboard := myBodyThree 
-    Clipwait 1
-    Send %Clipboard%
+    Clipboard := myBodyOne . "`n`n" . myBodyTwo . "`n`n" . myBodyThree
+    Send, % Clipboard
+    ; Clipboard := myBodyOne
+    ; Sleep 250
+    ; Clipwait 1
+    ; Send %Clipboard%
+    ; Send {Enter 2}
+    ; Clipboard := myBodyTwo
+    ; Clipwait 1
+    ; Send %Clipboard%
+    ; Send {Enter 2}
+    ; Clipboard := myBodyThree 
+    ; Clipwait 1
+    ; Send %Clipboard%
 }
 
+formatText(shippingCustomer)
+{
+    ; Split the text into words
+    shippingCustomer := StrSplit(shippingCustomer, " ")
+    ; Process each word
+    for index, word in shippingCustomer
+    {
+        ; Check if the word has more than three characters
+        if (StrLen(word) > 3)
+        {
+            ; Convert the word to title case
+            StringLower, word, word, T
+        }
+        else
+        {
+            ; Convert the word to upper case
+            StringUpper, word, word
+        }
+
+        ; Update the word in the array
+        shippingCustomer[index] := word
+        ; MsgBox, % shippingCustomer[index]
+    }
+
+    ; Join the words back together
+    formattedText := ""
+    for index, word in shippingCustomer
+    {
+        ; Add a space before each word except the first one
+        if (index > 1)
+            formattedText .= " "
+        formattedText .= word
+    }
+    return formattedText
+}
+
+forwardSoftwareLicense()
+; mySalesOrder := "PUR00688639"
+; getSalesOrderInfo(mySalesOrder)

@@ -9,7 +9,7 @@ SetWorkingDir, C:\Users\matthew.terbeek\OneDrive - Thermo Fisher Scientific\Docu
 #include <Vis2>
 #include <UIA_Interface>
 #include <UIA_Browser>
-#include OrderOrganizerFunctions.ahk
+; #include OrderOrganizerFunctions.ahk
 
 salesDirectors := "|Denise Schwartz|Joann Purkerson|Maroun El Khoury|Jimmy Yuk|Sylveer Bergs|N/A"
 
@@ -316,6 +316,7 @@ Gui destroy
 Return
 
 ClearFields:
+Gui, Submit, NoHide
 GuiControl,, cpq,
 GuiControl,, po,
 GuiControl,, sot,
@@ -464,16 +465,17 @@ if ((!cpq) || (!po))
 } 
 return
 
+
 readtheini:
 Gui Submit, NoHide
 if (cpq) && (po)
 	gosub, SaveToIni
 ; FileSelectFile, SelectedFile,r,%myinipath%, Open a file ;______ Needs to go back
-; if (ErrorLevel)
-; 	{
-; 		gosub, restartScript
-; 		return
-; 	}
+if (ErrorLevel)
+	{
+		gosub, restartScript
+		return
+	}
 IniRead, ID, %SelectedFile%, id, ID
 IniRead, cpq, %SelectedFile%, orderInfo, cpq
 GuiControl,, cpq, %cpq%
@@ -1369,7 +1371,7 @@ return
 ; }
 ; return
 #!f::
-forwardSoftwareLicense()
+; forwardSoftwareLicense()
 Return
 
 toMiddle() ; To the middle section of SAP Standard Order Page
