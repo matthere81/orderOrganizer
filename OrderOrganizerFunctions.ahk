@@ -101,11 +101,11 @@ getSalesOrderInfo(mySalesOrder) {
     StringLower, salesPersonName, salesPersonName
 
     ; Find the first and last name using regex
-    RegExMatch(salesPersonName, "(\w+)\s+(\w+)", match)
+    RegExMatch(salesPersonName, "(\w+)\s+(\w\. )?(\w+)", match)
     StringLower, firstName, match1, T
 
     ; Create the email address
-    salesEmail := match1 "." match2 "@thermofisher.com"
+    salesEmail := match1 "." match3 "@thermofisher.com"
 
     ; Find the customer name
     shippingCustomer := cUIA.FindByPath("1,27")
