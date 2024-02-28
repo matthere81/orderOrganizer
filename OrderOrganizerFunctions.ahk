@@ -9,7 +9,6 @@ SetWorkingDir, %A_ScriptDir%
 
 forwardSoftwareLicense()
 {
-    ; MsgBox, In order functions
     ; Get running instance of Outlook
     outlookApp := ComObjActive("Outlook.Application")                           
     
@@ -32,7 +31,8 @@ forwardSoftwareLicense()
         subject := email.Subject                                                
         
         ; Find the alphanumeric string after "SO/PO:"
-        RegExMatch(body, "SO/PO:\s*([a-zA-Z0-9-]+)", match)                 
+        RegExMatch(body, "SO/PO:\s*([a-zA-Z0-9-]+)", match)
+        MsgBox % match1                
         salesInfo := getSalesOrderInfo(match1)
 
         ; If there was an error getting the data, continue to the next email
@@ -42,12 +42,18 @@ forwardSoftwareLicense()
                 . "`n`nThis may mean there are multiple orders with the same number. Please check manually."
                 continue
             }
-
+        
         salesOrderOrPurchaseOrder := salesInfo[1]
         salesEmail := salesInfo[2]
         firstName := salesInfo[3]
         shippingCustomer := salesInfo[4]
         salesOrderNumber := salesInfo[5]
+
+        ; Check if forwardEmail function is successful
+        if (!forwardEmail(email, salesOrderOrPurchaseOrder, salesEmail, firstName, shippingCustomer, salesOrderNumber))
+        {
+            MsgBox, % "Error forwarding email. Skipping..."
+        }
 
         forwardEmail(email, salesOrderOrPurchaseOrder, salesEmail, firstName, shippingCustomer, salesOrderNumber)
         
@@ -74,21 +80,22 @@ getSalesOrderInfo(mySalesOrder) {
     Run, %browserExe% --force-renderer-accessibility %orderInfoAddress%
     cUIA := new UIA_Browser("ahk_exe " browserExe)
     Sleep 2000
-    cUIA.WaitPageLoad()
-    cUIA.WaitElementExistByPath("1.4")
-    poSearch := cUIA.WaitElementExistByNameAndType("Search by SO/PO", "Edit")
-    poSearch.Click()
+    cUIA.WaitPageLoad(,,sleepAfter=500)
+    cUIA.FindFirstByType("Edit").Click()
     Clipboard := mySalesOrder
-    Send, ^v{enter}
-    cUIA.WaitPageLoad()
-    sleep 500
+    Send, ^v
+    Sleep 100
+    Send {enter}
+    cUIA.WaitPageLoad(,,sleepAfter=500)
     url := cUIA.FindFirstByName("Address and search bar")
     url := url.Value
-    
+    ; MsgBox, % "URL: " . url
+
     ; Check if the title matches the expected title
     if (url != cockpitAddress)
         {
             ; MsgBox, There was an error pulling the info - please check manually.
+            ; MsgBox, URL does not match expected address
             Send ^w ; Close the tab
             return "error" ; Return from the function to move on to the next email
         }
@@ -96,6 +103,7 @@ getSalesOrderInfo(mySalesOrder) {
     ; Find the sales person's name
     salesPersonName := cUIA.FindByPath("1,23")
     salesPersonName := salesPersonName.Name
+    ; MsgBox, % "Sales Person Name: " . salesPersonName
 
     ; Convert the sales person's name to lowercase
     StringLower, salesPersonName, salesPersonName
@@ -103,6 +111,7 @@ getSalesOrderInfo(mySalesOrder) {
     ; Find the first and last name using regex
     RegExMatch(salesPersonName, "(\w+)\s+(\w\. )?(\w+)", match)
     StringLower, firstName, match1, T
+    ; MsgBox, % "First Name: " . firstName
 
     ; Create the email address
     salesEmail := match1 "." match3 "@thermofisher.com"
@@ -111,11 +120,13 @@ getSalesOrderInfo(mySalesOrder) {
     shippingCustomer := cUIA.FindByPath("1,27")
     shippingCustomer := shippingCustomer.Name
     shippingCustomer := formatText(shippingCustomer)
+    ; MsgBox, % "Shipping Customer: " . shippingCustomer
 
     ; Find the SO#
     salesOrderNumber := cUIA.FindByPath("1,25")
     salesOrderNumber := salesOrderNumber.Name
     salesOrderNumber := RegExReplace(salesOrderNumber, "^000", "")
+    ; MsgBox, % "Sales Order Number: " . salesOrderNumber
 
 
     salesInfo := [mySalesOrder, salesEmail, firstName, shippingCustomer, salesOrderNumber]
