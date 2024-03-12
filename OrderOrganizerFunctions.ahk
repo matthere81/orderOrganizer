@@ -220,6 +220,22 @@ formatText(shippingCustomer)
     return formattedText
 }
 
-forwardSoftwareLicense()
-; mySalesOrder := "PUR00688639"
-; getSalesOrderInfo(mySalesOrder)
+; forwardSoftwareLicense()
+
+
+shutdownComputer()
+{
+    ; Wait for an hour
+    Sleep, 3600000  ; 3600000 milliseconds = 1 hour
+
+    ; Close all open programs
+    WinClose, ahk_class *
+
+    ; Shut down the computer
+    Shutdown, 1
+}
+
++Esc::shutdownComputer()
+
+
+
