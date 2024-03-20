@@ -15,8 +15,6 @@ I_Icon = C:\Users\%A_UserName%\OneDrive - Thermo Fisher Scientific\Desktop\Auto 
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%
 
-Menu, FileMenu, Add
-
 SetTitleMatchMode, 2
 
 ; |----------- FUNCTIONS ---------------|
@@ -219,7 +217,22 @@ Gui Add, Edit, x810 ym+65 w150 h120 vnotes, %notes%
 ;|-------- END FIFTH COLUMN ------------|
 
 ;|-------- END GUI TEXT/EDIT ELEMENTS ------------|
-;|-------- END GUI TEXT/EDIT ELEMENTS ------------|
+
+
+; Create a new submenu
+Menu, SubMenu, Add, &Open, MenuItemHandler
+; Menu, SubMenu, Add, SubItem2, MenuItemHandler
+
+; Create a new menu and add the submenu to it
+Menu, MyMenu, Add, &File, :SubMenu
+
+; Add the menu to the GUI
+Gui, Menu, MyMenu
+
+; This function will be called when a menu item is clicked
+MenuItemHandler:
+    ; MsgBox, You clicked %A_ThisMenuItem%!
+
 
 ;|-------- IMPORTANT KEEPS FILELIST ON TOP! ------------|
 Gui Add, ListView, vFileList xm+300 ym+30 w350 h100, Orders
@@ -253,7 +266,7 @@ GuiControl,, salesManager,
 GuiControl,, managerCode,
 GuiControl,, salesDirector,
 GuiControl,, directorCode,
-; GuiControl,, software,
+GuiControl,, software,
 GuiControl,, serialNumber,
 GuiControl,, crd,
 GuiControl,, poDate,
