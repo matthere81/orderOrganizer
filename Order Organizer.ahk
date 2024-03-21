@@ -25,6 +25,11 @@ Menu, FileMenu, Add
 
 SetTitleMatchMode, 2
 
+; Initialize a global variable to keep track of the visibility
+global checkListVisible := true
+global guiControls := ["nameCheck", "quoteNumberMatch", "paymentTerms", "priceMatch", "bothAddresses", "pdfQuote", "arrangeLines", "soldToIdCheck", "orderTypeCheck", "poInfoCheck", "generateDps", "orderNoticeSent", "enteredSot", "tandcYes", "tandcNa", "poAttached", "quoteAttached", "dpsAttached", "orderNoticeAttached", "winYes", "winNa", "mergeYes", "mergeNa", "crdDateAdded", "firstDate", "incoterms", "volts", "shipper", "verifyIncoterms", "managerCodeCheck", "directorCodeCheck", "billtoCheck", "shiptoCheck", "endUserCheck", "endUserNA", "contactPersonCheck", "textsContactCheck", "serialYes", "serialNa", "endUserCopyBack", "endUserCopyBackNa", "finalTotal", "shippingYes", "shippingNa", "higherLevelLinkingYes", "higherLevelLinkingNa", "deliveryGroupsYes", "deliveryGroupsNa", "updateDeliveryBlock", "orderAcceptedYes", "orderAcceptedNa"]
+
+
 orderInfo(){
 global
 ;/******** GUI START ********\
@@ -126,14 +131,19 @@ Gui Add, Text, x+12.5 y70 Section, Notes:
 Gui Add, Edit, w215 h120 vnotes, %notes%
 Gui, Add, Button, w200 h30 gMyButton, Get Quote Info  ; Create a button
 
-;----------- START CHECKLISTS ---------------
+; Add a Text control
+; Gui, Add, Text, vMyText, Salesforce Checklist Content
 
-Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
+; Add a button that toggles the visibility of the Text control
+Gui, Add, Button, gToggleVisibility, Toggle Checklists
+
+;----------- START CHECKLISTS ---------------
+Gui Add,Tab3, vsalesforceChecklist, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
 Gui Tab, 1
 
 ; ----------- PRE SALESFORCE -----------------
 
-Gui Add, GroupBox,Section h175 w250, Pre Salesforce
+Gui Add, GroupBox, Section h175 w250, Pre Salesforce
 Gui Add, Checkbox, xp+10 yp+30 gsubmitChecklist vnameCheck, Check TENA name on PO
 Gui Add, Checkbox, gsubmitChecklist vquoteNumberMatch, Quote number matches on PO && quote
 Gui Add, Checkbox, gsubmitChecklist vpaymentTerms, Payment terms match on PO && quote
@@ -231,11 +241,27 @@ Gui Add, Radio, x+5 vorderAcceptedNa gsubmitChecklist, N/A
 
 ; ----------- END SAP -----------------
 
-Gui Show,w920, Order Organizer ;SO# %soNumber%
+Gui Show, w920 h530, Order Organizer ;SO# %soNumber%
 Gui Submit, NoHide
 
 submitChecklist:
 Gui Submit, Nohide
+return
+
+ToggleVisibility:
+    ; Toggle the visibility of the Edit control
+    if (checkListVisible)
+		{
+			GuiControl, Hide, salesforceChecklist
+			checkListVisible := false
+			Gui Show, w920 h530, Order Organizer ;SO# %soNumber%
+		}
+		else
+		{
+			GuiControl, Show, salesforceChecklist
+			checkListVisible := true
+			Gui Show, w920 h760, Order Organizer ;SO# %soNumber%
+		}
 return
 
 ; CalculateTotals:
@@ -1354,13 +1380,13 @@ return
 
 !+a:: ; Attach last file inside
 	Send, !e2af
-	Sleep 1500
+	Sleep 3000
 	Send {Enter}
 ; return
 
 !#a:: ; Attach last file pop out
 	Send, !haf
-	Sleep 1500
+	Sleep 3000
 	Send {Enter}
 ; return
 
