@@ -21,8 +21,12 @@ if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
 
-fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "SO#", "Payment Terms"]
-vars := ["sot", "customer", "contact", "soldTo", "soNumber", "terms"]
+fields := ["SOT Line#"] ;, "Customer", "Customer Contact", "Sold To Account", "SO#", "Payment Terms"]
+vars := ["sot"] ;, customer, contact, soldTo, soNumber, terms]
+
+; GUI Spacing Text & Edit Spacing
+yTextField := 70
+yEditField := 70
 
 ; -------- GLOBAL VARIABLES -------- END
 
@@ -43,29 +47,22 @@ Gui Add, Button, x350 y20 w70 greadtheini, O&pen
 ; Gui Add, Button, x+25 w100 gClearFields, &Clear Fields
 ; Gui Add, Edit, x+25 y22 w175 h20, Search
 
-; Loop, % fields.Length() {
-;     Gui Add, Text, Section x50 y70, % A_Index[] ; % fields . A_Index
-; 	; Gui, Add, ControlType , Options, Text
-;     ; Gui Add, Edit, yp+20 xp-2.5 v%vars[A_Index]%
-; }
-
-yTextField := 70
-
-for index, field in fields {
+for index, field in fields
+{
 	Gui Add, Text, x50 y%yTextField%, % field
-	yTextField += 20
+	yTextField += 50
 	Gui Add, Edit, yp+20 xp-2.5 v%vars%%index% ; %vars[A_Index]%
-	; Gui Add, Edit, vterms, %terms% 
-	; MsgBox % vars[index]
+	yEditField += 20
+	; MsgBox, % vars[index]
+
 	; Gui, Add, ControlType , Options, Text
 }
 
-; for index, var in vars {
-;     GuiControl,, %var%, % %var%
-; }
 
 Gui Show,w950 h700, Order Organizer ;SO# %soNumber%
+
+#Include %A_ScriptDir%\Menu.ahk
+
 Return
 
 #Include %A_ScriptDir%\Functions.ahk
-#Include %A_ScriptDir%\Menu.ahk

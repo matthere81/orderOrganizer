@@ -1,7 +1,4 @@
 
-Item1Handler:
-    MsgBox, You selected Item1.
-
 readtheini:
 Gui, Submit, NoHide
 ; if (cpq) && (po)
@@ -13,11 +10,17 @@ FileSelectFile, SelectedFile,r,%myinipath%, Open a file
 ;         return
 ;     }
 
-fields := ["cpq", "po", "sot", "customer", "salesPerson", "salesManager", "salesDirector", "managerCode", "directorCode", "address", "contact", "poValue", "tax", "freightCost", "surcharge", "totalCost", "system", "soldTo", "crd", "soNumber", "terms", "poDate", "sapDate", "endUser", "phone", "email"]
+for index, var in vars
+{
+    IniRead, value, %SelectedFile%, orderInfo, sot
+    ; if (field == "sot" && value == "ERROR")
+        ; value := 
+    GuiControl,, %A_Index%, % value
+    ; GuiControl, SubCommand, ControlID , Value
+    
+    ; MsgBox % value
+}
 
-    for index, field in fields {
-        IniRead, value, %SelectedFile%, orderInfo, %field%
-        if (field == "sot" && value == "ERROR")
-            value := 
-        GuiControl,, %field%, %value%
-    }
+; IniRead, OutputVar, Filename, Section, Key , Default
+; IniRead, OutputVarSection, Filename, Section
+; IniRead, OutputVarSectionNames, Filename
