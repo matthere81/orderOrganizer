@@ -12,7 +12,7 @@ FileSelectFile, SelectedFile,r,%myinipath%, Open a file
 
 for index, var in vars
 {
-    IniRead, value, %SelectedFile%, orderInfo, sot
+    IniRead, value, %SelectedFile%, orderInfo, %var%
     ; if (field == "sot" && value == "ERROR")
         ; value := 
     GuiControl,, %A_Index%, % value

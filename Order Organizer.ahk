@@ -21,8 +21,8 @@ if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
 
-fields := ["SOT Line#"] ;, "Customer", "Customer Contact", "Sold To Account", "SO#", "Payment Terms"]
-vars := ["sot"] ;, customer, contact, soldTo, soNumber, terms]
+fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "SO#", "Payment Terms"]
+vars := ["sot", "customer", "contact", "soldTo", "soNumber", "terms"]
 
 ; GUI Spacing Text & Edit Spacing
 yTextField := 70
@@ -38,9 +38,11 @@ Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, x10 y30, _________________________________
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y20 w300 +Left, Order Organizer ; - SO# %soNumber%
 Gui Font
+Gui Add, Edit, vSearchTerm w200 y20, ; Add an Edit field with 'Search for' as placeholder text
+Gui Add, Button, gSearch y20, Search ; Add a button that triggers the 'Search' subroutine when clicked
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
-Gui Add, Button, x350 y20 w70 greadtheini, O&pen
+; Gui Add, Button, x350 y20 w70 greadtheini, O&pen
 ; Gui Add, Button, x+25 w70 gSaveToIni, &Save
 ; Gui Add, Button, x+25 w125 grestartScript, &New PO or Reload
 ; Gui Add, Button, x+25 w100 gMyButton, Get Quote Info  ; Create a button
@@ -66,3 +68,4 @@ Gui Show,w950 h700, Order Organizer ;SO# %soNumber%
 Return
 
 #Include %A_ScriptDir%\Functions.ahk
+#Include %A_ScriptDir%\Search.ahk

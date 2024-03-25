@@ -6,6 +6,5 @@ Menu SubMenu, Add, &Open, readtheini
 ; Add the submenu to the main menu
 Menu MainMenu, Add, &File, :SubMenu
 
-
 Gui Menu, MainMenu
 
