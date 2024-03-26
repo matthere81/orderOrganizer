@@ -20,7 +20,12 @@ for index, var in vars
     
     ; MsgBox % value
 }
+Return
 
 ; IniRead, OutputVar, Filename, Section, Key , Default
 ; IniRead, OutputVarSection, Filename, Section
 ; IniRead, OutputVarSectionNames, Filename
+
+ShowChecklists:
+MsgBox placeholder for checklist toggle setting
+Return
