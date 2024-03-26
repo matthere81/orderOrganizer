@@ -3,12 +3,15 @@ readtheini:
 Gui, Submit, NoHide
 ; if (cpq) && (po)
 ;     gosub, SaveToIniNoGui
-FileSelectFile, SelectedFile,r,%myinipath%, Open a file
+; FileSelectFile, SelectedFile,r,%myinipath%, Open a file
 ; if (ErrorLevel)
 ;     {
 ;         gosub, restartScript
 ;         return
 ;     }
+
+SelectedFile := myinipath . "\" . SelectedFile
+MsgBox % SelectedFile
 
 for index, var in vars
 {
