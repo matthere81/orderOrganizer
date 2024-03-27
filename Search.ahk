@@ -33,18 +33,11 @@ Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
         {
             LV_Add("", matchingFiles[A_Index]) ; Add the file name to the ListView
         }
-        Gui Show, w500 h200 ; Show the GUI
+        Gui Show, w500 h200, Order Organizer Search Results ; Show the GUI
         ; Hotkey IfWinActive, ahk_id %MyGui% ; Set the hotkey to be active only when the new GUI is open
         ; Hotkey Escape, GuiClose, On ; Set the Escape key to trigger the GuiClose label
         ; Hotkey Enter, FileSelected, On ; Set the Enter key to trigger the FileSelected label
     }
-return
-
-FileSelected:
-    Gui Submit, ;NoHide ; Get the selected file
-    LV_GetText(SelectedFile, 1) ; Get the text of the selected item
-    Gosub readtheini
-    ; WinActivate, ahk_id %MyGui% ; Activate the new GUI again
 return
 
 ; GuiClose:

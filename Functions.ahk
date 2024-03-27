@@ -1,6 +1,6 @@
 
 readtheini:
-    Gui, Submit, NoHide
+    ; Gui, Submit, NoHide
     ; if (cpq) && (po)
     ;     gosub, SaveToIniNoGui
     ; FileSelectFile, SelectedFile,r,%myinipath%, Open a file
@@ -8,9 +8,9 @@ readtheini:
         ; MsgBox, You clicked Cancel.
         return
     }
-    MsgBox % SelectedFile
+    ; MsgBox % SelectedFile
     SelectedFile := myinipath . "\" . SelectedFile
-    MsgBox % SelectedFile
+    ; MsgBox % SelectedFile
 
     for index, var in vars
     {
@@ -44,4 +44,10 @@ return
 SetSearchAsDefault:
     KeyWait enter, d
     GuiControl Focus, Search ; Set the focus to the Search button
+return
+
+FileSelected:
+    Gui Submit, ;NoHide ; Get the selected file
+    LV_GetText(SelectedFile, 1) ; Get the text of the selected item
+    Gosub readtheini
 return
