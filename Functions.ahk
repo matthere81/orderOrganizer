@@ -4,14 +4,13 @@ Gui, Submit, NoHide
 ; if (cpq) && (po)
 ;     gosub, SaveToIniNoGui
 ; FileSelectFile, SelectedFile,r,%myinipath%, Open a file
-; if (ErrorLevel)
-;     {
-;         gosub, restartScript
-;         return
-;     }
+if (SelectedFile = "") {
+    ; MsgBox, You clicked Cancel.
+    return
+}
 
 SelectedFile := myinipath . "\" . SelectedFile
-MsgBox % SelectedFile
+; MsgBox % SelectedFile
 
 for index, var in vars
 {
@@ -29,6 +28,12 @@ Return
 ; IniRead, OutputVarSection, Filename, Section
 ; IniRead, OutputVarSectionNames, Filename
 
+OpenFileFromMenu:
+FileSelectFile, SelectedFile,r,%myinipath%, Open a file
+Gosub readtheini
+Return
+
 ShowChecklists:
 MsgBox placeholder for checklist toggle setting
 Return
+

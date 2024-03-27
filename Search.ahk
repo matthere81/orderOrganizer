@@ -2,12 +2,6 @@ Search:
 Gui Submit, NoHide ; Update the variables with the current values of the controls
 SearchTerm := Trim(SearchTerm) ; Remove trailing whitespace from SearchTerm
 
-Loop, %myinipath%\*.* ; Loop through all files in the selected folder
-{
-    IfInString, A_LoopFileName, %SearchTerm% ; If the current file name contains the search term
-        MsgBox, %A_LoopFileName% ; Display a message box with the file name
-}
-
 matchingFiles := [] ; Create an empty array to store matching files
 
 Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
@@ -25,12 +19,28 @@ if (matchingFiles.Length() = 1) ; If there's only one matching file
     }
     else if (matchingFiles.Length() > 1) ; If there's more than one matching file
     {
-        fileList := "" ; Create an empty string to store the file names
-        Loop, % matchingFiles.Length() ; Loop over the 'matchingFiles' array
+        Gui New, +HwndMyGui ; Create a new GUI and store its handle in the variable 'MyGui'
+        Gui Font, s12 w600 Italic cBlack, Tahoma
+        Gui Color, 79b8d1
+        Gui Font, S9, Segoe UI Semibold
+        Gui Add, ListBox, vSelectedFile gFileSelected w475, ; Add a ListBox control
+        Loop % matchingFiles.Length() ; Loop over the 'matchingFiles' array
         {
-            fileList := fileList . matchingFiles[A_Index] . "`n" ; Append the file name to the string
+            GuiControl,, SelectedFile, % matchingFiles[A_Index] ; Add the file name to the ListBox
         }
-        MsgBox, % "Please choose a file from the following list:`n" . fileList ; Display the file names in a MsgBox
+        Gui Show, w500 h200 ; Show the GUI
+        Hotkey IfWinActive, ahk_id %MyGui% ; Set the hotkey to be active only when the new GUI is open
+        Hotkey Escape, GuiClose, On ; Set the Escape key to trigger the GuiClose label
     }
 
+return
+
+FileSelected:
+    Gui, Submit ; Get the selected file
+    MsgBox, % "You selected: " . SelectedFile ; Display the selected file (replace this with your own code)
+return
+
+GuiClose:
+    Hotkey, Escape, Off ; Turn off the Escape hotkey
+    Gui, %MyGui%:Destroy ; Destroy the new GUI
 return

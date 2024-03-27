@@ -1,6 +1,6 @@
 
 ; Create the submenu
-Menu FileMenu, Add, &Open, readtheini
+Menu FileMenu, Add, &Open, OpenFileFromMenu
 Menu ViewMenu, Add, Show Checklists, ShowChecklists
 ; Menu, SettingsMenu, Add, Show Checklists, ShowChecklists
 
