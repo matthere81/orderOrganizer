@@ -38,7 +38,7 @@ Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, x10 y30, _________________________________
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y20 w300 +Left, Order Organizer ; - SO# %soNumber%
 Gui Font
-Gui Add, Edit, vSearchTerm w200 y20 ; Add an Edit field with 'Search for' as placeholder text
+Gui Add, Edit, vSearchTerm w200 y20 gSetSearchAsDefault ; Add an Edit field with 'Search for' as placeholder text
 Gui Add, Button, Default gSearch y20, Search ; Add a button that triggers the 'Search' subroutine when clicked
 Gui Add, Button, gRestart, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
 Gui Color, 79b8d1
