@@ -20,13 +20,12 @@ if (matchingFiles.Length() = 1) ; If there's only one matching file
     else if (matchingFiles.Length() > 1) ; If there's more than one matching file
     {
         Gui New, +HwndMyGui ; Create a new GUI and store its handle in the variable 'MyGui'
-        Gui Font, s12 w600 Italic cBlack, Tahoma
+        Gui Font, S9, Segoe UI ;Semibold
         Gui Color, 79b8d1
-        Gui Font, S9, Segoe UI Semibold
-        Gui Add, ListBox, vSelectedFile gFileSelected w475, ; Add a ListBox control
+        Gui Add, ListView, vSelectedFile gFileSelected w475, Search Results ; Add a ListBox control
         Loop % matchingFiles.Length() ; Loop over the 'matchingFiles' array
         {
-            GuiControl,, SelectedFile, % matchingFiles[A_Index] ; Add the file name to the ListBox
+            LV_Add("", matchingFiles[A_Index]) ; Add the file name to the ListView
         }
         Gui Show, w500 h200 ; Show the GUI
         Hotkey IfWinActive, ahk_id %MyGui% ; Set the hotkey to be active only when the new GUI is open
@@ -36,8 +35,8 @@ if (matchingFiles.Length() = 1) ; If there's only one matching file
 return
 
 FileSelected:
-    Gui, Submit ; Get the selected file
-    MsgBox, % "You selected: " . SelectedFile ; Display the selected file (replace this with your own code)
+    Gui Submit ; Get the selected file
+    MsgBox % "You selected: " . SelectedFile ; Display the selected file (replace this with your own code)
 return
 
 GuiClose:

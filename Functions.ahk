@@ -37,3 +37,6 @@ ShowChecklists:
 MsgBox placeholder for checklist toggle setting
 Return
 
+Restart:
+    Reload ; Restart the script
+return
