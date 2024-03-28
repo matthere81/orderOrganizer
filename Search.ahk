@@ -21,6 +21,7 @@ Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
     if (matchingFiles.Length() = 1) ; If there's only one matching file
     {
         SelectedFile := matchingFiles[1] ; Set the 'file' variable to the name of the file
+        SelectedFile := myinipath . "\" . SelectedFile
         Gosub readtheini
     }
     else if (matchingFiles.Length() > 1) ; If there's more than one matching file

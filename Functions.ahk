@@ -9,18 +9,19 @@ readtheini:
         return
     }
     ; MsgBox % SelectedFile
-    SelectedFile := myinipath . "\" . SelectedFile
+    ; SelectedFile := myinipath . "\" . SelectedFile
     ; MsgBox % SelectedFile
 
     for index, var in vars
     {
         IniRead, value, %SelectedFile%, orderInfo, %var%
+        ; MsgBox % value
         ; if (field == "sot" && value == "ERROR")
             ; value := 
-        GuiControl,, %A_Index%, % value
+        GuiControl,, %value%, % A_Index
         ; GuiControl, SubCommand, ControlID , Value
         
-        ; MsgBox % value
+        ; MsgBox % value . " " . var . " " . index . " " . A_Index
     }
 Return
 
@@ -47,7 +48,9 @@ SetSearchAsDefault:
 return
 
 FileSelected:
-    Gui Submit, ;NoHide ; Get the selected file
-    LV_GetText(SelectedFile, 1) ; Get the text of the selected item
+    SelectedRow := LV_GetNext() ; Get the selected row number
+    LV_GetText(SelectedFile, SelectedRow, 1) ; Get the text of the selected item from the first column
+    SelectedFile := myinipath . "\" . SelectedFile ;. ".ini" ; Add the '.ini' extension to the selected file
     Gosub readtheini
+    Gui, %MyGui%:Destroy ; Destroy the new GUI
 return
