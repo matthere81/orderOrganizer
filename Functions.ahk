@@ -4,6 +4,7 @@ readtheini:
     ; if (cpq) && (po)
     ;     gosub, SaveToIniNoGui
     ; FileSelectFile, SelectedFile,r,%myinipath%, Open a file
+    
     if (SelectedFile = "") {
         ; MsgBox, You clicked Cancel.
         return
@@ -12,13 +13,17 @@ readtheini:
     ; SelectedFile := myinipath . "\" . SelectedFile
     ; MsgBox % SelectedFile
 
+    ; IniRead, customer, %SelectedFile%, orderInfo, customer, "EET IT"
+    ; GuiControl,, %customer%, "EET IT"
     for index, var in vars
     {
-        IniRead, value, %SelectedFile%, orderInfo, %var%
-        ; MsgBox % value
+        ; MsgBox % SelectedFile . " " . var
+        IniRead myValue, %SelectedFile%, orderInfo, %var%, "Arrrrggg"        
+        ; IniRead, OutputVar, Filename, Section, Key [, Default]
+        MsgBox % var
         ; if (field == "sot" && value == "ERROR")
             ; value := 
-        GuiControl,, %value%, % A_Index
+        GuiControl,, %var%, %myValue%
         ; GuiControl, SubCommand, ControlID , Value
         
         ; MsgBox % value . " " . var . " " . index . " " . A_Index

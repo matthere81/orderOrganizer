@@ -54,9 +54,9 @@ for index, field in fields
 {
 	Gui Add, Text, x50 y%yTextField%, % field
 	yTextField += 50
-	Gui Add, Edit, yp+20 xp-2.5 v%vars%%index% ; %vars[A_Index]%
+	controlName := vars[index]
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName%
 	yEditField += 20
-	; MsgBox, % vars[index]
 
 	; Gui, Add, ControlType , Options, Text
 }
