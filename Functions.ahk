@@ -1,32 +1,15 @@
 
 readtheini:
-    ; Gui, Submit, NoHide
-    ; if (cpq) && (po)
-    ;     gosub, SaveToIniNoGui
-    ; FileSelectFile, SelectedFile,r,%myinipath%, Open a file
-    
+
     if (SelectedFile = "") {
         ; MsgBox, You clicked Cancel.
         return
     }
-    ; MsgBox % SelectedFile
-    ; SelectedFile := myinipath . "\" . SelectedFile
-    ; MsgBox % SelectedFile
 
-    ; IniRead, customer, %SelectedFile%, orderInfo, customer, "EET IT"
-    ; GuiControl,, %customer%, "EET IT"
     for index, var in vars
     {
-        ; MsgBox % SelectedFile . " " . var
-        IniRead myValue, %SelectedFile%, orderInfo, %var%, "Arrrrggg"        
-        ; IniRead, OutputVar, Filename, Section, Key [, Default]
-        MsgBox % var
-        ; if (field == "sot" && value == "ERROR")
-            ; value := 
+        IniRead myValue, %SelectedFile%, orderInfo, %var%,
         GuiControl,, %var%, %myValue%
-        ; GuiControl, SubCommand, ControlID , Value
-        
-        ; MsgBox % value . " " . var . " " . index . " " . A_Index
     }
 Return
 
@@ -54,8 +37,8 @@ return
 
 FileSelected:
     SelectedRow := LV_GetNext() ; Get the selected row number
-    LV_GetText(SelectedFile, SelectedRow, 1) ; Get the text of the selected item from the first column
-    SelectedFile := myinipath . "\" . SelectedFile ;. ".ini" ; Add the '.ini' extension to the selected file
-    Gosub readtheini
+    LV_GetText(ListView, SelectedRow, 1) ; Get the text of the selected item from the first column
+    SelectedFile := myinipath . "\" . ListView ;. ".ini" ; Add the '.ini' extension to the selected file
     Gui, %MyGui%:Destroy ; Destroy the new GUI
+    Gosub readtheini
 return

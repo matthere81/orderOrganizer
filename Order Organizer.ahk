@@ -40,7 +40,7 @@ Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y20 w300 +Left, Order Organizer ; - 
 Gui Font
 Gui Add, Edit, vSearchTerm w200 y20 gSetSearchAsDefault ; Add an Edit field with 'Search for' as placeholder text
 Gui Add, Button, Default gSearch y20, Search ; Add a button that triggers the 'Search' subroutine when clicked
-Gui Add, Button, gRestart, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
+Gui Add, Button, gRestart y20, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
 ; Gui Add, Button, x350 y20 w70 greadtheini, O&pen
