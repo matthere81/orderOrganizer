@@ -1,6 +1,7 @@
 
 ; Create the submenu
 Menu FileMenu, Add, &Open, OpenFileFromMenu
+Menu FileMenu, Add, &Save, SaveToIni
 Menu ViewMenu, Add, Show Checklists, ShowChecklists
 ; Menu, SettingsMenu, Add, Show Checklists, ShowChecklists
 

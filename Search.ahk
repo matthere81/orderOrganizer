@@ -48,3 +48,10 @@ return
 ;     Hotkey, Enter, Off ; Turn off the Enter hotkey
 ;     Gui, %MyGui%:Destroy ; Destroy the new GUI
 ; return
+
+SetTitleMatchMode 3
+#IfWinActive, Order Organizer Search Results
+; Enter::Send, {LButton 2}
+Enter::MouseClick Left,,, 2
+#IfWinActive
+SetTitleMatchMode 2

@@ -10,9 +10,17 @@ SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent star
 #include <UIA_Browser>
 
 
-; #Include %A_ScriptDir%\Hotstrings.ahk
-; #Include %A_ScriptDir%\Shortcuts.ahk
+;  Create Order Organizer Path If It Doesn't Exist
+if !FileExist("C:\Users\" . A_UserName . "\Order Organizer") {
+    FileCreateDir, A_WorkingDir . "\Order Organizer"
+    SetWorkingDir, A_WorkingDir . "\Order Organizer"
+}
 
+; Include Icon
+; FileInstall, C:\Users\A_UserName\Order Organizer\list_check_checklist_checkmark_icon_181579.ico, A_WorkingDir, 1
+I_Icon = C:\Users\%A_UserName%\Order Organizer\checkmark.ico
+IfExist, %I_Icon%
+	Menu, Tray, Icon, %I_Icon%
 
 ; -------- GLOBAL VARIABLES -------- START
 
@@ -41,14 +49,17 @@ Gui Font
 Gui Add, Edit, vSearchTerm w200 y20 gSetSearchAsDefault ; Add an Edit field with 'Search for' as placeholder text
 Gui Add, Button, Default gSearch y20, Search ; Add a button that triggers the 'Search' subroutine when clicked
 Gui Add, Button, gRestart y20, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
+Gui Add, Button, y20 gSaveToIni, &Save
+Gui Add, Button, y20, &New PO/Order
+Gui Add, Button, y20, Get Quote Info  ; Create a button
+
+
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
 ; Gui Add, Button, x350 y20 w70 greadtheini, O&pen
-; Gui Add, Button, x+25 w70 gSaveToIni, &Save
-; Gui Add, Button, x+25 w125 grestartScript, &New PO or Reload
-; Gui Add, Button, x+25 w100 gMyButton, Get Quote Info  ; Create a button
+
 ; Gui Add, Button, x+25 w100 gClearFields, &Clear Fields
-; Gui Add, Edit, x+25 y22 w175 h20, Search
+
 
 for index, field in fields
 {

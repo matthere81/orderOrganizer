@@ -13,9 +13,11 @@ readtheini:
     }
 Return
 
-; IniRead, OutputVar, Filename, Section, Key , Default
-; IniRead, OutputVarSection, Filename, Section
-; IniRead, OutputVarSectionNames, Filename
+SaveToIni:
+    ToolTip, hey-oh!
+    Sleep, 2000
+    ToolTip, 
+Return
 
 OpenFileFromMenu:
     FileSelectFile, SelectedFile,r,%myinipath%, Open a file

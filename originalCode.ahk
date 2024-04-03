@@ -7,16 +7,6 @@
 ; IfExist, %I_Icon%
 ; 	Menu, Tray, Icon, %I_Icon%
 
-; ; Set Order Organizer Path
-; if !FileExist("C:\Users\" . A_UserName . "\Order Organizer") {
-;     FileCreateDir, A_WorkingDir . "\Order Organizer"
-;     SetWorkingDir, A_WorkingDir . "\Order Organizer"
-; }
-
-; myinipath := "C:\Users\" . A_UserName . "\Order Organizer\Order Database"
-; if !FileExist(myinipath) {
-;     FileCreateDir, %myinipath%
-; }
 
 ; ; Include Icon
 ; FileInstall, C:\Users\A_UserName\OneDrive - Thermo Fisher Scientific\Desktop\Auto Hot Key Scripts\list_check_checklist_checkmark_icon_181579.ico, A_WorkingDir, 1
