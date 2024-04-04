@@ -4,7 +4,7 @@ SearchTerm := Trim(SearchTerm) ; Remove trailing whitespace from SearchTerm
 
 if (SearchTerm = "") ; If there's no matching files
 {
-    MsgBox, No matching files were found. ; Display a message box
+    MsgBox, No search term entered. ; Display a message box
     Return
 }
 
@@ -36,11 +36,10 @@ Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
         }
         Gui Show, w500 h200, Order Organizer Search Results ; Show the GUI
     }
-    
-    ; Else
-    ; {
-    ;     MsgBox, No matching files were found. ; Display a message box
-    ; }
+    else if (matchingFiles.Length() = 0) ; If there are no matching files
+    {
+        MsgBox, No matching files were found. ; Display a message box
+    }
 return
 
 ; GuiClose:
