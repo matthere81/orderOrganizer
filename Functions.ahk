@@ -23,6 +23,12 @@ Gui, Submit, NoHide
 IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 
+; ; Write the values to the INI file
+; for index, key in vars
+; {
+;     IniWrite, %values[key]%, %iniFilePath%, EditFields, %key%
+; }
+
 ; IniWrite, %sot%, %IniFilePath%, orderInfo, sot
 ; IniWrite, %customer%, %IniFilePath%, orderInfo, customer
 

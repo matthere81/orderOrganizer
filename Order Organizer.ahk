@@ -32,6 +32,13 @@ if !FileExist(myinipath) {
 fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "SO#", "Payment Terms"]
 vars := ["sot", "customer", "contact", "soldTo", "soNumber", "terms"]
 
+; Initialize the object with blank keys
+values := {}
+for index, key in vars
+{
+    values[key] := ""
+}
+
 ; GUI Spacing Text & Edit Spacing
 yTextField := 70
 yEditField := 70
