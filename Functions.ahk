@@ -30,20 +30,20 @@ IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . 
 ;     IniWrite, %values[key]%, %iniFilePath%, EditFields, %key%
 ; }
 
-; IniWrite, %sot%, %IniFilePath%, orderInfo, sot
-; IniWrite, %customer%, %IniFilePath%, orderInfo, customer
+; MsgBox % IniFilePath . "`n" . IniFilePathWithSo . "`n" . soNumber
 
-if FileExist(IniFilePath) && (soNumber)
-{
-    MsgBox, first if
-    ; gosub, WriteIniVariables
-    ; FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
-    ; IniFilePath = %IniFilePathWithSO% 
-    ; Gosub, SaveBar
-    ; gosub, CheckIfFolderExists
-    return  
-}
-else if FileExist(IniFilePathWithSo)
+; if FileExist(IniFilePath) && (soNumber)
+; {
+;     MsgBox, first if
+;     ; gosub, WriteIniVariables
+;     ; FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
+;     ; IniFilePath = %IniFilePathWithSO% 
+;     ; Gosub, SaveBar
+;     ; gosub, CheckIfFolderExists
+;     return  
+; }
+; else 
+if FileExist(IniFilePathWithSo)
 {
     MsgBox, second if
     ; IniFilePath = %IniFilePathWithSO% 
@@ -51,28 +51,28 @@ else if FileExist(IniFilePathWithSo)
     ; gosub, WriteIniVariables
     return
 }
-else if FileExist(IniFilePath) && (!soNumber)
-{
-    MsgBox, third if
-    ; gosub, WriteIniVariables
-    ; Gosub, SaveBar
-    ; gosub, CheckIfFolderExists
-    return
-}
-else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
-{
-    msgbox, fourth if
-    ; if(soNumber)
-    ; {
-    ;     IniFilePath = %IniFilePathWithSo%
-    ; } else {
-    ;     IniFilePath = %IniFilePath%
-    ; }
-    ; gosub, WriteIniVariables
-    ; Gosub, SaveBar
-    ; gosub, CheckIfFolderExists
-    return
-}
+; else if FileExist(IniFilePath) && (!soNumber)
+; {
+;     MsgBox, third if
+;     ; gosub, WriteIniVariables
+;     ; Gosub, SaveBar
+;     ; gosub, CheckIfFolderExists
+;     return
+; }
+; else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
+; {
+;     msgbox, fourth if
+;     ; if(soNumber)
+;     ; {
+;     ;     IniFilePath = %IniFilePathWithSo%
+;     ; } else {
+;     ;     IniFilePath = %IniFilePath%
+;     ; }
+;     ; gosub, WriteIniVariables
+;     ; Gosub, SaveBar
+;     ; gosub, CheckIfFolderExists
+;     return
+; }
 return
 
 OpenFileFromMenu:
