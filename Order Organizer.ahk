@@ -55,9 +55,9 @@ Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y20 w300 +Left, Order Organizer ; - 
 Gui Font
 Gui Add, Edit, vSearchTerm w200 y20 gSetSearchAsDefault ; Add an Edit field with 'Search for' as placeholder text
 Gui Add, Button, Default gSearch y20, Search ; Add a button that triggers the 'Search' subroutine when clicked
-Gui Add, Button, gRestart y20, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
+Gui Add, Button, y20 gRestart, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
 Gui Add, Button, y20 gSaveToIni, &Save
-Gui Add, Button, y20, &New PO/Order
+Gui Add, Button, y20 gClearFields, &New PO/Order
 Gui Add, Button, y20, Get Quote Info  ; Create a button
 
 
@@ -83,9 +83,9 @@ for index, field in fields
 Gui Show,w950 h700, Order Organizer ;SO# %soNumber%
 
 #Include %A_ScriptDir%\Menu.ahk
-
 Return
 
+#include %A_ScriptDir%\Hotkeys.ahk
 #Include %A_ScriptDir%\Functions.ahk
 #Include %A_ScriptDir%\Search.ahk
 

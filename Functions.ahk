@@ -11,6 +11,7 @@ readtheini:
         IniRead myValue, %SelectedFile%, orderInfo, %var%,
         GuiControl,, %var%, %myValue%
     }
+
 Return
 
 SaveToIni:
@@ -32,42 +33,46 @@ IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . 
 ; IniWrite, %sot%, %IniFilePath%, orderInfo, sot
 ; IniWrite, %customer%, %IniFilePath%, orderInfo, customer
 
-; if FileExist(IniFilePath) && (soNumber)
-; {
-;     ; gosub, WriteIniVariables
-;     ; FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
-;     ; IniFilePath = %IniFilePathWithSO% 
-;     ; Gosub, SaveBar
-;     ; gosub, CheckIfFolderExists
-;     return  
-; }
-; else if FileExist(IniFilePathWithSo)
-; {
-;     ; IniFilePath = %IniFilePathWithSO% 
-;     ; Gosub, SaveBar
-;     ; gosub, WriteIniVariables
-;     return
-; }
-; else if FileExist(IniFilePath) && (!soNumber)
-; {
-;     ; gosub, WriteIniVariables
-;     ; Gosub, SaveBar
-;     ; gosub, CheckIfFolderExists
-;     return
-; }
-; else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
-; {
-;     ; if(soNumber)
-;     ; {
-;     ;     IniFilePath = %IniFilePathWithSo%
-;     ; } else {
-;     ;     IniFilePath = %IniFilePath%
-;     ; }
-;     ; gosub, WriteIniVariables
-;     ; Gosub, SaveBar
-;     ; gosub, CheckIfFolderExists
-;     return
-; }
+if FileExist(IniFilePath) && (soNumber)
+{
+    MsgBox, first if
+    ; gosub, WriteIniVariables
+    ; FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
+    ; IniFilePath = %IniFilePathWithSO% 
+    ; Gosub, SaveBar
+    ; gosub, CheckIfFolderExists
+    return  
+}
+else if FileExist(IniFilePathWithSo)
+{
+    MsgBox, second if
+    ; IniFilePath = %IniFilePathWithSO% 
+    ; Gosub, SaveBar
+    ; gosub, WriteIniVariables
+    return
+}
+else if FileExist(IniFilePath) && (!soNumber)
+{
+    MsgBox, third if
+    ; gosub, WriteIniVariables
+    ; Gosub, SaveBar
+    ; gosub, CheckIfFolderExists
+    return
+}
+else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
+{
+    msgbox, fourth if
+    ; if(soNumber)
+    ; {
+    ;     IniFilePath = %IniFilePathWithSo%
+    ; } else {
+    ;     IniFilePath = %IniFilePath%
+    ; }
+    ; gosub, WriteIniVariables
+    ; Gosub, SaveBar
+    ; gosub, CheckIfFolderExists
+    return
+}
 return
 
 OpenFileFromMenu:
@@ -124,6 +129,21 @@ SetSearchAsDefault:
     KeyWait enter, d
     GuiControl Focus, Search ; Set the focus to the Search button
 return
+
+ClearFields:
+for index, field in vars
+{
+    GuiControl,, %field%, 
+}
+GuiControl,, SearchTerm,
+return
+
+ButtonDefault:
+    GuiControlGet,FocusControl,Focus
+    If (FocusControl!="SysListView321")
+        Return
+    Gosub FileSelected
+Return
 
 FileSelected:
     SelectedRow := LV_GetNext() ; Get the selected row number

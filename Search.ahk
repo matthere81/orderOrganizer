@@ -30,11 +30,13 @@ Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
         Gui Font, S9, Segoe UI ;Semibold
         Gui Color, 79b8d1
         Gui Add, ListView, vListView gFileSelected w475, Search Results ; Add a ListBox control
+        Gui Add, Button, Hidden Default, Default
         Loop % matchingFiles.Length() ; Loop over the 'matchingFiles' array
         {
             LV_Add("", matchingFiles[A_Index]) ; Add the file name to the ListView
         }
         Gui Show, w500 h200, Order Organizer Search Results ; Show the GUI
+
     }
     else if (matchingFiles.Length() = 0) ; If there are no matching files
     {
@@ -48,9 +50,10 @@ return
 ;     Gui, %MyGui%:Destroy ; Destroy the new GUI
 ; return
 
-SetTitleMatchMode 3
-#IfWinActive, Order Organizer Search Results
-; Enter::Send, {LButton 2}
-Enter::MouseClick Left,,, 2
-#IfWinActive
-SetTitleMatchMode 2
+; SetTitleMatchMode 3
+; #IfWinActive, Order Organizer Search Results
+; Esc::Gui %MyGui%:Destroy
+; Enter::Gosub FileSelected
+; ; #IfWinActive
+; SetTitleMatchMode 2
+
