@@ -42,6 +42,9 @@ for index, key in vars
 ; GUI Spacing Text & Edit Spacing
 yTextField := 70
 yEditField := 70
+xCoordinate := 40
+yCoordinate := 70
+initialY := yCoordinate
 
 
 ; -------- GLOBAL VARIABLES -------- END
@@ -71,19 +74,21 @@ Gui Font, S9, Segoe UI Semibold
 
 for index, field in fields
 {
-
 	if index = 7
 	{
-		Gui Add, Text, x50 y%yTextField% w400 h1 +BackgroundTrans +Border, ; Visual separator
-        yTextField += 20 ; Adjust y-coordinate for the next controls
+		Gui Add, GroupBox, x+20 y95 w1 h285 ; vertical line
+		xCoordinate += 175 ; Move to the next column
+		yCoordinate := initialY ; Reset y-coordinate for the new column
 	}
 
-	Gui Add, Text, x50 y%yTextField%, % field
-	yTextField += 50
+	Gui Add, Text, x%xCoordinate% y%yCoordinate%, % field
+	yCoordinate += 50
 	controlName := vars[index]
 	Gui Add, Edit, yp+20 xp-2.5 v%controlName%
-	yEditField += 20
+	yCoordinate += 5
 }
+
+
 
 
 Gui Show,w950 h700, Order Organizer ;SO# %soNumber%
