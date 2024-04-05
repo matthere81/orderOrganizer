@@ -29,8 +29,14 @@ if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
 
-fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "SO#", "Payment Terms", "CPQ/Quote#", "PO#"]
-vars := ["sot", "customer", "contact", "soldTo", "soNumber", "terms", "cpq", "po"]
+fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "Intercompany Entity", "SO#", "Payment Terms", "CPQ/Quote#", "System"
+	, "CRD - Cust Req Date", "PO Date", "SAP Date", "PO#", "PO Value", "Tax", "Freight Cost", "Surcharge", "Total"
+	, "Salesperson", "Sales Manager", "Sales Manager Code", "Sales Director", "Sales Director Code", "Software S/N?"
+	, "Notes", "End User", "End User / Contact Phone", "End User / Contact Email", "End Use"]
+
+vars := ["sot", "customer", "contact", "soldTo", "intercompanyEntity", "soNumber", "terms", "cpq", "system", "crd", "poDate", "sapDate", "po"
+	, "poValue", "tax", "freightCost", "surcharge", "totalCost", "salesperson", "salesManager", "managerCode", "salesDirector"
+	, "directorCode", "serialNumber", "notes", "endUser", "phone", "email", "endUse"]
 
 ; Initialize the object with blank keys
 values := {}
@@ -63,32 +69,43 @@ Gui Add, Button, y20 gRestart, Restart ; Add a button that triggers the 'Restart
 Gui Add, Button, y20 gSaveToIni, &Save
 Gui Add, Button, y20 gClearFields, &New PO/Order
 Gui Add, Button, y20, Get Quote Info  ; Create a button
-
-
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
-; Gui Add, Button, x350 y20 w70 greadtheini, O&pen
-
-; Gui Add, Button, x+25 w100 gClearFields, &Clear Fields
 
 
+; ---- Loop through the fields and create the text and edit fields ----
 for index, field in fields
 {
-	if index = 7
+	if (index = 7 or index = 13 or index = 19 or index = 25)
 	{
 		Gui Add, GroupBox, x+20 y95 w1 h285 ; vertical line
 		xCoordinate += 175 ; Move to the next column
 		yCoordinate := initialY ; Reset y-coordinate for the new column
 	}
 
-	Gui Add, Text, x%xCoordinate% y%yCoordinate%, % field
+	Gui Add, Text, x%xCoordinate% y%yCoordinate%, % field . ":"
 	yCoordinate += 50
 	controlName := vars[index]
+
+	if (field = "CRD - Cust Req Date" or field = "PO Date" or field = "SAP Date")
+	{
+		Gui Add, DateTime, yp+20 xp-2.5 w135 h20 v%controlName%,
+		yCoordinate += 5
+		Continue
+	}
+
+	if (field = "Notes")
+	{
+		Gui Add, Edit, yp+20 xp-2.5 w135 h90 v%controlName%
+		yCoordinate += 60
+		Continue
+	}
+
 	Gui Add, Edit, yp+20 xp-2.5 v%controlName%
 	yCoordinate += 5
 }
 
-
+; END ---- END - Loop through the fields and create the text and edit fields - END ---- END
 
 
 Gui Show,w950 h700, Order Organizer ;SO# %soNumber%
