@@ -8,6 +8,7 @@ SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent star
 #include <Vis2>	
 #include <UIA_Interface>	
 #include <UIA_Browser>
+; #Include ChecklistGUI.ahk
 
 
 ;  Create Order Organizer Path If It Doesn't Exist
@@ -30,13 +31,13 @@ if !FileExist(myinipath) {
 }
 
 fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "Intercompany Entity",  "Payment Terms", "SO#", "CPQ/Quote#", "System"
-	, "CRD - Cust Req Date", "PO Date", "SAP Date", "PO#", "PO Value", "Tax", "Freight Cost", "Surcharge", "Total"
-	, "Salesperson", "Sales Manager", "Sales Manager Code", "Sales Director", "Sales Director Code", "Software S/N?"
+	, "CRD - Cust Req Date", "PO Date", "SAP Date", "Software S/N?", "PO#", "PO Value", "Tax", "Freight Cost", "Surcharge", "Total"
+	, "Salesperson", "Sales Manager", "Sales Manager Code", "Sales Director", "Sales Director Code", 
 	, "Notes", "End User", "End User / Contact Phone", "End User / Contact Email", "End Use"]
 
-vars := ["sot", "customer", "contact", "soldTo", "intercompanyEntity", "terms", "soNumber", "cpq", "system", "crd", "poDate", "sapDate", "po"
-	, "poValue", "tax", "freightCost", "surcharge", "totalCost", "salesperson", "salesManager", "managerCode", "salesDirector"
-	, "directorCode", "serialNumber", "notes", "endUser", "phone", "email", "endUse"]
+vars := ["sot", "customer", "contact", "soldTo", "intercompanyEntity", "terms", "soNumber", "cpq", "system", "crd", "poDate", "sapDate", "serialNumber"
+	, "po", "poValue", "tax", "freightCost", "surcharge", "totalCost", "salesperson", "salesManager", "managerCode", "salesDirector"
+	, "directorCode", "notes", "endUser", "phone", "email", "endUse"]
 
 ; Initialize the object with blank keys
 values := {}
@@ -77,15 +78,15 @@ Gui Font, S9, Segoe UI Semibold
 
 for index, field in fields
 {
-	if (index = 8 or index = 15 or index = 22)
+	if (index = 8 or index = 14 or index = 20)
 	{
 		Gui Add, GroupBox, x+20 y95 w1 h335 ; vertical line
 		xCoordinate += 175 ; Move to the next column
 		yCoordinate := initialY ; Reset y-coordinate for the new column
 	} 
-	else if (index = 26)
+	else if (index = 27)
 	{
-		Gui Add, GroupBox, x+20 y95 w1 h200 ; vertical line
+		Gui Add, GroupBox, x718 y95 w1 h200 ; vertical line
 		xCoordinate += 175 ; Move to the next column
 		yCoordinate := initialY ; Reset y-coordinate for the new column
 	}
@@ -103,7 +104,14 @@ for index, field in fields
 
 	if (field = "Notes")
 	{
-		Gui Add, Edit, yp+20 xp-2.5 w135 h90 v%controlName%
+		Gui Add, Edit, yp+20 xp-2.5 w310 h90 v%controlName%
+		yCoordinate += 60
+		Continue
+	}
+
+	if (field = "End Use")
+	{
+		Gui Add, Edit, yp+20 xp-2.5 h90 v%controlName%
 		yCoordinate += 60
 		Continue
 	}
@@ -114,7 +122,10 @@ for index, field in fields
 
 ; END ---- END - Loop through the fields and create the text and edit fields - END ---- END
 
-
+; Gui Add, Progress, x0 y475 w950 h1 cRed ; Horizontal line
+Gui Add, Text, x0 y475, ________________________________________________________________________________________________________________________________________________________________________________________________
+; Gui, SubCommand [, Value1, Value2, Value3]
+#Include ChecklistGUI.ahk
 Gui Show,w950 h700, Order Organizer ;SO# %soNumber%
 
 #Include %A_ScriptDir%\Menu.ahk
