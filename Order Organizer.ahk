@@ -59,6 +59,7 @@ initialY := yCoordinate
 ; GUI code goes here
 
 Gui destroy
+Gui +Resize
 Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, x10 y30, _________________________________
