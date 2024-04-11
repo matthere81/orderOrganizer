@@ -2,7 +2,7 @@
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
+Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page ;|SAP Checklist - Inside The Order|SAP - Finalizing The Order
 Gui Tab, 1
 
 ; ; Define the sections and their checklists
@@ -16,11 +16,11 @@ checklists := [["Check TENA name on PO", "Quote number matches on PO && quote", 
 Loop, % sections.MaxIndex()
     {
         ; Calculate y-coordinate based on section index
-        yCoord := 600 ; Adjust multiplier as needed for spacing
-        xCoord := 10
+        yCoord := 525 ; Adjust multiplier as needed for spacing
+        xCoord := 10 + (A_Index - 1) * 260 ; Fixed x-coordinate for left alignment
 
         ; Add a group box for the section
-        Gui Add, GroupBox, y%yCoord% h175 w250, % sections[A_Index]
+        Gui Add, GroupBox, x%xCoord% y%yCoord% h175 w250, % sections[A_Index]
     
         index := A_Index
         ; Loop over each item in the checklist
@@ -43,7 +43,7 @@ Loop, % sections.MaxIndex()
             varName := StrReplace(varName, "/", "_")
     
             ; Add a checkbox for the item
-            ; Gui Add, Checkbox, x10 y%yCoord% + 10 v%varName%, %item% ;y%checkboxYCoord% v%varName%, %item% ;gsubmitChecklist
+            Gui Add, Checkbox, x10 y%yCoord% v%varName%, %item% ;y%checkboxYCoord% v%varName%, %item% ;gsubmitChecklist
 
         }
     }
