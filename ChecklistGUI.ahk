@@ -2,7 +2,7 @@
 
 ;----------- START CHECKLISTS ---------------
 
-Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page ;|SAP Checklist - Inside The Order|SAP - Finalizing The Order
+Gui Add,Tab3,, Salesforce Checklist|SAP Checklist - Main Page|SAP Checklist - Inside The Order|SAP - Finalizing The Order
 Gui Tab, 1
 
 ; ; Define the sections and their checklists
@@ -16,24 +16,23 @@ checklists := [["Check TENA name on PO", "Quote number matches on PO && quote", 
 Loop, % sections.MaxIndex()
     {
         ; Calculate y-coordinate based on section index
-        yCoord := 525 ; Adjust multiplier as needed for spacing
+        yCoord := 575 ; Adjust multiplier as needed for spacing
         xCoord := 10 + (A_Index - 1) * 300 ; Adjust multiplier as needed for spacing
 
         ; Add a group box for the section
-        Gui Add, GroupBox, x%xCoord% y%yCoord% h175 w300, % sections[A_Index]
+        Gui Add, GroupBox, x%xCoord% y%yCoord% h175 w280, % sections[A_Index]
     
+        checkboxYCoord := 595 ;+ (A_Index - 1) * 20 ; Adjust multiplier as needed for spacing
+
         index := A_Index
         ; Loop over each item in the checklist
         Loop, % checklists[A_Index].MaxIndex()
         {
-            ; Calculate y-coordinate for the checkbox based on item index
-            checkboxYCoord := 545 + (A_Index - 1) * 15 ; Adjust multiplier as needed for spacing
+            ; Calculate x-coordinate for the checkbox based on item index
             checkboxXCoord := % xCoord + 10 ;+ (A_Index - 1) ; * 15 ; Adjust multiplier as needed for spacing
             
             ; Get the checklist item
             item := checklists[index,A_Index] ;,[A_Index[A_Index]] ;,%index%]
-            ; MsgBox % index . " " . A_Index
-            ; MsgBox % item
 
             ; Create a sanitized version of the item to use as the variable name
             varName := StrReplace(item, " ", "_")
@@ -43,10 +42,41 @@ Loop, % sections.MaxIndex()
             varName := StrReplace(varName, "-", "_")
             varName := StrReplace(varName, "/", "_")
             varName := StrReplace(varName, "?", "_")
+
+            ; If the item text is longer than 45 characters, split it into two lines
+            if (StrLen(item) > 40)
+            {
+                ; Find the position of the next whitespace character after the 45th character
+                pos := InStr(item, " ", false, 41)
+                ; If a whitespace character was found, split the item text at that position
+                if (pos > 0)
+                {
+                    line1 := SubStr(item, 1, pos - 1)
+                    line2 := SubStr(item, pos + 1)
+                }
+                else
+                {
+                    ; If no whitespace character was found, split the item text at the 45th character
+                    line1 := SubStr(item, 1, 45)
+                    line2 := SubStr(item, 46)
+                }
+            
+                Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %line1%`n%line2%
+                ; Increase the y-coordinate for the next checkbox by an additional amount to account for the extra line
+                checkboxYCoord := checkboxYCoord + 30 ; Adjust as needed for spacing
+            }
+            else
+            {
+                Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %item%
+                ; Increase the y-coordinate for the next checkbox
+                checkboxYCoord := checkboxYCoord + 20 ; Adjust as needed for spacing
+            }
+
     
             ; Add a checkbox for the item
-            ; MsgBox % checkboxXCoord
-            Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %item% ;gsubmitChecklist
+            ; MsgBox % item
+            ; Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %item% ;gsubmitChecklist
+            
         }
     }
 
