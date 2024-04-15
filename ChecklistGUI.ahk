@@ -23,7 +23,7 @@ Loop, % section1.MaxIndex()
     index := A_Index
     ; Call the subroutine with the current section index, section and checklist
     ; Func("AddSection").Call(section1[A_Index], checklists1[A_Index])
-    AddSection(section1[A_Index], checklists1)
+    AddSection(section1[A_Index], checklists1[A_Index])
 }
 
 

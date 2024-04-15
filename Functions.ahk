@@ -162,7 +162,7 @@ return
 
 AddSection(section, checklist)
 {
-    MsgBox, % section . " " . checklist
+    ; MsgBox, % section . " " . checklist
     ; Calculate y-coordinate based on section index
     yCoord := 575 ; Adjust multiplier as needed for spacing
     xCoord := 10 + (A_Index - 1) * 300 ; Adjust multiplier as needed for spacing
@@ -177,23 +177,22 @@ AddSection(section, checklist)
     ; MsgBox, % "checklist[A_Index].MaxIndex(): " . checklist[A_Index].MaxIndex() 
 
     ; Loop over each item in the checklist
-    Loop, % checklist[A_Index].MaxIndex()
+    Loop, % checklist.MaxIndex()
     {
-        MsgBox, here
         ; Calculate x-coordinate for the checkbox based on item index
-        checkboxXCoord := % xCoord + 10 ;+ (A_Index - 1) ; * 15 ; Adjust multiplier as needed for spacing
+        ; checkboxXCoord := % xCoord + 10 ;+ (A_Index - 1) ; * 15 ; Adjust multiplier as needed for spacing
         
-        ; Get the checklist item
-        item := checklist[index,A_Index] ;,[A_Index[A_Index]] ;,%index%]
+        ; ; Get the checklist item
+        ; item := checklist[A_Index] ;,[A_Index[A_Index]] ;,%index%]
         ; MsgBox, % index . " " . A_Index . " " . item
-        ; Create a sanitized version of the item to use as the variable name
-        varName := StrReplace(item, " ", "_")
-        varName := StrReplace(varName, "&", "_")
-        varName := StrReplace(varName, "(", "_")
-        varName := StrReplace(varName, ")", "_")
-        varName := StrReplace(varName, "-", "_")
-        varName := StrReplace(varName, "/", "_")
-        varName := StrReplace(varName, "?", "_")
+        ; ; Create a sanitized version of the item to use as the variable name
+        ; global varName := StrReplace(item, " ", "_")
+        ; varName := StrReplace(varName, "&", "_")
+        ; varName := StrReplace(varName, "(", "_")
+        ; varName := StrReplace(varName, ")", "_")
+        ; varName := StrReplace(varName, "-", "_")
+        ; varName := StrReplace(varName, "/", "_")
+        ; varName := StrReplace(varName, "?", "_")
 
         ; ; If the item text is longer than 45 characters, split it into two lines
         ; if (StrLen(item) > 40)
@@ -219,9 +218,9 @@ AddSection(section, checklist)
         ; }
         ; else
         ; {
-            Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %item%
+            ; Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %item%
             ; Increase the y-coordinate for the next checkbox
-            checkboxYCoord := checkboxYCoord + 20 ; Adjust as needed for spacing
+            ; checkboxYCoord := checkboxYCoord + 20 ; Adjust as needed for spacing
         ; }
     }
 }
