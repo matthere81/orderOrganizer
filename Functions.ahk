@@ -166,62 +166,61 @@ AddSection(section, checklist)
     ; Calculate y-coordinate based on section index
     yCoord := 575 ; Adjust multiplier as needed for spacing
     xCoord := 10 + (A_Index - 1) * 300 ; Adjust multiplier as needed for spacing
+    checkboxYCoord := 600 ;+ (A_Index - 1) * 20 ; Adjust multiplier as needed for spacing
+    index := A_Index
 
     ; Add a group box for the section
     Gui Add, GroupBox, x%xCoord% y%yCoord% h175 w280, % section ;[A_Index]
 
-    checkboxYCoord := 595 ;+ (A_Index - 1) * 20 ; Adjust multiplier as needed for spacing
-    index := A_Index
-
     ; Print the value of checklist[A_Index].MaxIndex() for debugging
     ; MsgBox, % "checklist[A_Index].MaxIndex(): " . checklist[A_Index].MaxIndex() 
 
+   ; Create a global array to store the checkbox states
+    global checkboxStates := []
+
     ; Loop over each item in the checklist
     Loop, % checklist.MaxIndex()
-    {
-        ; Calculate x-coordinate for the checkbox based on item index
-        ; checkboxXCoord := % xCoord + 10 ;+ (A_Index - 1) ; * 15 ; Adjust multiplier as needed for spacing
+        {
+            ; Calculate x-coordinate for the checkbox based on item index
+            checkboxXCoord := % xCoord + 10 ;+ (A_Index - 1) ; * 15 ; Adjust multiplier as needed for spacing
+            
+            ; Get the checklist item
+            item := checklist[A_Index]
         
-        ; ; Get the checklist item
-        ; item := checklist[A_Index] ;,[A_Index[A_Index]] ;,%index%]
-        ; MsgBox, % index . " " . A_Index . " " . item
-        ; ; Create a sanitized version of the item to use as the variable name
-        ; global varName := StrReplace(item, " ", "_")
-        ; varName := StrReplace(varName, "&", "_")
-        ; varName := StrReplace(varName, "(", "_")
-        ; varName := StrReplace(varName, ")", "_")
-        ; varName := StrReplace(varName, "-", "_")
-        ; varName := StrReplace(varName, "/", "_")
-        ; varName := StrReplace(varName, "?", "_")
-
-        ; ; If the item text is longer than 45 characters, split it into two lines
-        ; if (StrLen(item) > 40)
-        ; {
-        ;     ; Find the position of the next whitespace character after the 45th character
-        ;     pos := InStr(item, " ", false, 41)
-        ;     ; If a whitespace character was found, split the item text at that position
-        ;     if (pos > 0)
-        ;     {
-        ;         line1 := SubStr(item, 1, pos - 1)
-        ;         line2 := SubStr(item, pos + 1)
-        ;     }
-        ;     else
-        ;     {
-        ;         ; If no whitespace character was found, split the item text at the 45th character
-        ;         line1 := SubStr(item, 1, 45)
-        ;         line2 := SubStr(item, 46)
-        ;     }
+            ; Add the checkbox state to the array
+            checkboxStates.Push(false)
         
-        ;     Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %line1%`n%line2%
-        ;     ; Increase the y-coordinate for the next checkbox by an additional amount to account for the extra line
-        ;     checkboxYCoord := checkboxYCoord + 30 ; Adjust as needed for spacing
-        ; }
-        ; else
-        ; {
-            ; Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %item%
+            ; Create a checkbox with the item text and a g-label to update the checkbox state
+            Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName% gUpdateCheckboxState, %item%
+        
             ; Increase the y-coordinate for the next checkbox
-            ; checkboxYCoord := checkboxYCoord + 20 ; Adjust as needed for spacing
-        ; }
-    }
+            checkboxYCoord := checkboxYCoord + 20 ; Adjust as needed for spacing
+        }
 }
 return
+
+; Define the g-label function to update the checkbox state
+UpdateCheckboxState:
+    ; Get the index of the checkbox that was checked or unchecked
+    ControlGet checkboxIndex, Choice, , % A_GuiControl
+
+    ; Update the checkbox state in the array
+    checkboxStates[checkboxIndex] := !checkboxStates[checkboxIndex]
+return
+
+sanitizeVarName(item) {
+    ; Create an array of characters to replace
+    charsToReplace := [" ", "&", "(", ")", "-", "/", "?"]
+
+    ; Create a sanitized version of the item to use as the variable name
+    varName := item
+
+    ; Loop over each character in the array
+    Loop, % charsToReplace.MaxIndex()
+    {
+        ; Replace the current character with an underscore
+        varName := StrReplace(varName, charsToReplace[A_Index], "_")
+    }
+
+    return varName
+}
