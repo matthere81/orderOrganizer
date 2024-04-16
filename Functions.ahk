@@ -160,39 +160,59 @@ return
 ;|                                          |
 ;|------------------------------------------|
 
+
 AddSection(section, checklist)
 {
-    ; MsgBox, % section . " " . checklist
+    ; Initialize rightmost edge of the furthest section
+    static rightmostEdge := 10
+
     ; Calculate y-coordinate based on section index
     yCoord := 575 ; Adjust multiplier as needed for spacing
-    xCoord := 10 + (A_Index - 1) * 320 ; Adjust multiplier as needed for spacing
+    xCoord := rightmostEdge ;10 + (A_Index - 1) * 270 ; Adjust multiplier as needed for spacing
     checkboxYCoord := 600 + (A_Index - 1) ;* 20 ; Adjust multiplier as needed for spacing
     index := A_Index
 
-    ; Add a group box for the section
-    Gui Add, GroupBox, x%xCoord% y%yCoord% h200 w310, % section ;[A_Index]
+    ; Calculate the width of the longest string in the checklist
+    maxWidth := 1
+    Loop, % checklist.MaxIndex()
+    {
+        item := checklist[A_Index]
+        if (StrLen(item) > maxWidth)
+            maxWidth := StrLen(item)
+            ; MsgBox % 
+    }
 
-   ; Create a global array to store the checkbox states
+    ; Convert the width from characters to pixels
+    ; This is a rough approximation, adjust the multiplier as needed
+    maxWidth := maxWidth * 8
+
+    ; Add a group box for the section with the calculated width
+    Gui Add, GroupBox, x%xCoord% y%yCoord% h200 w%maxWidth%, % section ;[A_Index]
+
+    ; Update the rightmost edge of the furthest section
+    rightmostEdge := xCoord + maxWidth + 10 ; Add some padding
+
+    ; Create a global array to store the checkbox states
     global checkboxStates := []
 
     ; Loop over each item in the checklist
     Loop, % checklist.MaxIndex()
-        {
-            ; Calculate x-coordinate for the checkbox based on item index
-            checkboxXCoord := % xCoord + 10 ;+ (A_Index - 1) ; * 15 ; Adjust multiplier as needed for spacing
-            
-            ; Get the checklist item
-            item := checklist[A_Index]
+    {
+        ; Calculate x-coordinate for the checkbox based on item index
+        checkboxXCoord := % xCoord + 10 ;+ (A_Index - 1) ; * 15 ; Adjust multiplier as needed for spacing
         
-            ; Add the checkbox state to the array
-            checkboxStates.Push(false)
-        
-            ; Create a checkbox with the item text and a g-label to update the checkbox state
-            Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName% gUpdateCheckboxState, %item%
-        
-            ; Increase the y-coordinate for the next checkbox
-            checkboxYCoord := checkboxYCoord + 25 ; Adjust as needed for spacing
-        }
+        ; Get the checklist item
+        item := checklist[A_Index]
+    
+        ; Add the checkbox state to the array
+        checkboxStates.Push(false)
+    
+        ; Create a checkbox with the item text and a g-label to update the checkbox state
+        Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName% gUpdateCheckboxState, %item%
+    
+        ; Increase the y-coordinate for the next checkbox
+        checkboxYCoord := checkboxYCoord + 25 ; Adjust as needed for spacing
+    }
 }
 return
 
