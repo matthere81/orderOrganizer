@@ -22,7 +22,6 @@ Loop, % section1.MaxIndex()
 {
     index := A_Index
     ; Call the subroutine with the current section index, section and checklist
-    ; Func("AddSection").Call(section1[A_Index], checklists1[A_Index])
     AddSection(section1[A_Index], checklists1[A_Index])
 }
 
@@ -33,72 +32,62 @@ Loop, % section1.MaxIndex()
 ;|                                          |
 ;|------------------------------------------|
 
+Gui Tab, 2
+
 section2 :=["SAP Attachments", "Main Sales Tab"]
 checklists2 := [["PO", "Quote", "Order Notice", "WIN Form", "Merge Report"], ["CRD Date", "First Date Lines Updated", "Incoterms"]]
 
-; ; Loop over each section
-; Loop, % section2.MaxIndex()
-; {
-;     ; Calculate y-coordinate based on section index
-;     yCoord := 575 ; Adjust multiplier as needed for spacing
-;     xCoord := 10 + (A_Index - 1) * 300 ; Adjust multiplier as needed for spacing
+; Loop over each section
+Loop, % section2.MaxIndex()
+{
+    index := A_Index
+    ; Call the subroutine with the current section index, section and checklist
+    AddSection(section2[A_Index], checklists2[A_Index], true)
+}
 
-;     ; Add a group box for the section
-;     Gui Add, GroupBox, x%xCoord% y%yCoord% h175 w280, % section1[A_Index]
+;|------------------------------------------|
+;|                                          |
+;| Define the section 3 and its checklists  |
+;|                                          |
+;|------------------------------------------|
 
-;     checkboxYCoord := 595 ;+ (A_Index - 1) * 20 ; Adjust multiplier as needed for spacing
+Gui Tab, 3
 
-;     index := A_Index
-;     ; Loop over each item in the checklist
-;     Loop, % checklists1[A_Index].MaxIndex()
-;     {
-;         ; Calculate x-coordinate for the checkbox based on item index
-;         checkboxXCoord := % xCoord + 10 ;+ (A_Index - 1) ; * 15 ; Adjust multiplier as needed for spacing
-        
-;         ; Get the checklist item
-;         item := checklists1[index,A_Index] ;,[A_Index[A_Index]] ;,%index%]
+section3 :=["Inside the Order", "Partners Tab", "Texts Tab"]
+checklists3 := [["110 Volts (Sales Tab)", "Shipper (Shipping Tab)", "Verify Incoterms (Billing Tab)"
+                ,"Check for Partner", "Check for Partner Function"], ["Manager Code (Sales Manager)"
+                ,"Director Code (Sales Employee 9)", "Verify Billing Address", "Verify Shipping Address"
+                ,"End User Added", "Contact Person Added"], ["Contact Person or End User Info Added"
+                ,"Serial/Dongle Number Added To Form Header?", "End User info added in the partners tab?"]]
 
-;         ; Create a sanitized version of the item to use as the variable name
-;         varName := StrReplace(item, " ", "_")
-;         varName := StrReplace(varName, "&", "_")
-;         varName := StrReplace(varName, "(", "_")
-;         varName := StrReplace(varName, ")", "_")
-;         varName := StrReplace(varName, "-", "_")
-;         varName := StrReplace(varName, "/", "_")
-;         varName := StrReplace(varName, "?", "_")
+                
+; Loop over each section
+Loop, % section3.MaxIndex()
+{
+    index := A_Index
+    ; Call the subroutine with the current section index, section and checklist
+    AddSection(section3[A_Index], checklists3[A_Index], true)
+}
 
-;         ; If the item text is longer than 45 characters, split it into two lines
-;         if (StrLen(item) > 40)
-;         {
-;             ; Find the position of the next whitespace character after the 45th character
-;             pos := InStr(item, " ", false, 41)
-;             ; If a whitespace character was found, split the item text at that position
-;             if (pos > 0)
-;             {
-;                 line1 := SubStr(item, 1, pos - 1)
-;                 line2 := SubStr(item, pos + 1)
-;             }
-;             else
-;             {
-;                 ; If no whitespace character was found, split the item text at the 45th character
-;                 line1 := SubStr(item, 1, 45)
-;                 line2 := SubStr(item, 46)
-;             }
-        
-;             Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %line1%`n%line2%
-;             ; Increase the y-coordinate for the next checkbox by an additional amount to account for the extra line
-;             checkboxYCoord := checkboxYCoord + 30 ; Adjust as needed for spacing
-;         }
-;         else
-;         {
-;             Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName%, %item%
-;             ; Increase the y-coordinate for the next checkbox
-;             checkboxYCoord := checkboxYCoord + 20 ; Adjust as needed for spacing
-;         }
-;     }
-; }
+;|------------------------------------------|
+;|                                          |
+;| Define the section 4 and its checklists  |
+;|                                          |
+;|------------------------------------------|
 
-; Gui Tab, 2
+Gui Tab, 4
+
+section4 := ["Finalizing the Order"]
+checklists4 := [["Check Net Value", "Add Shipping?", "Higher Level Linking?", "Delivery Groups?"
+                ,"Update Delivery Block", "Order Acceptance"]]
+
+; Loop over each section
+Loop, % section4.MaxIndex()
+{
+    index := A_Index
+    ; Call the subroutine with the current section index, section and checklist
+    AddSection(section4[A_Index], checklists4[A_Index], true)
+}
 
 ; Add radio buttons for the "T&&Cs?" item in the "Pre SAP" section
 ; Gui Add, Text, tcs y+10, T&&Cs?

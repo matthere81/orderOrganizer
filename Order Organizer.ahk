@@ -25,6 +25,11 @@ IfExist, %I_Icon%
 
 ; -------- GLOBAL VARIABLES -------- START
 
+global guiWidth := 925
+global guiHeight := 485
+global guiChecklistHeight := 720
+
+
 myinipath := "C:\Users\" . A_UserName . "\Order Organizer\Order Database"
 if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
@@ -127,7 +132,7 @@ for index, field in fields
 Gui Add, Text, x0 y475, ________________________________________________________________________________________________________________________________________________________________________________________________
 ; Gui, SubCommand [, Value1, Value2, Value3]
 #Include ChecklistGUI.ahk
-Gui Show,w950 h700, Order Organizer ;SO# %soNumber%
+Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
 
 #Include %A_ScriptDir%\Menu.ahk
 Return

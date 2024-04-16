@@ -81,7 +81,18 @@ OpenFileFromMenu:
 Return
 
 ShowChecklists:
-    MsgBox placeholder for checklist toggle setting
+    ; Get the current height of the GUI
+    Gui, +LastFound
+    WinGetPos, , , , currentHeight
+
+    if (currentHeight > guiHeight and currentHeight < guiChecklistHeight)
+    {
+        Gui, Show, w%guiWidth% h%guiChecklistHeight%, Order Organizer
+    }
+    else if (currentHeight > guiChecklistHeight)
+    {
+        Gui, Show, w%guiWidth% h%guiHeight%, Order Organizer
+    }
 Return
 
 Restart:
@@ -161,10 +172,14 @@ return
 ;|------------------------------------------|
 
 
-AddSection(section, checklist)
+AddSection(section, checklist, resetXCoord = false)
 {
     ; Initialize rightmost edge of the furthest section
     static rightmostEdge := 10
+
+    ; Reset the x-coordinate if requested
+    if (A_Index = 1)
+        rightmostEdge := 10
 
     ; Calculate y-coordinate based on section index
     yCoord := 575 ; Adjust multiplier as needed for spacing
@@ -173,13 +188,13 @@ AddSection(section, checklist)
     index := A_Index
 
     ; Calculate the width of the longest string in the checklist
-    maxWidth := 1
+    maxWidth := 25
     Loop, % checklist.MaxIndex()
     {
         item := checklist[A_Index]
         if (StrLen(item) > maxWidth)
             maxWidth := StrLen(item)
-            ; MsgBox % 
+            ; MsgBox % maxWidth
     }
 
     ; Convert the width from characters to pixels
@@ -187,10 +202,10 @@ AddSection(section, checklist)
     maxWidth := maxWidth * 8
 
     ; Add a group box for the section with the calculated width
-    Gui Add, GroupBox, x%xCoord% y%yCoord% h200 w%maxWidth%, % section ;[A_Index]
+    Gui Add, GroupBox, x%xCoord% y%yCoord% h175 w%maxWidth%, % section ;[A_Index]
 
     ; Update the rightmost edge of the furthest section
-    rightmostEdge := xCoord + maxWidth + 10 ; Add some padding
+    rightmostEdge := xCoord + maxWidth + 5 ; Add some padding
 
     ; Create a global array to store the checkbox states
     global checkboxStates := []
