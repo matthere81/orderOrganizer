@@ -165,15 +165,12 @@ AddSection(section, checklist)
     ; MsgBox, % section . " " . checklist
     ; Calculate y-coordinate based on section index
     yCoord := 575 ; Adjust multiplier as needed for spacing
-    xCoord := 10 + (A_Index - 1) * 300 ; Adjust multiplier as needed for spacing
-    checkboxYCoord := 600 ;+ (A_Index - 1) * 20 ; Adjust multiplier as needed for spacing
+    xCoord := 10 + (A_Index - 1) * 320 ; Adjust multiplier as needed for spacing
+    checkboxYCoord := 600 + (A_Index - 1) ;* 20 ; Adjust multiplier as needed for spacing
     index := A_Index
 
     ; Add a group box for the section
-    Gui Add, GroupBox, x%xCoord% y%yCoord% h175 w280, % section ;[A_Index]
-
-    ; Print the value of checklist[A_Index].MaxIndex() for debugging
-    ; MsgBox, % "checklist[A_Index].MaxIndex(): " . checklist[A_Index].MaxIndex() 
+    Gui Add, GroupBox, x%xCoord% y%yCoord% h200 w310, % section ;[A_Index]
 
    ; Create a global array to store the checkbox states
     global checkboxStates := []
@@ -194,7 +191,7 @@ AddSection(section, checklist)
             Gui Add, Checkbox, x%checkboxXCoord% y%checkboxYCoord% v%varName% gUpdateCheckboxState, %item%
         
             ; Increase the y-coordinate for the next checkbox
-            checkboxYCoord := checkboxYCoord + 20 ; Adjust as needed for spacing
+            checkboxYCoord := checkboxYCoord + 25 ; Adjust as needed for spacing
         }
 }
 return
