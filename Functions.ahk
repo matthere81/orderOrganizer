@@ -27,9 +27,33 @@ return
 
 ; The 'Autosave' subroutine
 Autosave:
-    ; IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
+    ; Create an InputHook object to monitor for the keys "a" and "b"
+    ; Input := InputHook("a", "b")
+
+    ; Start monitoring for input
+    Input.Start()
+
+    ; Wait for the input to be terminated
+    EndReason := Input.Wait()
+
+    ; Display the reason why the input was terminated
+    MsgBox % "The input was terminated because: " . EndReason
+
+    Return
+    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
     IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 
+    if FileExist(IniFilePath) or FileExist(IniFilePathWithSo)
+    {
+        MsgBox, 4,, A file with this quote and PO# already exists. Would you like to overwrite it?
+        IfMsgBox, No
+            return
+    }
+    Else
+    {
+        IniFilePath := myinipath . "\Temp.ini"
+    }
+    Return
     ; Determine the file path based on whether 'cpq' and 'po' are entered
     if (cpq and po)
     {
@@ -58,22 +82,6 @@ Autosave:
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %field%
         ; IniWrite, Value, Filename, Section, Key
     }
-
-
-    ; if FileExist(IniFilePath) && (soNumber)
-    ; IniWrite, %cpq%, %IniFilePath%, orderInfo, cpq
-    ; if !FileExist(IniFilePath) ;&& (soNumber)
-    ;     if (!cpq) || (!po)
-    ;     {
-    ;         MsgBox, Please enter a quote and PO#.
-    ;         return
-    ;     }
-    ;     else
-    ;     {
-    ;         ; IniWrite, %controlName%, %IniFilePathWithSo%, orderInfo, controlName
-    ;         IniWrite % field, %IniFilePath%, GuiState, % field
-    ;         ; IniWrite, Value, Filename, Section, Key
-    ;     }
 Return
 
 OpenFileFromMenu:
