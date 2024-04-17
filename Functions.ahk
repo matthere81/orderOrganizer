@@ -8,6 +8,8 @@ readtheini:
     for index, var in vars
     {
         IniRead myValue, %SelectedFile%, orderInfo, %var%,
+        if (myValue = "ERROR")
+            myValue := ""
         GuiControl,, %var%, %myValue%
     }
 
@@ -31,6 +33,7 @@ Autosave:
     ; Determine the file path based on whether 'cpq' and 'po' are entered
     if (cpq and po)
     {
+        ; MsgBox In cpq and PO true
         IniFilePath := IniFilePathWithSo
         ; If the temporary file exists, delete it
         if FileExist(myinipath . "\Temp.ini")
@@ -38,15 +41,22 @@ Autosave:
     }
     else
     {
+        ; MsgBox In else
         IniFilePath := myinipath . "\Temp.ini"
     }
 
     ; Save the current state of the GUI to an ini file
     Gui Submit, NoHide
     
-    for index, field in fields
+    for index, var in vars
     {
-        IniWrite, % field, %IniFilePath%, GuiState, % field
+        ; MsgBox, % IniFilePath
+        GuiControlGet, fieldValue,, %var%
+        ; MsgBox, 4,, % fields[index] . " " . fieldValue
+        ; ifMsgBox, No
+        ;     break
+        IniWrite %fieldValue%, %IniFilePath%, orderInfo, %field%
+        ; IniWrite, Value, Filename, Section, Key
     }
 
 

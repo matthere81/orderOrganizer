@@ -26,7 +26,7 @@ Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
     }
     else if (matchingFiles.Length() > 1) ; If there's more than one matching file
     {
-        Gui New, +HwndMyGui ; Create a new GUI and store its handle in the variable 'MyGui'
+        Gui New, +AlwaysOnTop +HwndMyGui ; Create a new GUI and store its handle in the variable 'MyGui'
         Gui Font, S9, Segoe UI ;Semibold
         Gui Color, 79b8d1
         Gui Add, ListView, vListView gFileSelected w475, Search Results ; Add a ListBox control
@@ -36,6 +36,7 @@ Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
             LV_Add("", matchingFiles[A_Index]) ; Add the file name to the ListView
         }
         Gui Show, w500 h200, Order Organizer Search Results ; Show the GUI
+        WinActivate Order Organizer Search Results
 
     }
     else if (matchingFiles.Length() = 0) ; If there are no matching files

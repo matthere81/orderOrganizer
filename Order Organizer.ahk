@@ -97,7 +97,7 @@ for index, field in fields
 		xCoordinate += 175 ; Move to the next column
 		yCoordinate := initialY ; Reset y-coordinate for the new column
 	} 
-	else if (index = 27)
+	else if (index = 26)
 	{
 		Gui Add, GroupBox, x718 y95 w1 h200 ; vertical line
 		xCoordinate += 175 ; Move to the next column
