@@ -1,6 +1,5 @@
 
 readtheini:
-
     if (SelectedFile = "") {
         ; MsgBox, You clicked Cancel.
         return
@@ -15,65 +14,57 @@ readtheini:
 Return
 
 SaveToIni:
-Gui, Submit, NoHide
+; Gui Submit, NoHide
 ; if (!cpq) || (!po)
 ; {
 ;     MsgBox, Please enter a quote and PO#.
 ;     return
 ; }
-IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
-IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 
-; ; Write the values to the INI file
-; for index, key in vars
-; {
-;     IniWrite, %values[key]%, %iniFilePath%, EditFields, %key%
-; }
-
-; MsgBox % IniFilePath . "`n" . IniFilePathWithSo . "`n" . soNumber
-
-; if FileExist(IniFilePath) && (soNumber)
-; {
-;     MsgBox, first if
-;     ; gosub, WriteIniVariables
-;     ; FileMove, %IniFilePath%, %IniFilePathWithSo% , 1
-;     ; IniFilePath = %IniFilePathWithSO% 
-;     ; Gosub, SaveBar
-;     ; gosub, CheckIfFolderExists
-;     return  
-; }
-; else 
-if FileExist(IniFilePathWithSo)
-{
-    MsgBox, second if
-    ; IniFilePath = %IniFilePathWithSO% 
-    ; Gosub, SaveBar
-    ; gosub, WriteIniVariables
-    return
-}
-; else if FileExist(IniFilePath) && (!soNumber)
-; {
-;     MsgBox, third if
-;     ; gosub, WriteIniVariables
-;     ; Gosub, SaveBar
-;     ; gosub, CheckIfFolderExists
-;     return
-; }
-; else if !FileExist(IniFilePath) && !FileExist(IniFilePathWithSo)
-; {
-;     msgbox, fourth if
-;     ; if(soNumber)
-;     ; {
-;     ;     IniFilePath = %IniFilePathWithSo%
-;     ; } else {
-;     ;     IniFilePath = %IniFilePath%
-;     ; }
-;     ; gosub, WriteIniVariables
-;     ; Gosub, SaveBar
-;     ; gosub, CheckIfFolderExists
-;     return
-; }
 return
+
+; The 'Autosave' subroutine
+Autosave:
+    ; IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
+    IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
+
+    ; Determine the file path based on whether 'cpq' and 'po' are entered
+    if (cpq and po)
+    {
+        IniFilePath := IniFilePathWithSo
+        ; If the temporary file exists, delete it
+        if FileExist(myinipath . "\Temp.ini")
+            FileDelete, %myinipath%\Temp.ini
+    }
+    else
+    {
+        IniFilePath := myinipath . "\Temp.ini"
+    }
+
+    ; Save the current state of the GUI to an ini file
+    Gui Submit, NoHide
+    
+    for index, field in fields
+    {
+        IniWrite, % field, %IniFilePath%, GuiState, % field
+    }
+
+
+    ; if FileExist(IniFilePath) && (soNumber)
+    ; IniWrite, %cpq%, %IniFilePath%, orderInfo, cpq
+    ; if !FileExist(IniFilePath) ;&& (soNumber)
+    ;     if (!cpq) || (!po)
+    ;     {
+    ;         MsgBox, Please enter a quote and PO#.
+    ;         return
+    ;     }
+    ;     else
+    ;     {
+    ;         ; IniWrite, %controlName%, %IniFilePathWithSo%, orderInfo, controlName
+    ;         IniWrite % field, %IniFilePath%, GuiState, % field
+    ;         ; IniWrite, Value, Filename, Section, Key
+    ;     }
+Return
 
 OpenFileFromMenu:
     FileSelectFile, SelectedFile,r,%myinipath%, Open a file
@@ -142,11 +133,12 @@ SetSearchAsDefault:
 return
 
 ClearFields:
-for index, field in vars
-{
-    GuiControl,, %field%, 
-}
-GuiControl,, SearchTerm,
+    for index, field in vars
+    {
+        GuiControl,, %field%, 
+    }
+    GuiControl,, SearchTerm,
+    GuiControl,, % endUse
 return
 
 ButtonDefault:

@@ -35,14 +35,21 @@ if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
 
-fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "Intercompany Entity",  "Payment Terms", "SO#", "CPQ/Quote#", "System"
+fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "Intercompany Entity", "Payment Terms", "SO#", "CPQ/Quote#", "System"
 	, "CRD - Cust Req Date", "PO Date", "SAP Date", "Software S/N?", "PO#", "PO Value", "Tax", "Freight Cost", "Surcharge", "Total"
-	, "Salesperson", "Sales Manager", "Sales Manager Code", "Sales Director", "Sales Director Code", 
+	, "Salesperson", "Sales Manager", "Sales Manager Code", "Sales Director", "Sales Director Code"
 	, "Notes", "End User", "End User / Contact Phone", "End User / Contact Email", "End Use"]
 
 vars := ["sot", "customer", "contact", "soldTo", "intercompanyEntity", "terms", "soNumber", "cpq", "system", "crd", "poDate", "sapDate", "serialNumber"
 	, "po", "poValue", "tax", "freightCost", "surcharge", "totalCost", "salesperson", "salesManager", "managerCode", "salesDirector"
 	, "directorCode", "notes", "endUser", "phone", "email", "endUse"]
+
+; fieldsInfo := ""
+; for index, field in fields
+; {
+; 	fieldsInfo .= "Index: " . index . ", Field: " . field . "`n"
+; }
+; MsgBox, % fieldsInfo
 
 ; Initialize the object with blank keys
 values := {}
@@ -122,7 +129,7 @@ for index, field in fields
 		Continue
 	}
 
-	Gui Add, Edit, yp+20 xp-2.5 v%controlName%
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gAutosave
 	yCoordinate += 5
 }
 
