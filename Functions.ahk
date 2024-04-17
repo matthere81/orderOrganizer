@@ -87,11 +87,11 @@ ShowChecklists:
 
     if (currentHeight > guiHeight and currentHeight < guiChecklistHeight)
     {
-        Gui, Show, w%guiWidth% h%guiChecklistHeight%, Order Organizer
+        Gui Show, y150 w%guiWidth% h%guiChecklistHeight%, Order Organizer
     }
     else if (currentHeight > guiChecklistHeight)
     {
-        Gui, Show, w%guiWidth% h%guiHeight%, Order Organizer
+        Gui Show, y300 w%guiWidth% h%guiHeight%, Order Organizer
     }
 Return
 
