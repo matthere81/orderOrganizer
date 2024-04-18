@@ -129,7 +129,7 @@ for index, field in fields
 		Continue
 	}
 
-	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gAutosave
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gEditChanged
 	yCoordinate += 5
 }
 

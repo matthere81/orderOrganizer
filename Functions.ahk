@@ -25,21 +25,52 @@ SaveToIni:
 
 return
 
+; This subroutine is called when the user inputs text in the Edit field
+EditChanged:
+    ; The user is currently inputting text
+    allInput := ""
+    ; Save the current content of the Edit field to a temporary variable
+    for index, var in vars
+    {
+        ; MsgBox, % IniFilePath
+        GuiControlGet fieldValue,, %var%
+        ; If the content has changed, display a message box
+        if (fieldValue != oldValues[var])
+        {
+            ; MsgBox, A new field has been entered: %fieldValue%
+            ; Update the old value
+            oldValues[var] := fieldValue
+        }
+        ; Append the content of the control to the string
+        allInput .= fieldValue . "`n"
+        
+    }
+    MsgBox % allInput
+Return
+
+; This subroutine is called when there has been no input for 3 seconds
+; NoInput:
+;     MsgBox, There has been no input for 3 seconds.
+;     ; Start a timer that calls the 'CheckInput' subroutine every second (1000 milliseconds)
+;     SetTimer, CheckInput, 1000
+; Return
+
+; This subroutine is called every second to check if the user has started inputting text again
+; CheckInput:
+;     ; Get the current content of the Edit field
+;     GuiControlGet, MyEdit
+;     ; If the content has changed, the user has started inputting text again
+;     if (MyEdit != oldContent)
+;     {
+;         MsgBox, The user has started inputting text again.
+;         ; Stop the timer
+;         SetTimer, CheckInput, Off
+;     }
+; Return
+
 ; The 'Autosave' subroutine
 Autosave:
-    ; Create an InputHook object to monitor for the keys "a" and "b"
-    ; Input := InputHook("a", "b")
 
-    ; Start monitoring for input
-    Input.Start()
-
-    ; Wait for the input to be terminated
-    EndReason := Input.Wait()
-
-    ; Display the reason why the input was terminated
-    MsgBox % "The input was terminated because: " . EndReason
-
-    Return
     IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
     IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 
