@@ -26,7 +26,7 @@ IfExist, %I_Icon%
 ; -------- GLOBAL VARIABLES -------- START
 
 global guiWidth := 925
-global guiHeight := 485
+global guiHeight := 515
 global guiChecklistHeight := 720
 
 
@@ -71,7 +71,7 @@ initialY := yCoordinate
 ; GUI code goes here
 
 Gui destroy
-Gui +Resize
+Gui +Resize +MinSize%guiWidth%x%guiHeight% +MaxSize%guiWidth%x%guiChecklistHeight% +HwndhGui
 Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
 Gui Add, Text, x10 y30, _________________________________
@@ -85,7 +85,7 @@ Gui Add, Button, y20 gClearFields, &New PO/Order
 Gui Add, Button, y20, Get Quote Info  ; Create a button
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
-
+Gui, Add, StatusBar,, This is a status bar
 
 ; ---- Loop through the fields and create the text and edit fields ----
 
