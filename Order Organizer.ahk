@@ -26,8 +26,8 @@ IfExist, %I_Icon%
 ; -------- GLOBAL VARIABLES -------- START
 
 global guiWidth := 925
-global guiHeight := 515
-global guiChecklistHeight := 720
+global guiHeight := 510
+global guiChecklistHeight := 765
 
 
 myinipath := "C:\Users\" . A_UserName . "\Order Organizer\Order Database"
