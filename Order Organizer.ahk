@@ -8,7 +8,6 @@ SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent star
 #include <Vis2>	
 #include <UIA_Interface>	
 #include <UIA_Browser>
-; #Include ChecklistGUI.ahk
 
 
 ;  Create Order Organizer Path If It Doesn't Exist
@@ -99,7 +98,7 @@ for index, field in fields
 	} 
 	else if (index = 26)
 	{
-		Gui Add, GroupBox, x718 y95 w1 h200 ; vertical line
+		Gui Add, GroupBox, x718 y95 w1 h225 ; vertical line
 		xCoordinate += 175 ; Move to the next column
 		yCoordinate := initialY ; Reset y-coordinate for the new column
 	}
@@ -129,8 +128,9 @@ for index, field in fields
 		Continue
 	}
 
-	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gEditChanged
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gFieldFocus ; gAutoSave ;gEditChanged
 	yCoordinate += 5
+
 }
 
 ; END ---- END - Loop through the fields and create the text and edit fields - END ---- END
@@ -140,6 +140,8 @@ Gui Add, Text, x0 y475, ________________________________________________________
 ; Gui, SubCommand [, Value1, Value2, Value3]
 #Include ChecklistGUI.ahk
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
+
+OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
 
 #Include %A_ScriptDir%\Menu.ahk
 Return

@@ -7,6 +7,8 @@ SetTitleMatchMode 3
 Esc::Gui %MyGui%:Destroy
 #IfWinActive
 SetTitleMatchMode 2
+Return
+
 
 ; ---- END HOTKEY & HOT STRING LIST ----
 

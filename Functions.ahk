@@ -25,6 +25,38 @@ SaveToIni:
 
 return
 
+; This subroutine is called every second to check if the focus of the control has changed
+; SetTimer, CheckFocus, 1000
+; CheckFocus:
+;     ; Get the name of the control that currently has focus
+;     GuiControlGet, focusedControl, Focus
+;     ; If the name is different from the name of the control that you're interested in, the focus has changed
+;     if (focusedControl != controlName)
+;     {
+;         MsgBox, The focus of %controlName% has changed.
+;         ; Update the name of the control that you're interested in
+;         controlName := focusedControl
+;     }
+; Return
+
+; This subroutine is called when an Edit field gains focus
+FieldFocus:
+    ; Get the name of the control that gained focus
+    GuiControlGet, focusedControl, Focus
+    MsgBox, The focus has changed to %focusedControl%.
+Return
+
+WM_LBUTTONDOWN(wParam, lParam)
+{
+    X := lParam & 0xFFFF
+    Y := lParam >> 16
+    if A_GuiControl
+        Ctrl := "`n(in control " . A_GuiControl . ")"
+    ToolTip You left-clicked in Gui window #%A_Gui% at client coordinates %X%x%Y%.%Ctrl%
+    ; Sleep 2000
+    ; ToolTip
+}
+
 ; This subroutine is called when the user inputs text in the Edit field
 EditChanged:
     ; The user is currently inputting text
@@ -48,31 +80,12 @@ EditChanged:
     MsgBox % allInput
 Return
 
-; This subroutine is called when there has been no input for 3 seconds
-; NoInput:
-;     MsgBox, There has been no input for 3 seconds.
-;     ; Start a timer that calls the 'CheckInput' subroutine every second (1000 milliseconds)
-;     SetTimer, CheckInput, 1000
-; Return
-
-; This subroutine is called every second to check if the user has started inputting text again
-; CheckInput:
-;     ; Get the current content of the Edit field
-;     GuiControlGet, MyEdit
-;     ; If the content has changed, the user has started inputting text again
-;     if (MyEdit != oldContent)
-;     {
-;         MsgBox, The user has started inputting text again.
-;         ; Stop the timer
-;         SetTimer, CheckInput, Off
-;     }
-; Return
-
-; The 'Autosave' subroutine
 Autosave:
 
     IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
     IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
+
+    Gosub EditChanged
 
     if FileExist(IniFilePath) or FileExist(IniFilePathWithSo)
     {
