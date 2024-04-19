@@ -84,7 +84,7 @@ Gui Add, Button, y20 gClearFields, &New PO/Order
 Gui Add, Button, y20, Get Quote Info  ; Create a button
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
-Gui, Add, StatusBar,, This is a status bar
+Gui Add, StatusBar, vMyStatusBar -Theme
 
 ; ---- Loop through the fields and create the text and edit fields ----
 
@@ -127,8 +127,8 @@ for index, field in fields
 		yCoordinate += 60
 		Continue
 	}
-
-	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gFieldFocus ; gAutoSave ;gEditChanged
+	
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gEditChanged ;gAutoSave  ;gFieldFocus ;  ;
 	yCoordinate += 5
 
 }
@@ -141,7 +141,7 @@ Gui Add, Text, x0 y475, ________________________________________________________
 #Include ChecklistGUI.ahk
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
 
-OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
+; OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
 
 #Include %A_ScriptDir%\Menu.ahk
 Return

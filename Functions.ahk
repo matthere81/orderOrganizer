@@ -25,19 +25,39 @@ SaveToIni:
 
 return
 
-; This subroutine is called every second to check if the focus of the control has changed
-; SetTimer, CheckFocus, 1000
-; CheckFocus:
-;     ; Get the name of the control that currently has focus
-;     GuiControlGet, focusedControl, Focus
-;     ; If the name is different from the name of the control that you're interested in, the focus has changed
-;     if (focusedControl != controlName)
-;     {
-;         MsgBox, The focus of %controlName% has changed.
-;         ; Update the name of the control that you're interested in
-;         controlName := focusedControl
-;     }
-; Return
+EditChanged:
+
+    TempIniPath := myinipath . "\Temp.ini"
+    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
+    IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
+
+    ; If the temporary file exists, delete it
+    if FileExist(myinipath . "\Temp.ini")
+    {
+        FileDelete, %myinipath%\Temp.ini
+    }   
+    Else
+    {
+        IniFilePath := myinipath . "\Temp.ini"
+    } 
+
+    ; Get the values of the CPQ and PO fields
+    GuiControlGet, CPQ, , cpq
+    GuiControlGet, PO, , po
+
+    ; Check if both fields are not empty
+    if (cpq != "" and po != "")
+    {
+        ; Start or reset a timer that calls the Autosave function after a 2-second delay
+        SetTimer, Autosave, -2000
+    }
+    else
+    {
+        ; Stop the timer
+        SetTimer, Autosave, Off
+    }
+
+Return
 
 ; This subroutine is called when an Edit field gains focus
 FieldFocus:
@@ -48,84 +68,93 @@ Return
 
 WM_LBUTTONDOWN(wParam, lParam)
 {
-    X := lParam & 0xFFFF
-    Y := lParam >> 16
+    ; X := lParam & 0xFFFF
+    ; Y := lParam >> 16
     if A_GuiControl
         Ctrl := "`n(in control " . A_GuiControl . ")"
-    ToolTip You left-clicked in Gui window #%A_Gui% at client coordinates %X%x%Y%.%Ctrl%
+    ToolTip You left-clicked in Gui window %A_Gui% %Ctrl%
     ; Sleep 2000
     ; ToolTip
 }
 
 ; This subroutine is called when the user inputs text in the Edit field
-EditChanged:
-    ; The user is currently inputting text
-    allInput := ""
-    ; Save the current content of the Edit field to a temporary variable
-    for index, var in vars
-    {
-        ; MsgBox, % IniFilePath
-        GuiControlGet fieldValue,, %var%
-        ; If the content has changed, display a message box
-        if (fieldValue != oldValues[var])
-        {
-            ; MsgBox, A new field has been entered: %fieldValue%
-            ; Update the old value
-            oldValues[var] := fieldValue
-        }
-        ; Append the content of the control to the string
-        allInput .= fieldValue . "`n"
+; EditChanged:
+;     ; The user is currently inputting text
+;     allInput := ""
+;     ; Save the current content of the Edit field to a temporary variable
+;     for index, var in vars
+;     {
+;         ; MsgBox, % IniFilePath
+;         GuiControlGet fieldValue,, %var%
+;         ; If the content has changed, display a message box
+;         if (fieldValue != oldValues[var])
+;         {
+;             ; MsgBox, A new field has been entered: %fieldValue%
+;             ; Update the old value
+;             oldValues[var] := fieldValue
+;         }
+;         ; Append the content of the control to the string
+;         allInput .= fieldValue . "`n"
         
-    }
-    MsgBox % allInput
-Return
+;     }
+;     MsgBox % allInput
+; Return
 
-Autosave:
+Autosave:  
 
-    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
-    IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
-
-    Gosub EditChanged
-
-    if FileExist(IniFilePath) or FileExist(IniFilePathWithSo)
-    {
-        MsgBox, 4,, A file with this quote and PO# already exists. Would you like to overwrite it?
-        IfMsgBox, No
-            return
-    }
-    Else
-    {
-        IniFilePath := myinipath . "\Temp.ini"
-    }
-    Return
-    ; Determine the file path based on whether 'cpq' and 'po' are entered
-    if (cpq and po)
-    {
-        ; MsgBox In cpq and PO true
-        IniFilePath := IniFilePathWithSo
-        ; If the temporary file exists, delete it
-        if FileExist(myinipath . "\Temp.ini")
-            FileDelete, %myinipath%\Temp.ini
-    }
-    else
-    {
-        ; MsgBox In else
-        IniFilePath := myinipath . "\Temp.ini"
-    }
-
-    ; Save the current state of the GUI to an ini file
-    Gui Submit, NoHide
+    ; GuiControl, SubCommand, ControlID [, Value]
+    ; Show a message in the status bar
+    SB_SetText("Autosaving...",,0)
+    ; MsgBox in autosave
     
-    for index, var in vars
-    {
-        ; MsgBox, % IniFilePath
-        GuiControlGet, fieldValue,, %var%
-        ; MsgBox, 4,, % fields[index] . " " . fieldValue
-        ; ifMsgBox, No
-        ;     break
-        IniWrite %fieldValue%, %IniFilePath%, orderInfo, %field%
-        ; IniWrite, Value, Filename, Section, Key
-    }
+    ; IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
+    ; IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
+
+    ; Gosub EditChanged
+
+    ; if FileExist(IniFilePath) ;or FileExist(IniFilePathWithSo)
+    ; {
+    ;     MsgBox, 4,, A file with this quote and PO# already exists. Would you like to overwrite it?
+    ;     IfMsgBox, No
+    ;         return
+    ; }
+    ; ; Else
+    ; ; {
+    ; ;     IniFilePath := myinipath . "\Temp.ini"
+    ; ; }
+    ; ; Return
+    ; ; Determine the file path based on whether 'cpq' and 'po' are entered
+    ; if (cpq and po)
+    ; {
+    ;     ; MsgBox In cpq and PO true
+    ;     IniFilePath := IniFilePathWithSo
+    ;     ; If the temporary file exists, delete it
+    ;     if FileExist(myinipath . "\Temp.ini")
+    ;         FileDelete, %myinipath%\Temp.ini
+    ; }
+    ; else
+    ; {
+    ;     MsgBox In else
+    ;     IniFilePath := myinipath . "\Temp.ini"
+    ; }
+
+    ; Gosub EditChanged
+
+    ; ; Save the current state of the GUI to an ini file
+    ; Gui Submit, NoHide
+    
+    ; for index, var in vars
+    ; {
+    ;     ; MsgBox, % IniFilePath
+    ;     GuiControlGet, fieldValue,, %var%
+    ;     ; MsgBox, 4,, % fields[index] . " " . fieldValue
+    ;     ; ifMsgBox, No
+    ;     ;     break
+    ;     IniWrite %fieldValue%, %IniFilePath%, orderInfo, %field%
+    ;     ; IniWrite, Value, Filename, Section, Key
+    ; }
+    Sleep 500
+    SB_SetText("",,0) ; , 1)
 Return
 
 OpenFileFromMenu:
