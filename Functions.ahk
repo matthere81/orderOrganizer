@@ -26,21 +26,6 @@ SaveToIni:
 return
 
 EditChanged:
-
-    TempIniPath := myinipath . "\Temp.ini"
-    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
-    IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
-
-    ; If the temporary file exists, delete it
-    if FileExist(myinipath . "\Temp.ini")
-    {
-        FileDelete, %myinipath%\Temp.ini
-    }   
-    Else
-    {
-        IniFilePath := myinipath . "\Temp.ini"
-    } 
-
     ; Get the values of the CPQ and PO fields
     GuiControlGet, CPQ, , cpq
     GuiControlGet, PO, , po
@@ -49,7 +34,7 @@ EditChanged:
     if (cpq != "" and po != "")
     {
         ; Start or reset a timer that calls the Autosave function after a 2-second delay
-        SetTimer, Autosave, -2000
+        SetTimer, Autosave, -3000
     }
     else
     {
@@ -79,9 +64,10 @@ WM_LBUTTONDOWN(wParam, lParam)
 
 ; This subroutine is called when the user inputs text in the Edit field
 ; EditChanged:
+;     IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
 ;     ; The user is currently inputting text
-;     allInput := ""
-;     ; Save the current content of the Edit field to a temporary variable
+;     ; allInput := ""
+;     ;Save the current content of the Edit field to a temporary variable
 ;     for index, var in vars
 ;     {
 ;         ; MsgBox, % IniFilePath
@@ -94,10 +80,11 @@ WM_LBUTTONDOWN(wParam, lParam)
 ;             oldValues[var] := fieldValue
 ;         }
 ;         ; Append the content of the control to the string
-;         allInput .= fieldValue . "`n"
+;         ; allInput .= fieldValue . "`n"
+;         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %field%
         
 ;     }
-;     MsgBox % allInput
+;     ; MsgBox % allInput
 ; Return
 
 Autosave:  
@@ -107,8 +94,32 @@ Autosave:
     SB_SetText("Autosaving...",,0)
     ; MsgBox in autosave
     
-    ; IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
+    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
     ; IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
+
+    ; fileNames := ""
+    ; today := A_Now
+    ; FormatTime, today, %today%, yyyyMMdd
+
+    ; Loop, %myIniPath%\*.*
+    ; {
+    ;     FileGetTime, creationTime, %A_LoopFileLongPath%, C
+    ;     FormatTime, creationTime, %creationTime%, yyyyMMdd
+
+    ;     If (creationTime = today)
+    ;     {
+    ;         fileNames .= A_LoopFileName . "`n"
+    ;     }
+    ; }
+
+    ; MsgBox, % fileNames
+
+    if FileExist(IniFilePath)
+    {
+        MsgBox, 4,, A file with this quote and PO# already exists. Would you like to overwrite it?
+        IfMsgBox, No
+            return
+    }
 
     ; Gosub EditChanged
 
@@ -138,21 +149,22 @@ Autosave:
     ;     IniFilePath := myinipath . "\Temp.ini"
     ; }
 
-    ; Gosub EditChanged
-
-    ; ; Save the current state of the GUI to an ini file
-    ; Gui Submit, NoHide
     
-    ; for index, var in vars
-    ; {
-    ;     ; MsgBox, % IniFilePath
-    ;     GuiControlGet, fieldValue,, %var%
-    ;     ; MsgBox, 4,, % fields[index] . " " . fieldValue
-    ;     ; ifMsgBox, No
-    ;     ;     break
-    ;     IniWrite %fieldValue%, %IniFilePath%, orderInfo, %field%
-    ;     ; IniWrite, Value, Filename, Section, Key
-    ; }
+
+    ; Save the current state of the GUI to an ini file
+    Gui Submit, NoHide
+  
+    ; fileNames := []
+    ; myFile := "PO 456 CPQ-123.ini"
+    ; msgbox % IniFilePath
+
+    for index, var in vars
+    {
+        GuiControlGet, fieldValue,, %var%
+        IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
+    }
+
+    ; MsgBox % allInput
     Sleep 500
     SB_SetText("",,0) ; , 1)
 Return

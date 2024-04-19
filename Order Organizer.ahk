@@ -128,7 +128,7 @@ for index, field in fields
 		Continue
 	}
 	
-	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gEditChanged ;gAutoSave  ;gFieldFocus ;  ;
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gEditChanged ;gAutoSave gFieldFocus
 	yCoordinate += 5
 
 }
