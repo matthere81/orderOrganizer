@@ -88,75 +88,22 @@ WM_LBUTTONDOWN(wParam, lParam)
 ; Return
 
 Autosave:  
-
-    ; GuiControl, SubCommand, ControlID [, Value]
     ; Show a message in the status bar
     SB_SetText("Autosaving...",,0)
-    ; MsgBox in autosave
     
     IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
     ; IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 
-    ; fileNames := ""
-    ; today := A_Now
-    ; FormatTime, today, %today%, yyyyMMdd
-
-    ; Loop, %myIniPath%\*.*
-    ; {
-    ;     FileGetTime, creationTime, %A_LoopFileLongPath%, C
-    ;     FormatTime, creationTime, %creationTime%, yyyyMMdd
-
-    ;     If (creationTime = today)
-    ;     {
-    ;         fileNames .= A_LoopFileName . "`n"
-    ;     }
-    ; }
-
-    ; MsgBox, % fileNames
-
-    if FileExist(IniFilePath)
-    {
-        MsgBox, 4,, A file with this quote and PO# already exists. Would you like to overwrite it?
-        IfMsgBox, No
-            return
-    }
-
-    ; Gosub EditChanged
-
-    ; if FileExist(IniFilePath) ;or FileExist(IniFilePathWithSo)
+    ; Check if the file already exists
+    ; if FileExist(IniFilePath)
     ; {
     ;     MsgBox, 4,, A file with this quote and PO# already exists. Would you like to overwrite it?
     ;     IfMsgBox, No
     ;         return
     ; }
-    ; ; Else
-    ; ; {
-    ; ;     IniFilePath := myinipath . "\Temp.ini"
-    ; ; }
-    ; ; Return
-    ; ; Determine the file path based on whether 'cpq' and 'po' are entered
-    ; if (cpq and po)
-    ; {
-    ;     ; MsgBox In cpq and PO true
-    ;     IniFilePath := IniFilePathWithSo
-    ;     ; If the temporary file exists, delete it
-    ;     if FileExist(myinipath . "\Temp.ini")
-    ;         FileDelete, %myinipath%\Temp.ini
-    ; }
-    ; else
-    ; {
-    ;     MsgBox In else
-    ;     IniFilePath := myinipath . "\Temp.ini"
-    ; }
-
     
-
     ; Save the current state of the GUI to an ini file
     Gui Submit, NoHide
-  
-    ; fileNames := []
-    ; myFile := "PO 456 CPQ-123.ini"
-    ; msgbox % IniFilePath
 
     for index, var in vars
     {
@@ -164,7 +111,33 @@ Autosave:
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
 
-    ; MsgBox % allInput
+    ; Check for old files that were created in the last 10 minutes
+    recentFiles := ""
+    
+    ; Check for old files that were created in the last 10 minutes and contain the string of the new file
+    Loop, Files, %myinipath%\*
+    {
+        FileGetTime, creationTime, %A_LoopFileFullPath%, C
+        
+        ; Convert A_Now and creationTime to timestamps
+        currentTimestamp := A_Now
+        creationTimestamp := creationTime
+
+        ; Calculate the difference in seconds
+        timeDifferenceSeconds := currentTimestamp - creationTimestamp
+
+        ; Convert the difference to minutes
+        timeDifferenceMinutes := timeDifferenceSeconds // 60
+
+        ; If the file was created in the last 10 minutes and its name contains the name of the new file, delete it
+        ; if (timeDifference <= 10) ;and InStr(A_LoopFileName, A_ScriptName)
+        ; {
+            ; FileDelete, %A_LoopFileFullPath%
+            recentFiles .= A_LoopFileFullPath . " - " . timeDifferenceMinutes . "`n"
+        ; }
+    }
+
+    MsgBox, % recentFiles
     Sleep 500
     SB_SetText("",,0) ; , 1)
 Return
@@ -356,17 +329,6 @@ moveDatabase(myIniPath)
 {
     sourceDir := "C:\Users\" . A_UserName . "\Order Organizer\Order Database\*.*" ; The source directory
     broadDir := "C:\Users\" . A_UserName . "\Order Organizer"
-
     FileMove, %sourceDir%, %myIniPath%, 1 ; The '1' option overwrites existing files
-
-    if ErrorLevel
-    {
-        MsgBox, 16, , An error occurred while moving the files.
-    }
-    else
-    {
-        MsgBox, , , The files were moved successfully.
-    }
-
-    FileRemoveDir, %broadDir%, 1
+    FileRemoveDir, %broadDir%, 1 ; The '1' option removes the directory and all its contents
 }

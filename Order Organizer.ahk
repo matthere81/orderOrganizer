@@ -44,7 +44,11 @@ if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
 
-moveDatabase(myinipath)
+if FileExist("C:\Users\" . A_UserName . "\Order Organizer")
+{
+	moveDatabase(myinipath)
+}
+	
 
 ;|------------------------------------------|
 ;|        Create Text and Edit Arrays       |
