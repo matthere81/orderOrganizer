@@ -1,7 +1,7 @@
 ﻿#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
+; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-workingDir := "C:\Users\" . A_UserName . "\OneDrive - Thermo Fisher Scientific\Documents\Order Organizer"
-SetWorkingDir, workingDir ; Ensures a consistent starting directory.
+SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent starting directory.
 #SingleInstance Force
 #InstallKeybdHook	
 #KeyHistory 50	
@@ -9,17 +9,11 @@ SetWorkingDir, workingDir ; Ensures a consistent starting directory.
 #include <UIA_Interface>	
 #include <UIA_Browser>
 
-; START START START START START START START START
-;| ------------------------------------------ |
-;| 			 GLOBAL VARIABLES  START		  |
-;| ------------------------------------------ |
-; START START START START START START START START
 
 ;  Create Order Organizer Path If It Doesn't Exist
-if !FileExist(workingDir)
-{
-    FileCreateDir % workingDir
-    SetWorkingDir % workingDir
+if !FileExist("C:\Users\" . A_UserName . "\Order Organizer") {
+    FileCreateDir, A_WorkingDir . "\Order Organizer"
+    SetWorkingDir, A_WorkingDir . "\Order Organizer"
 }
 
 ; Include Icon
@@ -27,16 +21,12 @@ I_Icon = % workingDir . "\checkmark.ico"
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%
 
+; -------- GLOBAL VARIABLES -------- START
+
 global guiWidth := 925
 global guiHeight := 510
 global guiChecklistHeight := 765
 
-; GUI Spacing Text & Edit Spacing
-yTextField := 70
-yEditField := 70
-xCoordinate := 40
-yCoordinate := 70
-initialY := yCoordinate
 
 ; Create Order Database Path If It Doesn't Exist
 myinipath := % workingDir . "\orderOrganizerDatabase"
@@ -77,11 +67,15 @@ for index, key in vars
     values[key] := ""
 }
 
-;END END END END END END END END END END END
-;| ------------------------------------------ |
-;| 			 GLOBAL VARIABLES  END			  |
-;| ------------------------------------------ |
-;END END END END END END END END END END END
+; GUI Spacing Text & Edit Spacing
+yTextField := 70
+yEditField := 70
+xCoordinate := 40
+yCoordinate := 70
+initialY := yCoordinate
+
+
+; -------- GLOBAL VARIABLES -------- END
 
 ; GUI code goes here
 

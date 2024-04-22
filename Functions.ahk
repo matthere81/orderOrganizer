@@ -116,18 +116,19 @@ Autosave:
     
     ; Loop through all files in myinipath
     Loop, Files, %myinipath%\*
+    {
+        ; Get the filename without the extension from A_LoopFileName
+        SplitPath, A_LoopFileFullPath, LoopFileNameNoExt
+        
+        MsgBox % LoopFileNameNoExt . " " . IniFileName
+        ; Check if LoopFileNameNoExt matches IniFileName
+        if (LoopFileNameNoExt = IniFileName)
         {
-            ; Get the filename without the extension from A_LoopFileName
-            SplitPath, A_LoopFileFullPath, LoopFileNameNoExt
-            MsgBox % LoopFileNameNoExt . " " . IniFileName
-            ; Check if LoopFileNameNoExt matches IniFileName
-            if (LoopFileNameNoExt = IniFileName)
-            {
-                ; Display a message box
-                MsgBox % "IniFileName matches A_LoopFileName without the extension at " . A_LoopFileFullPath
-                ; FileDelete % A_LoopFileFullPath
-            }
+            ; Display a message box
+            MsgBox % "IniFileName matches A_LoopFileName without the extension at " . A_LoopFileFullPath
+            ; FileDelete % A_LoopFileFullPath
         }
+    }
 
     ; Show a message box with the recentFiles list
     ; MsgBox, % recentFiles . " - Recent Files" . "`nIniFilePath" . IniFilePath . "`nIniFileName" . IniFileName . "`nmyinipath" . myinipath
