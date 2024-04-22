@@ -44,6 +44,8 @@ if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
 
+moveDatabase(workingDir)
+
 ;|------------------------------------------|
 ;|        Create Text and Edit Arrays       |
 ;|------------------------------------------|
@@ -152,7 +154,6 @@ Gui Add, Text, x0 y475, ________________________________________________________
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
 
 ; OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
-
 #Include %A_ScriptDir%\Menu.ahk
 Return
 

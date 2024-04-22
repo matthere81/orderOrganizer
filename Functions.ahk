@@ -351,3 +351,20 @@ sanitizeVarName(item) {
 
     return varName
 }
+
+moveDatabase(workingDir)
+{
+    MsgBox, % workingDir
+    sourceDir := 
+    FileMove, %sourceDir%, %workingDir%, 1 ; The '1' option overwrites existing files
+    ; FileMove, Source, Dest [, Flag (1 = overwrite)]
+
+    if ErrorLevel
+    {
+        MsgBox, 16, , An error occurred while moving the files.
+    }
+    else
+    {
+        MsgBox, , , The files were moved successfully.
+    }
+}
