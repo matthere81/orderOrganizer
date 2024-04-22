@@ -23,7 +23,7 @@ if !FileExist(workingDir)
 }
 
 ; Include Icon
-I_Icon = C:\Users\%A_UserName%\Order Organizer\checkmark.ico
+I_Icon = % workingDir . "\checkmark.ico"
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%
 
@@ -44,7 +44,7 @@ if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
 
-moveDatabase(workingDir)
+moveDatabase(myinipath)
 
 ;|------------------------------------------|
 ;|        Create Text and Edit Arrays       |

@@ -354,17 +354,43 @@ sanitizeVarName(item) {
 
 moveDatabase(workingDir)
 {
-    MsgBox, % workingDir
-    sourceDir := 
-    FileMove, %sourceDir%, %workingDir%, 1 ; The '1' option overwrites existing files
-    ; FileMove, Source, Dest [, Flag (1 = overwrite)]
+    ; sourceDir := "C:\Users\" . A_UserName . "\Order Organizer\Order Database"
+    ; ; Progress, Param1 [, SubText, MainText, WinTitle, FontName]
+    ; FileMove, %sourceDir%, %myIniPath%, 1 ; The '1' option overwrites existing files
 
-    if ErrorLevel
-    {
-        MsgBox, 16, , An error occurred while moving the files.
+    ; if ErrorLevel
+    ; {
+    ;     MsgBox, 16, , An error occurred while moving the files.
+    ; }
+    ; else
+    ; {
+    ;     MsgBox, , , The files were moved successfully.
+    ; }
+
+     ; Show a progress window
+     global MyProgress
+     Gui, Add, Progress, w200 h20 cBlue vMyProgress
+     Gui, Show, , Moving files
+ 
+     ; Simulate a long-running operation with the Sleep command
+     for index in range(1, 100)
+     {
+         Sleep, 50 ; Sleep for 50 milliseconds
+         GuiControl,, MyProgress, %index% ; Update the progress bar
+     }
+ 
+     ; Hide the progress window
+     Gui, Destroy
+ 
+     MsgBox, , , The operation completed successfully.
+}
+
+range(start, end)
+{
+    local array := []
+    while (start <= end) {
+        array.Push(start)
+        start++
     }
-    else
-    {
-        MsgBox, , , The files were moved successfully.
-    }
+    return array
 }
