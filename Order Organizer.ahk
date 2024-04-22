@@ -1,7 +1,7 @@
 ﻿#NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
-; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent starting directory.
+workingDir := "C:\Users\" . A_UserName . "\OneDrive - Thermo Fisher Scientific\Documents\Order Organizer"
+SetWorkingDir, workingDir ; Ensures a consistent starting directory.
 #SingleInstance Force
 #InstallKeybdHook	
 #KeyHistory 50	
@@ -9,30 +9,44 @@ SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent star
 #include <UIA_Interface>	
 #include <UIA_Browser>
 
+; START START START START START START START START
+;| ------------------------------------------ |
+;| 			 GLOBAL VARIABLES  START		  |
+;| ------------------------------------------ |
+; START START START START START START START START
 
 ;  Create Order Organizer Path If It Doesn't Exist
-if !FileExist("C:\Users\" . A_UserName . "\Order Organizer") {
-    FileCreateDir, A_WorkingDir . "\Order Organizer"
-    SetWorkingDir, A_WorkingDir . "\Order Organizer"
+if !FileExist(workingDir)
+{
+    FileCreateDir % workingDir
+    SetWorkingDir % workingDir
 }
 
 ; Include Icon
-; FileInstall, C:\Users\A_UserName\Order Organizer\list_check_checklist_checkmark_icon_181579.ico, A_WorkingDir, 1
 I_Icon = C:\Users\%A_UserName%\Order Organizer\checkmark.ico
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%
-
-; -------- GLOBAL VARIABLES -------- START
 
 global guiWidth := 925
 global guiHeight := 510
 global guiChecklistHeight := 765
 
+; GUI Spacing Text & Edit Spacing
+yTextField := 70
+yEditField := 70
+xCoordinate := 40
+yCoordinate := 70
+initialY := yCoordinate
 
-myinipath := "C:\Users\" . A_UserName . "\Order Organizer\Order Database"
+; Create Order Database Path If It Doesn't Exist
+myinipath := % workingDir . "\Order Database"
 if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
+
+;|------------------------------------------|
+;|        Create Text and Edit Arrays       |
+;|------------------------------------------|
 
 fields := ["SOT Line#", "Customer", "Customer Contact", "Sold To Account", "Intercompany Entity", "Payment Terms", "SO#", "CPQ/Quote#", "System"
 	, "CRD - Cust Req Date", "PO Date", "SAP Date", "Software S/N?", "PO#", "PO Value", "Tax", "Freight Cost", "Surcharge", "Total"
@@ -57,15 +71,11 @@ for index, key in vars
     values[key] := ""
 }
 
-; GUI Spacing Text & Edit Spacing
-yTextField := 70
-yEditField := 70
-xCoordinate := 40
-yCoordinate := 70
-initialY := yCoordinate
-
-
-; -------- GLOBAL VARIABLES -------- END
+;END END END END END END END END END END END
+;| ------------------------------------------ |
+;| 			 GLOBAL VARIABLES  END			  |
+;| ------------------------------------------ |
+;END END END END END END END END END END END
 
 ; GUI code goes here
 
