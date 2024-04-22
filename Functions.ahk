@@ -352,45 +352,21 @@ sanitizeVarName(item) {
     return varName
 }
 
-moveDatabase(workingDir)
+moveDatabase(myIniPath)
 {
-    ; sourceDir := "C:\Users\" . A_UserName . "\Order Organizer\Order Database"
-    ; ; Progress, Param1 [, SubText, MainText, WinTitle, FontName]
-    ; FileMove, %sourceDir%, %myIniPath%, 1 ; The '1' option overwrites existing files
+    sourceDir := "C:\Users\" . A_UserName . "\Order Organizer\Order Database\*.*" ; The source directory
+    broadDir := "C:\Users\" . A_UserName . "\Order Organizer"
 
-    ; if ErrorLevel
-    ; {
-    ;     MsgBox, 16, , An error occurred while moving the files.
-    ; }
-    ; else
-    ; {
-    ;     MsgBox, , , The files were moved successfully.
-    ; }
+    FileMove, %sourceDir%, %myIniPath%, 1 ; The '1' option overwrites existing files
 
-     ; Show a progress window
-     global MyProgress
-     Gui, Add, Progress, w200 h20 cBlue vMyProgress
-     Gui, Show, , Moving files
- 
-     ; Simulate a long-running operation with the Sleep command
-     for index in range(1, 100)
-     {
-         Sleep, 50 ; Sleep for 50 milliseconds
-         GuiControl,, MyProgress, %index% ; Update the progress bar
-     }
- 
-     ; Hide the progress window
-     Gui, Destroy
- 
-     MsgBox, , , The operation completed successfully.
-}
-
-range(start, end)
-{
-    local array := []
-    while (start <= end) {
-        array.Push(start)
-        start++
+    if ErrorLevel
+    {
+        MsgBox, 16, , An error occurred while moving the files.
     }
-    return array
+    else
+    {
+        MsgBox, , , The files were moved successfully.
+    }
+
+    FileRemoveDir, %broadDir%, 1
 }

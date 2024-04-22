@@ -39,7 +39,7 @@ yCoordinate := 70
 initialY := yCoordinate
 
 ; Create Order Database Path If It Doesn't Exist
-myinipath := % workingDir . "\Order Database"
+myinipath := % workingDir . "\orderOrganizerDatabase"
 if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
