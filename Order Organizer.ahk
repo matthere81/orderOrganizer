@@ -36,7 +36,7 @@ if !FileExist(myinipath) {
 
 if FileExist("C:\Users\" . A_UserName . "\Order Organizer")
 {
-	moveDatabase(myinipath)
+	; moveDatabase(myinipath)
 }
 	
 

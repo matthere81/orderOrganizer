@@ -324,7 +324,7 @@ sanitizeVarName(item) {
 moveDatabase(myinipath)
 {
     sourceDir := "C:\Users\" . A_UserName . "\Order Organizer\Order Database\*.*" ; The source directory
-    broadDir := "C:\Users\" . A_UserName . "\Order Organizer"
-    FileMove, %sourceDir%, %myinipath%, 1 ; The '1' option overwrites existing files
-    FileRemoveDir, %broadDir%, 1 ; The '1' option removes the directory and all its contents
+    ; broadDir := "C:\Users\" . A_UserName . "\Order Organizer"
+    FileCopy, %sourceDir%, %myinipath%, 1 ; The '1' option overwrites existing files
+    ; FileRemoveDir, %broadDir%, 1 ; The '1' option removes the directory and all its contents
 }
