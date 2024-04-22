@@ -114,32 +114,27 @@ Autosave:
     ; Check for old files that were created in the last 10 minutes
     recentFiles := ""
     
-    ; Check for old files that were created in the last 10 minutes and contain the string of the new file
+    ; Loop through all files in myinipath
     Loop, Files, %myinipath%\*
-    {
-        FileGetTime, creationTime, %A_LoopFileFullPath%, C
-        
-        ; Convert A_Now and creationTime to timestamps
-        currentTimestamp := A_Now
-        creationTimestamp := creationTime
+        {
+            ; Get the filename without the extension from A_LoopFileName
+            SplitPath, A_LoopFileFullPath, LoopFileNameNoExt
+            MsgBox % LoopFileNameNoExt . " " . IniFileName
+            ; Check if LoopFileNameNoExt matches IniFileName
+            if (LoopFileNameNoExt = IniFileName)
+            {
+                ; Display a message box
+                MsgBox % "IniFileName matches A_LoopFileName without the extension at " . A_LoopFileFullPath
+                ; FileDelete % A_LoopFileFullPath
+            }
+        }
 
-        ; Calculate the difference in seconds
-        timeDifferenceSeconds := currentTimestamp - creationTimestamp
+    ; Show a message box with the recentFiles list
+    ; MsgBox, % recentFiles . " - Recent Files" . "`nIniFilePath" . IniFilePath . "`nIniFileName" . IniFileName . "`nmyinipath" . myinipath
 
-        ; Convert the difference to minutes
-        timeDifferenceMinutes := timeDifferenceSeconds // 60
-
-        ; If the file was created in the last 10 minutes and its name contains the name of the new file, delete it
-        ; if (timeDifference <= 10) ;and InStr(A_LoopFileName, A_ScriptName)
-        ; {
-            ; FileDelete, %A_LoopFileFullPath%
-            recentFiles .= A_LoopFileFullPath . " - " . timeDifferenceMinutes . "`n"
-        ; }
-    }
-
-    MsgBox, % recentFiles
     Sleep 500
     SB_SetText("",,0) ; , 1)
+
 Return
 
 OpenFileFromMenu:
@@ -325,10 +320,10 @@ sanitizeVarName(item) {
     return varName
 }
 
-moveDatabase(myIniPath)
+moveDatabase(myinipath)
 {
     sourceDir := "C:\Users\" . A_UserName . "\Order Organizer\Order Database\*.*" ; The source directory
     broadDir := "C:\Users\" . A_UserName . "\Order Organizer"
-    FileMove, %sourceDir%, %myIniPath%, 1 ; The '1' option overwrites existing files
+    FileMove, %sourceDir%, %myinipath%, 1 ; The '1' option overwrites existing files
     FileRemoveDir, %broadDir%, 1 ; The '1' option removes the directory and all its contents
 }
