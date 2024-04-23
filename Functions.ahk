@@ -95,12 +95,10 @@ Autosave:
     ; IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 
     ; Check if the file already exists
-    ; if FileExist(IniFilePath)
-    ; {
-    ;     MsgBox, 4,, A file with this quote and PO# already exists. Would you like to overwrite it?
-    ;     IfMsgBox, No
-    ;         return
-    ; }
+    if FileExist(IniFilePath)
+    {
+
+    }   
     
     ; Save the current state of the GUI to an ini file
     Gui Submit, NoHide
@@ -111,25 +109,7 @@ Autosave:
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
 
-    ; Check for old files that were created in the last 10 minutes
-    recentFiles := ""
     
-    ; Loop through all files in myinipath
-    Loop, Files, %myinipath%\*
-    {
-        ; Get the filename without the extension from A_LoopFileName
-        SplitPath, A_LoopFileFullPath, LoopFileNameNoExt
-        
-        MsgBox % LoopFileNameNoExt . " " . IniFileName
-        ; Check if LoopFileNameNoExt matches IniFileName
-        if (LoopFileNameNoExt = IniFileName)
-        {
-            ; Display a message box
-            MsgBox % "IniFileName matches A_LoopFileName without the extension at " . A_LoopFileFullPath
-            ; FileDelete % A_LoopFileFullPath
-        }
-    }
-
     ; Show a message box with the recentFiles list
     ; MsgBox, % recentFiles . " - Recent Files" . "`nIniFilePath" . IniFilePath . "`nIniFileName" . IniFileName . "`nmyinipath" . myinipath
 
@@ -137,6 +117,12 @@ Autosave:
     SB_SetText("",,0) ; , 1)
 
 Return
+
+; Define the label that will be executed when the po edit field loses focus
+PoEditLostFocus:
+    MsgBox, The cursor has left the po edit field.
+    gosub, EditChanged
+return
 
 OpenFileFromMenu:
     FileSelectFile, SelectedFile,r,%myinipath%, Open a file
@@ -169,34 +155,34 @@ DeleteFile:
 return
 
 ArchiveFiles:
-; Get the current time
-CurrentTime := A_Now
+    ; Get the current time
+    CurrentTime := A_Now
 
-; Loop over all files in the myinipath directory
-Loop, Files, %myinipath%\*
-{
-    ; Get the creation time of the file
-    FileGetTime, CreationTime, %A_LoopFileFullPath%, C
-
-    ; Calculate the difference between the current time and the creation time in years
-    YearsOld := (CurrentTime - CreationTime) // 31536000
-
-    ; If the file is more than three years old
-    if (YearsOld >= 3)
+    ; Loop over all files in the myinipath directory
+    Loop, Files, %myinipath%\*
     {
-        ; Get the year the file was created
-        YearCreated := SubStr(CreationTime, 1, 4)
+        ; Get the creation time of the file
+        FileGetTime, CreationTime, %A_LoopFileFullPath%, C
 
-        ; If the folder for the year doesn't exist, create it
-        if !FileExist(myinipath . "\" . YearCreated)
+        ; Calculate the difference between the current time and the creation time in years
+        YearsOld := (CurrentTime - CreationTime) // 31536000
+
+        ; If the file is more than three years old
+        if (YearsOld >= 3)
         {
-            FileCreateDir, %myinipath%\%YearCreated%
-        }
+            ; Get the year the file was created
+            YearCreated := SubStr(CreationTime, 1, 4)
 
-        ; Move the file to the folder for the year
-        FileMove, %A_LoopFileFullPath%, %myinipath%\%YearCreated%
+            ; If the folder for the year doesn't exist, create it
+            if !FileExist(myinipath . "\" . YearCreated)
+            {
+                FileCreateDir, %myinipath%\%YearCreated%
+            }
+
+            ; Move the file to the folder for the year
+            FileMove, %A_LoopFileFullPath%, %myinipath%\%YearCreated%
+        }
     }
-}
 return
 
 SetSearchAsDefault:

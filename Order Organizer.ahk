@@ -120,6 +120,13 @@ for index, field in fields
 		Continue
 	}
 
+	if (field = "PO#")
+	{
+		Gui Add, Edit, yp+20 xp-2.5 w135 h22.5 v%controlName% gPoEditLostFocus
+		yCoordinate += 5
+		Continue
+	}
+
 	if (field = "Notes")
 	{
 		Gui Add, Edit, yp+20 xp-2.5 w310 h90 v%controlName%
