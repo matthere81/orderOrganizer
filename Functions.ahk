@@ -26,23 +26,55 @@ SaveToIni:
 return
 
 EditChanged:
+    ; Loop through the controls
+    ; for index, var in vars
+    ; {
+    ;     Gui Submit, NoHide
+    ;     ; Get the control that currently has focus
+    ;     GuiControlGet focusedControl, FocusV
+    
+    ;     ; If the focused control is the current control, display a message box
+    ;     if (focusedControl == var)
+    ;     {
+    ;         MsgBox, The %var% control has the focus.
+    ;         break
+    ;     }
+    ;     ; If the focused control is the current control, display a message box
+    ;     ; if (focusedControl != "po" || focusedControl != "cpq")
+    ;     ; {
+    ;     ;     MsgBox The %focusedControl% control has the focus.
+    ;     ; }
+   
+    ; }
     ; Get the values of the CPQ and PO fields
-    GuiControlGet, CPQ, , cpq
-    GuiControlGet, PO, , po
+    ; GuiControlGet, CPQ, , cpq
+    ; GuiControlGet, PO, , po
 
-    ; Check if both fields are not empty
-    if (cpq != "" and po != "")
+    ; ; Check if both fields are not empty
+    ; if (cpq != "" and po != "")
+    ; {
+    ;     ; Start or reset a timer that calls the Autosave function after a 2-second delay
+    ;     SetTimer, Autosave, -3000
+    ; }
+    ; else
+    ; {
+    ;     ; Stop the timer
+    ;     SetTimer, Autosave, Off
+    ; }
+
+Return
+
+CheckFocus:
+    GuiControlGet focusedControl, FocusV
+    if (focusedControl != "po") && (focusedControl != "cpq")
     {
-        ; Start or reset a timer that calls the Autosave function after a 2-second delay
-        SetTimer, Autosave, -3000
+        ToolTip, The %focusedControl% edit field has the focus.
     }
     else
     {
-        ; Stop the timer
-        SetTimer, Autosave, Off
+        ToolTip
     }
-
-Return
+return
 
 ; This subroutine is called when an Edit field gains focus
 FieldFocus:
@@ -119,10 +151,10 @@ Autosave:
 Return
 
 ; Define the label that will be executed when the po edit field loses focus
-PoEditLostFocus:
-    MsgBox, The cursor has left the po edit field.
-    gosub, EditChanged
-return
+; PoEditLostFocus:
+;     MsgBox, The cursor has left the po edit field.
+;     gosub, EditChanged
+; return
 
 OpenFileFromMenu:
     FileSelectFile, SelectedFile,r,%myinipath%, Open a file

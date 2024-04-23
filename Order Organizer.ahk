@@ -9,7 +9,6 @@ SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent star
 #include <UIA_Interface>	
 #include <UIA_Browser>
 
-
 ;  Create Order Organizer Path If It Doesn't Exist
 if !FileExist("C:\Users\" . A_UserName . "\Order Organizer") {
     FileCreateDir, A_WorkingDir . "\Order Organizer"
@@ -115,28 +114,21 @@ for index, field in fields
 
 	if (field = "CRD - Cust Req Date" or field = "PO Date" or field = "SAP Date")
 	{
-		Gui Add, DateTime, yp+20 xp-2.5 w135 h22.5 v%controlName%,
-		yCoordinate += 5
-		Continue
-	}
-
-	if (field = "PO#")
-	{
-		Gui Add, Edit, yp+20 xp-2.5 w135 h22.5 v%controlName% gPoEditLostFocus
+		Gui Add, DateTime, yp+20 xp-2.5 w135 h22.5 v%controlName% gEditChanged
 		yCoordinate += 5
 		Continue
 	}
 
 	if (field = "Notes")
 	{
-		Gui Add, Edit, yp+20 xp-2.5 w310 h90 v%controlName%
+		Gui Add, Edit, yp+20 xp-2.5 w310 h90 v%controlName% gEditChanged
 		yCoordinate += 60
 		Continue
 	}
 
 	if (field = "End Use")
 	{
-		Gui Add, Edit, yp+20 xp-2.5 h90 v%controlName%
+		Gui Add, Edit, yp+20 xp-2.5 h90 v%controlName% gEditChanged
 		yCoordinate += 60
 		Continue
 	}
@@ -153,7 +145,7 @@ Gui Add, Text, x0 y475, ________________________________________________________
 ; Gui, SubCommand [, Value1, Value2, Value3]
 #Include ChecklistGUI.ahk
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
-
+SetTimer CheckFocus, 100
 ; OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
 #Include %A_ScriptDir%\Menu.ahk
 Return
