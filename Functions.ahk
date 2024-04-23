@@ -321,10 +321,14 @@ sanitizeVarName(item) {
     return varName
 }
 
-moveDatabase(myinipath)
+backupDatabase(myinipath)
 {
-    sourceDir := "C:\Users\" . A_UserName . "\Order Organizer\Order Database\*.*" ; The source directory
-    ; broadDir := "C:\Users\" . A_UserName . "\Order Organizer"
-    FileCopy, %sourceDir%, %myinipath%, 1 ; The '1' option overwrites existing files
-    ; FileRemoveDir, %broadDir%, 1 ; The '1' option removes the directory and all its contents
+    sourceDir := % myinipath . "\*.*" ; The source directory
+    backupDir := "C:\Users\" . A_UserName . "\OneDrive - Thermo Fisher Scientific\Documents\Order Organizer - Backup", 1 ; The '1' option overwrites existing files
+    ; FileCopy, Source, Dest [, Flag (1 = overwrite)]
+    if !FileExist(backupDir)
+    {
+        FileCreateDir, %backupDir%
+    }
+    FileCopy, %sourceDir%, %backupDir%, 1
 }

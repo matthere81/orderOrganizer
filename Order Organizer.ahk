@@ -29,16 +29,12 @@ global guiChecklistHeight := 765
 
 
 ; Create Order Database Path If It Doesn't Exist
-myinipath := % workingDir . "\orderOrganizerDatabase"
+myinipath := % A_WorkingDir . "\Order Database"
 if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
 }
 
-if FileExist("C:\Users\" . A_UserName . "\Order Organizer")
-{
-	; moveDatabase(myinipath)
-}
-	
+backupDatabase(myinipath)
 
 ;|------------------------------------------|
 ;|        Create Text and Edit Arrays       |
