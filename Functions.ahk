@@ -25,55 +25,43 @@ SaveToIni:
 
 return
 
-EditChanged:
-    ; Loop through the controls
-    ; for index, var in vars
-    ; {
-    ;     Gui Submit, NoHide
-    ;     ; Get the control that currently has focus
-    ;     GuiControlGet focusedControl, FocusV
-    
-    ;     ; If the focused control is the current control, display a message box
-    ;     if (focusedControl == var)
-    ;     {
-    ;         MsgBox, The %var% control has the focus.
-    ;         break
-    ;     }
-    ;     ; If the focused control is the current control, display a message box
-    ;     ; if (focusedControl != "po" || focusedControl != "cpq")
-    ;     ; {
-    ;     ;     MsgBox The %focusedControl% control has the focus.
-    ;     ; }
-   
-    ; }
-    ; Get the values of the CPQ and PO fields
-    ; GuiControlGet, CPQ, , cpq
-    ; GuiControlGet, PO, , po
-
-    ; ; Check if both fields are not empty
-    ; if (cpq != "" and po != "")
-    ; {
-    ;     ; Start or reset a timer that calls the Autosave function after a 2-second delay
-    ;     SetTimer, Autosave, -3000
-    ; }
-    ; else
-    ; {
-    ;     ; Stop the timer
-    ;     SetTimer, Autosave, Off
-    ; }
-
-Return
-
 CheckFocus:
+    Gui Submit, NoHide
     GuiControlGet focusedControl, FocusV
-    if (focusedControl != "po") && (focusedControl != "cpq") && (cpq) && (po)
+
+    if (cpq != "") && (po != "") && (focusedControl != "po") && (focusedControl != "cpq")
     {
-        ToolTip, The %focusedControl% edit field has the focus.
+        ; Save the current state of the GUI to a variable
+        knownState := ""
+        for index, var in vars
+        {
+            GuiControlGet fieldValue,, %var%
+            knownState .= var . "=" . fieldValue . "`n"
+        }
+        ; Get the current state of the GUI
+        Gui Submit, NoHide
+        currentState := ""
+        for index, var in vars
+        {
+            GuiControlGet, fieldValue,, %var%
+            currentState .= var . "=" . fieldValue . "`n"
+        }
+        sleep 2000
+        MsgBox, % knownState . "`n" . currentState
+        ; Compare the current state with the known state
+        if (currentState = knownState)
+        {
+            MsgBox, The current state of the GUI is the same as the known state.
+        }
+        else
+        {
+            MsgBox, The current state of the GUI is different from the known state.
+        }
+        sleep 2000
+
+        ; Gosub Autosave
     }
-    else
-    {
-        ToolTip
-    }
+
 return
 
 ; This subroutine is called when an Edit field gains focus
@@ -83,55 +71,12 @@ FieldFocus:
     MsgBox, The focus has changed to %focusedControl%.
 Return
 
-WM_LBUTTONDOWN(wParam, lParam)
-{
-    ; X := lParam & 0xFFFF
-    ; Y := lParam >> 16
-    if A_GuiControl
-        Ctrl := "`n(in control " . A_GuiControl . ")"
-    ToolTip You left-clicked in Gui window %A_Gui% %Ctrl%
-    ; Sleep 2000
-    ; ToolTip
-}
-
-; This subroutine is called when the user inputs text in the Edit field
-; EditChanged:
-;     IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
-;     ; The user is currently inputting text
-;     ; allInput := ""
-;     ;Save the current content of the Edit field to a temporary variable
-;     for index, var in vars
-;     {
-;         ; MsgBox, % IniFilePath
-;         GuiControlGet fieldValue,, %var%
-;         ; If the content has changed, display a message box
-;         if (fieldValue != oldValues[var])
-;         {
-;             ; MsgBox, A new field has been entered: %fieldValue%
-;             ; Update the old value
-;             oldValues[var] := fieldValue
-;         }
-;         ; Append the content of the control to the string
-;         ; allInput .= fieldValue . "`n"
-;         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %field%
-        
-;     }
-;     ; MsgBox % allInput
-; Return
-
 Autosave:  
     ; Show a message in the status bar
     SB_SetText("Autosaving...",,0)
     
     IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
-    ; IniFilePathWithSo := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . " SO# " . soNumber . ".ini"
 
-    ; Check if the file already exists
-    if FileExist(IniFilePath)
-    {
-
-    }   
-    
     ; Save the current state of the GUI to an ini file
     Gui Submit, NoHide
 
@@ -141,11 +86,7 @@ Autosave:
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
 
-    
-    ; Show a message box with the recentFiles list
-    ; MsgBox, % recentFiles . " - Recent Files" . "`nIniFilePath" . IniFilePath . "`nIniFileName" . IniFileName . "`nmyinipath" . myinipath
-
-    Sleep 500
+    Sleep 2000
     SB_SetText("",,0) ; , 1)
 
 Return

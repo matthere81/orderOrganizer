@@ -114,26 +114,26 @@ for index, field in fields
 
 	if (field = "CRD - Cust Req Date" or field = "PO Date" or field = "SAP Date")
 	{
-		Gui Add, DateTime, yp+20 xp-2.5 w135 h22.5 v%controlName% gEditChanged
+		Gui Add, DateTime, yp+20 xp-2.5 w135 h22.5 v%controlName% gCheckFocus
 		yCoordinate += 5
 		Continue
 	}
 
 	if (field = "Notes")
 	{
-		Gui Add, Edit, yp+20 xp-2.5 w310 h90 v%controlName% gEditChanged
+		Gui Add, Edit, yp+20 xp-2.5 w310 h90 v%controlName% gCheckFocus
 		yCoordinate += 60
 		Continue
 	}
 
 	if (field = "End Use")
 	{
-		Gui Add, Edit, yp+20 xp-2.5 h90 v%controlName% gEditChanged
+		Gui Add, Edit, yp+20 xp-2.5 h90 v%controlName% gCheckFocus
 		yCoordinate += 60
 		Continue
 	}
 	
-	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gEditChanged ;gAutoSave gFieldFocus
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gCheckFocus 
 	yCoordinate += 5
 
 }
