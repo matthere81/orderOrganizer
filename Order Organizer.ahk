@@ -17,7 +17,7 @@ if !FileExist("C:\Users\" . A_UserName . "\Order Organizer") {
 }
 
 ; Include Icon
-I_Icon = % workingDir . "\checkmark.ico"
+I_Icon = % A_WorkingDir . "\checkmark.ico"
 IfExist, %I_Icon%
 	Menu, Tray, Icon, %I_Icon%
 
