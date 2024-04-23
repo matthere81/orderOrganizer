@@ -66,7 +66,7 @@ Return
 
 CheckFocus:
     GuiControlGet focusedControl, FocusV
-    if (focusedControl != "po") && (focusedControl != "cpq")
+    if (focusedControl != "po") && (focusedControl != "cpq") && (cpq) && (po)
     {
         ToolTip, The %focusedControl% edit field has the focus.
     }
