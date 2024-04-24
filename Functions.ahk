@@ -17,14 +17,27 @@ Return
 
 CheckFocus:
     ; ; Save the current state of the GUI to an ini file
-    ; Gui Submit, NoHide
-    ; GuiControlGet focusedControl, FocusV
+    Gui Submit, NoHide
+    GuiControlGet focusedControl, FocusV
     
     ; ; Set the path for the ini file
-    ; IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
+    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini" ;. customer . ".ini"
+    TempIniFilePath := myinipath . "\Temp.ini " ;. customer . ".ini"
     
     ; ; Read the previously saved value of the focused control from the INI file
     ; IniRead prevValue, %IniFilePath%, orderInfo, %focusedControl%
+
+    ; Loop through all files in myinipath
+    Loop, Files, %myinipath%\*, F
+    {
+        ; Check if the current file matches IniFilePath
+        if (A_LoopFileFullPath = IniFilePath)
+        {
+            ; The file was found
+            MsgBox, The file %IniFilePath% was found.
+            break
+        }
+    }
     
     ; ; Get the current value of the focused control
     ; GuiControlGet currentValue,, %focusedControl%
@@ -34,7 +47,7 @@ CheckFocus:
     ; {
     ;     ; Show a message in the status bar
     ;     SB_SetText("",,0)
-    ;     Gosub Autosave
+        Gosub Autosave
     ; }
 Return
 
@@ -69,11 +82,11 @@ Autosave:
     ; ; Save the current state of the GUI to an ini file
     ; Gui Submit, NoHide
     
-    ; for index, var in vars
-    ; {
-    ;     GuiControlGet, fieldValue,, %var%
-    ;     IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
-    ; }
+    for index, var in vars
+    {
+        GuiControlGet, fieldValue,, %var%
+        IniWrite %fieldValue%, %TempIniFilePath%, orderInfo, %var%
+    }
 
     ; Sleep 500
     ; SB_SetText("",,0)
