@@ -18,6 +18,6 @@ Menu SettingsMenu, Add, &Archive Files, ArchiveFiles
 ; Add the submenu to the main menu
 Menu MainMenu, Add, &File, :FileMenu
 Menu MainMenu, Add, &View, :ViewMenu
-Menu MainMenu, Add, &Settings, :SettingsMenu
+Menu MainMenu, Add, Settings, :SettingsMenu
 
 Gui Menu, MainMenu

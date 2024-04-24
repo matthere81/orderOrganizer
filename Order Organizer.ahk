@@ -89,7 +89,7 @@ Gui Add, Button, y20 gClearFields, &New PO/Order
 Gui Add, Button, y20, Get Quote Info  ; Create a button
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
-Gui Add, StatusBar, vMyStatusBar -Theme
+Gui Add, StatusBar, vMyStatusBar -Theme ;, Type In CPQ/Quote# AND PO# To Begin Autosaving
 
 ; ---- Loop through the fields and create the text and edit fields ----
 
@@ -114,38 +114,41 @@ for index, field in fields
 
 	if (field = "CRD - Cust Req Date" or field = "PO Date" or field = "SAP Date")
 	{
-		Gui Add, DateTime, yp+20 xp-2.5 w135 h22.5 v%controlName% gCheckFocus
+		Gui Add, DateTime, yp+20 xp-2.5 w135 h22.5 v%controlName% ;gCheckFocus
 		yCoordinate += 5
 		Continue
 	}
 
 	if (field = "Notes")
 	{
-		Gui Add, Edit, yp+20 xp-2.5 w310 h90 v%controlName% gCheckFocus
+		Gui Add, Edit, yp+20 xp-2.5 w310 h90 v%controlName% ;gCheckFocus
 		yCoordinate += 60
 		Continue
 	}
 
 	if (field = "End Use")
 	{
-		Gui Add, Edit, yp+20 xp-2.5 h90 v%controlName% gCheckFocus
+		Gui Add, Edit, yp+20 xp-2.5 h90 v%controlName% ;gCheckFocus
 		yCoordinate += 60
 		Continue
 	}
 	
-	Gui Add, Edit, yp+20 xp-2.5 v%controlName% gCheckFocus 
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName% ;;+gOnChange ;gCheckFocus 
 	yCoordinate += 5
-
 }
-
 ; END ---- END - Loop through the fields and create the text and edit fields - END ---- END
 
-; Gui Add, Progress, x0 y475 w950 h1 cRed ; Horizontal line
 Gui Add, Text, x0 y475, ________________________________________________________________________________________________________________________________________________________________________________________________
-; Gui, SubCommand [, Value1, Value2, Value3]
+
 #Include ChecklistGUI.ahk
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
-SetTimer CheckFocus, 100
+
+; Set Timer CheckFocus
+SetTimer CheckFocus, 500
+
+; Set Timer WhatFocus
+; SetTimer WhatFocus, 500
+
 ; OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
 #Include %A_ScriptDir%\Menu.ahk
 Return

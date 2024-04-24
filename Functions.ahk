@@ -15,87 +15,83 @@ readtheini:
 
 Return
 
-SaveToIni:
-; Gui Submit, NoHide
-; if (!cpq) || (!po)
-; {
-;     MsgBox, Please enter a quote and PO#.
-;     return
-; }
-
-return
-
 CheckFocus:
-    Gui Submit, NoHide
-    GuiControlGet focusedControl, FocusV
-
-    if (cpq != "") && (po != "") && (focusedControl != "po") && (focusedControl != "cpq")
-    {
-        ; Save the current state of the GUI to a variable
-        knownState := ""
-        for index, var in vars
-        {
-            GuiControlGet fieldValue,, %var%
-            knownState .= var . "=" . fieldValue . "`n"
-        }
-        ; Get the current state of the GUI
-        Gui Submit, NoHide
-        currentState := ""
-        for index, var in vars
-        {
-            GuiControlGet, fieldValue,, %var%
-            currentState .= var . "=" . fieldValue . "`n"
-        }
-        sleep 2000
-        MsgBox, % knownState . "`n" . currentState
-        ; Compare the current state with the known state
-        if (currentState = knownState)
-        {
-            MsgBox, The current state of the GUI is the same as the known state.
-        }
-        else
-        {
-            MsgBox, The current state of the GUI is different from the known state.
-        }
-        sleep 2000
-
-        ; Gosub Autosave
-    }
-
-return
-
-; This subroutine is called when an Edit field gains focus
-FieldFocus:
-    ; Get the name of the control that gained focus
-    GuiControlGet, focusedControl, Focus
-    MsgBox, The focus has changed to %focusedControl%.
+    ; ; Save the current state of the GUI to an ini file
+    ; Gui Submit, NoHide
+    ; GuiControlGet focusedControl, FocusV
+    
+    ; ; Set the path for the ini file
+    ; IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
+    
+    ; ; Read the previously saved value of the focused control from the INI file
+    ; IniRead prevValue, %IniFilePath%, orderInfo, %focusedControl%
+    
+    ; ; Get the current value of the focused control
+    ; GuiControlGet currentValue,, %focusedControl%
+    ; ; MsgBox, %focusedControl%: %currentValue%
+    
+    ; if (cpq != "") && (po != "") && (focusedControl != "po") && (focusedControl != "cpq")  && (currentValue != prevValue)
+    ; {
+    ;     ; Show a message in the status bar
+    ;     SB_SetText("",,0)
+    ;     Gosub Autosave
+    ; }
 Return
 
-Autosave:  
-    ; Show a message in the status bar
-    SB_SetText("Autosaving...",,0)
-    
-    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
+WhatFocus:
+    ; Get the current value of the focused control
+    GuiControlGet currentValue,, %focusedControl%
+    if (cpq != "") && (po != "") && (focusedControl != "po") && (focusedControl != "po") && (focusedControl != "cpq")
+    {
+        ; Show a message in the status bar
+        SB_SetText("",,0)
+    }
+return
 
-    ; Save the current state of the GUI to an ini file
+SaveToIni:
     Gui Submit, NoHide
-
+    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
     for index, var in vars
     {
         GuiControlGet, fieldValue,, %var%
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
+    MsgBox, Saved
+return
 
-    Sleep 2000
-    SB_SetText("",,0) ; , 1)
+Autosave:  
+    ; ; Show a message in the status bar
+    ; SB_SetText("Autosaving...",,0)
+    
+    ; ; Set the path for the ini file
+    ; IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
+    
+    ; ; Save the current state of the GUI to an ini file
+    ; Gui Submit, NoHide
+    
+    ; for index, var in vars
+    ; {
+    ;     GuiControlGet, fieldValue,, %var%
+    ;     IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
+    ; }
 
+    ; Sleep 500
+    ; SB_SetText("",,0)
 Return
 
-; Define the label that will be executed when the po edit field loses focus
-; PoEditLostFocus:
-;     MsgBox, The cursor has left the po edit field.
-;     gosub, EditChanged
-; return
+InitialState:
+; Save the initial state of the controls after the data is loaded
+Gui Submit, NoHide
+initialState := {}
+initialStateString := ""
+for index, var in vars
+{
+    GuiControlGet, fieldValue,, %var%
+    initialState[var] := fieldValue
+    initialStateString .= var . ": " . fieldValue . "`n"
+}
+MsgBox, InitialState:`n%initialStateString%
+Return
 
 OpenFileFromMenu:
     FileSelectFile, SelectedFile,r,%myinipath%, Open a file
