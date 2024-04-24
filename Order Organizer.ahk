@@ -48,6 +48,10 @@ vars := ["sot", "customer", "contact", "soldTo", "intercompanyEntity", "terms", 
 	, "po", "poValue", "tax", "freightCost", "surcharge", "totalCost", "salesperson", "salesManager", "managerCode", "salesDirector"
 	, "directorCode", "notes", "endUser", "phone", "email", "endUse"]
 
+autosaveVars := ["sot", "contact", "soldTo", "intercompanyEntity", "terms", "soNumber", "system", "serialNumber"
+, "poValue", "tax", "freightCost", "surcharge", "totalCost", "salesperson", "salesManager", "managerCode", "salesDirector"
+, "directorCode", "notes", "endUser", "phone", "email", "endUse"]
+
 ; fieldsInfo := ""
 ; for index, field in fields
 ; {

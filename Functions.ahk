@@ -20,24 +20,51 @@ CheckFocus:
     Gui Submit, NoHide
     GuiControlGet focusedControl, FocusV
     
-    ; ; Set the path for the ini file
-    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini" ;. customer . ".ini"
-    TempIniFilePath := myinipath . "\Temp.ini " ;. customer . ".ini"
-    
+    IniFilePath := SetIniFilePath(myinipath, po, cpq, customer)
+
+    MsgBox % IniFilePath
+    Gosub Autosave
     ; ; Read the previously saved value of the focused control from the INI file
     ; IniRead prevValue, %IniFilePath%, orderInfo, %focusedControl%
 
-    ; Loop through all files in myinipath
-    Loop, Files, %myinipath%\*, F
-    {
-        ; Check if the current file matches IniFilePath
-        if (A_LoopFileFullPath = IniFilePath)
-        {
-            ; The file was found
-            MsgBox, The file %IniFilePath% was found.
-            break
-        }
-    }
+    ; ; Loop through all files in myinipath
+    ; Loop, Files, %myinipath%\*, F
+    ; {
+    ;     ; Check if the current file matches IniFilePath
+    ;     if (A_LoopFileFullPath = IniFilePath)
+    ;         {
+    ;             ; The file was found
+    ;             matchedFilePath := A_LoopFileFullPath
+    ;             ; MsgBox % customer . " and PO is " . po
+    ;             ; Continue checking for a match until the variables are entered
+    ;             while (po != "") && (cpq != "") && (customer != "") ;&& (crd != "") && (poDate != "") && (sapDate != "")
+    ;             {
+    ;                 ; MsgBox, 2
+    ;                 ; Check if all fields in vars are not blank
+    ;                 allFieldsEntered := false
+    ;                 for index, var in autosaveVars
+    ;                 {
+    ;                     ; MsgBox % var
+    ;                     ; if (var = "")
+    ;                     ; {
+    ;                     ;     ; MsgBox % var
+    ;                     ;     allFieldsEntered := false
+    ;                     ;     break
+    ;                     ; }
+    ;                 }
+        
+    ;                 ; ; If all fields in vars are entered, exit the while loop
+    ;                 ; if (allFieldsEntered)
+    ;                 ; {
+    ;                 ;     break
+    ;                 ; }
+        
+    ;                 ; TODO: Add code here to update the variables
+    ;             }
+        
+    ;             break
+    ;         }
+    ; }
     
     ; ; Get the current value of the focused control
     ; GuiControlGet currentValue,, %focusedControl%
@@ -47,19 +74,9 @@ CheckFocus:
     ; {
     ;     ; Show a message in the status bar
     ;     SB_SetText("",,0)
-        Gosub Autosave
+        ; Gosub Autosave
     ; }
 Return
-
-WhatFocus:
-    ; Get the current value of the focused control
-    GuiControlGet currentValue,, %focusedControl%
-    if (cpq != "") && (po != "") && (focusedControl != "po") && (focusedControl != "po") && (focusedControl != "cpq")
-    {
-        ; Show a message in the status bar
-        SB_SetText("",,0)
-    }
-return
 
 SaveToIni:
     Gui Submit, NoHide
@@ -67,13 +84,14 @@ SaveToIni:
     for index, var in vars
     {
         GuiControlGet, fieldValue,, %var%
+        msgbox % var
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
     MsgBox, Saved
 return
 
 Autosave:  
-    ; ; Show a message in the status bar
+    ; Show a message in the status bar
     ; SB_SetText("Autosaving...",,0)
     
     ; ; Set the path for the ini file
@@ -82,15 +100,39 @@ Autosave:
     ; ; Save the current state of the GUI to an ini file
     ; Gui Submit, NoHide
     
+    ; allFields := "" ; Initialize an empty string to collect all fields and values
+
     for index, var in vars
     {
         GuiControlGet, fieldValue,, %var%
         IniWrite %fieldValue%, %TempIniFilePath%, orderInfo, %var%
+        
+        ; allFields .= "Field: " . var . ", Value: " . fieldValue . "`n" ; Add the field and value to the string
     }
 
+    ; MsgBox % allFields ; Display all fields and values
+    
     ; Sleep 500
     ; SB_SetText("",,0)
 Return
+
+SetIniFilePath(myinipath, po, cpq, customer)
+{
+    ; Set the path for the ini file
+    if (po != "") && (cpq != "") && (customer != "")
+    {
+        IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
+    }
+    else if (po != "") && (cpq != "")
+    {
+        IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini"
+    }
+    else
+    {
+        IniFilePath := myinipath . "\Temp.ini"
+    }
+    return IniFilePath
+}
 
 InitialState:
 ; Save the initial state of the controls after the data is loaded
