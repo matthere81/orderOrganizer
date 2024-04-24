@@ -25,6 +25,7 @@ IfExist, %I_Icon%
 global guiWidth := 925
 global guiHeight := 510
 global guiChecklistHeight := 765
+global essentialFields := (po != "") && (cpq != "") && (customer != "")
 
 
 ; Create Order Database Path If It Doesn't Exist
@@ -149,9 +150,6 @@ Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
 
 ; Set Timer CheckFocus
 SetTimer CheckFocus, 500
-
-; Set Timer WhatFocus
-; SetTimer WhatFocus, 500
 
 ; OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
 #Include %A_ScriptDir%\Menu.ahk

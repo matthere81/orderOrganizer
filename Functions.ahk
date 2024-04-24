@@ -16,116 +16,87 @@ readtheini:
 Return
 
 CheckFocus:
-    ; ; Save the current state of the GUI to an ini file
+    ; Save the current state of the GUI to an ini file
     Gui Submit, NoHide
     GuiControlGet focusedControl, FocusV
     
-    IniFilePath := SetIniFilePath(myinipath, po, cpq, customer)
-
-    MsgBox % IniFilePath
-    Gosub Autosave
-    ; ; Read the previously saved value of the focused control from the INI file
-    ; IniRead prevValue, %IniFilePath%, orderInfo, %focusedControl%
-
-    ; ; Loop through all files in myinipath
-    ; Loop, Files, %myinipath%\*, F
-    ; {
-    ;     ; Check if the current file matches IniFilePath
-    ;     if (A_LoopFileFullPath = IniFilePath)
-    ;         {
-    ;             ; The file was found
-    ;             matchedFilePath := A_LoopFileFullPath
-    ;             ; MsgBox % customer . " and PO is " . po
-    ;             ; Continue checking for a match until the variables are entered
-    ;             while (po != "") && (cpq != "") && (customer != "") ;&& (crd != "") && (poDate != "") && (sapDate != "")
-    ;             {
-    ;                 ; MsgBox, 2
-    ;                 ; Check if all fields in vars are not blank
-    ;                 allFieldsEntered := false
-    ;                 for index, var in autosaveVars
-    ;                 {
-    ;                     ; MsgBox % var
-    ;                     ; if (var = "")
-    ;                     ; {
-    ;                     ;     ; MsgBox % var
-    ;                     ;     allFieldsEntered := false
-    ;                     ;     break
-    ;                     ; }
-    ;                 }
-        
-    ;                 ; ; If all fields in vars are entered, exit the while loop
-    ;                 ; if (allFieldsEntered)
-    ;                 ; {
-    ;                 ;     break
-    ;                 ; }
-        
-    ;                 ; TODO: Add code here to update the variables
-    ;             }
-        
-    ;             break
-    ;         }
-    ; }
+    IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
     
-    ; ; Get the current value of the focused control
-    ; GuiControlGet currentValue,, %focusedControl%
-    ; ; MsgBox, %focusedControl%: %currentValue%
-    
-    ; if (cpq != "") && (po != "") && (focusedControl != "po") && (focusedControl != "cpq")  && (currentValue != prevValue)
-    ; {
-    ;     ; Show a message in the status bar
-    ;     SB_SetText("",,0)
-        ; Gosub Autosave
-    ; }
+    ; What type of IniFilePath is this
+    SplitPath IniFilePath, myFileName
+
+    if InStr(myFileName, CPQ)
+    {
+        checkAndSave(po, cpq, customer,autosaveVars, IniFilePath, vars)
+    }
 Return
 
 SaveToIni:
+    ; MsgBox in basic save
     Gui Submit, NoHide
-    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
+    IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
     for index, var in vars
-    {
-        GuiControlGet, fieldValue,, %var%
-        msgbox % var
-        IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
-    }
-    MsgBox, Saved
+        save(vars, IniFilePath)
+    ; MsgBox out basic save
 return
 
-Autosave:  
+statusBarSave(vars, IniFilePath)
+{
+    ; MsgBox in statusBarSave
     ; Show a message in the status bar
-    ; SB_SetText("Autosaving...",,0)
-    
-    ; ; Set the path for the ini file
-    ; IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini " ;. customer . ".ini"
-    
-    ; ; Save the current state of the GUI to an ini file
-    ; Gui Submit, NoHide
-    
-    ; allFields := "" ; Initialize an empty string to collect all fields and values
+    SB_SetText("Autosaving...",,0)
 
+    save(vars, IniFilePath)
+
+    Sleep 500
+    SB_SetText("",,0)
+    ; msgbox out statusBarSave
+}
+
+save(vars, IniFilePath)
+{
+    ; msgbox in basic save
     for index, var in vars
     {
         GuiControlGet, fieldValue,, %var%
-        IniWrite %fieldValue%, %TempIniFilePath%, orderInfo, %var%
-        
-        ; allFields .= "Field: " . var . ", Value: " . fieldValue . "`n" ; Add the field and value to the string
+        fieldValue := Trim(fieldValue) ; Trim whitespace from fieldValue
+        IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
+    ; msgbox out basic save
+}
 
-    ; MsgBox % allFields ; Display all fields and values
-    
-    ; Sleep 500
-    ; SB_SetText("",,0)
-Return
+checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars)
+{
+    ; Continue checking for a match until the variables are entered
+    if (po != "") && (cpq != "") && (customer != "")
+    {
+        ; Check if all fields in vars are not blank
+        anyFieldEntered := false
+        for index, var in autosaveVars
+        {
+            GuiControlGet, currentText,, %var%
+            ; MsgBox % "Control: " . var . ", Text: " . currentText
+            if (currentText != "")
+            {
+                anyFieldEntered := true
+                break
+            }
+        }
 
-SetIniFilePath(myinipath, po, cpq, customer)
+        ; If any field in vars is entered, save
+        if (anyFieldEntered)
+        {
+            statusBarSave(vars, IniFilePath)
+        }
+    }
+}
+
+SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
 {
     ; Set the path for the ini file
     if (po != "") && (cpq != "") && (customer != "")
     {
         IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
-    }
-    else if (po != "") && (cpq != "")
-    {
-        IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini"
     }
     else
     {
@@ -133,20 +104,6 @@ SetIniFilePath(myinipath, po, cpq, customer)
     }
     return IniFilePath
 }
-
-InitialState:
-; Save the initial state of the controls after the data is loaded
-Gui Submit, NoHide
-initialState := {}
-initialStateString := ""
-for index, var in vars
-{
-    GuiControlGet, fieldValue,, %var%
-    initialState[var] := fieldValue
-    initialStateString .= var . ": " . fieldValue . "`n"
-}
-MsgBox, InitialState:`n%initialStateString%
-Return
 
 OpenFileFromMenu:
     FileSelectFile, SelectedFile,r,%myinipath%, Open a file
