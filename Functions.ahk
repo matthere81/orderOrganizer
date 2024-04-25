@@ -25,12 +25,25 @@ CheckFocus:
     ; What type of IniFilePath is this
     SplitPath IniFilePath, myFileName
 
-    compareFilenames(myinipath, myFileName, po, cpq, customer)
+    currentFileName := compareFilenames(myinipath, myFileName, po, cpq, customer)
 
-    if InStr(myFileName, CPQ)
+    if (currentFileName = myFileName)
     {
-        checkAndSave(po, cpq, customer,autosaveVars, IniFilePath, vars)
+        fileMatch := currentFileName
+        checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars) ;, currentFileName)
+        ; MsgBox % fileMatch
     }
+    else if (currentFileName = "")
+    {
+        IniFilePath := myinipath . "\" . currentFileName
+        checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars)
+    }
+
+
+    ; if InStr(myFileName, CPQ)
+    ; {
+    ;     checkAndSave(po, cpq, customer,autosaveVars, IniFilePath, vars)
+    ; }
 Return
 
 SaveToIni:
@@ -67,7 +80,7 @@ save(vars, IniFilePath)
     ; msgbox out basic save
 }
 
-checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars)
+checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars) ;, currentFileName)
 {
     ; Continue checking for a match until the variables are entered
     if (po != "") && (cpq != "") && (customer != "")
@@ -77,7 +90,7 @@ checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars)
         for index, var in autosaveVars
         {
             GuiControlGet, currentText,, %var%
-            ; MsgBox % "Control: " . var . ", Text: " . currentText
+            MsgBox % "Control: " . var . ", Text: " . currentText
             if (currentText != "")
             {
                 anyFieldEntered := true
@@ -86,10 +99,10 @@ checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars)
         }
 
         ; If any field in vars is entered, save
-        if (anyFieldEntered)
-        {
-            statusBarSave(vars, IniFilePath)
-        }
+        ; if (anyFieldEntered)
+        ; {
+        ;     statusBarSave(vars, IniFilePath)
+        ; }
     }
 }
 
@@ -113,20 +126,27 @@ SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
 
 compareFilenames(myinipath, myFileName, po, cpq, customer)
 {
-    if (po != "") (cpq!= "")
+    if (customer = "")
     {
-        Loop, Files, %myinipath%\*.*
+        targetFileName := % "PO " . po . " CPQ-" . cpq . ".ini"
+    }
+    else If (customer != "")
+    {
+        targetFileName := % "PO " . po . " CPQ-" . cpq . customer . ".ini"
+    }
+
+    Loop, Files, %myinipath%\*.*
+    {
+        SplitPath, A_LoopFileLongPath, currentFileName
+        ; MsgBox % "currentFileName: " . currentFileName . "`ntargetFileName: " . targetFileName
+        if (currentFileName = targetFileName)
         {
-            SplitPath, A_LoopFileLongPath, currentFileName
-            MsgBox % "currentFileName: " . currentFileName . "`nmyFileName: " . myFileName
-            if (currentFileName = myFileName)
-            {
-                MsgBox, % "Match found: " . A_LoopFileLongPath
-                return true
-            }
+            ; MsgBox, % "Match found: " . A_LoopFileLongPath
+            MsgBox % myFileName
+            return myFileName
         }
     }
-    return false
+    return
 }
 
 OpenFileFromMenu:
