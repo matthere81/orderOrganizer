@@ -49,10 +49,6 @@ vars := ["sot", "customer", "contact", "soldTo", "intercompanyEntity", "terms", 
 	, "po", "poValue", "tax", "freightCost", "surcharge", "totalCost", "salesperson", "salesManager", "managerCode", "salesDirector"
 	, "directorCode", "notes", "endUser", "phone", "email", "endUse"]
 
-autosaveVars := ["sot", "contact", "soldTo", "intercompanyEntity", "terms", "soNumber", "system", "serialNumber"
-, "poValue", "tax", "freightCost", "surcharge", "totalCost", "salesperson", "salesManager", "managerCode", "salesDirector"
-, "directorCode", "notes", "endUser", "phone", "email", "endUse"]
-
 ; fieldsInfo := ""
 ; for index, field in fields
 ; {
@@ -150,6 +146,9 @@ Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
 
 ; Set Timer CheckFocus
 SetTimer CheckFocus, 500
+; Start the timer when the script starts. The timer will trigger the MonitorInputs function every 1000 milliseconds (1 second).
+SetTimer, MonitorInputs, 500
+
 
 ; OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
 #Include %A_ScriptDir%\Menu.ahk

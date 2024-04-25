@@ -15,10 +15,54 @@ readtheini:
 
 Return
 
-CheckFocus:
-    ; Save the current state of the GUI to an ini file
+MonitorInputs:
+    ; Get the current values of the cpq, po, and customer fields
+    GuiControlGet currentCpq,, cpq
+    GuiControlGet currentPo,, po
+    GuiControlGet currentCustomer,, customer
+
+    ; If the current values are different from the previous values, do something
+    if (currentCpq != previousCpq || currentPo != previousPo || currentCustomer != previousCustomer)
+    {
+        ; Save the current values for the next comparison
+        previousCpq := currentCpq
+        previousPo := currentPo
+        previousCustomer := currentCustomer
+
+        ; Loop through all of the vars in the vars array
+        for index, var in vars
+        {
+            ; Check if the current variable is not one of the excluded variables
+            if (IsVarExcluded(var))
+            {
+                ; Get the value of the current field
+                GuiControlGet fieldValue,, %var%
+                MsgBox % "Field: " . var . ", Value: " . fieldValue
+
+                ; Time to check against existing files
+                ; If it checks out, time to save
+            }
+        }
+    }
+return
+
+IsVarExcluded(var)
+{
+    ; Define the excluded variables
+    excludedVars := "po,cpq,customer,crd,sapDate,poDate"
+
+    ; Check if the current variable is not one of the excluded variables
+    return !InStr(excludedVars, var)
+}
+
+GuiState:
     Gui Submit, NoHide
     GuiControlGet focusedControl, FocusV
+return
+
+CheckFocus:
+    ; Save the current state of the GUI to an ini file
+    Gosub GuiState
     
     IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
     
@@ -29,42 +73,63 @@ CheckFocus:
 
     if (currentFileName = myFileName)
     {
-        fileMatch := currentFileName
-        checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars) ;, currentFileName)
-        ; MsgBox % fileMatch
+        ; MsgBox % currentFileName . " cfn is the same as mfn " . myFileName
+        ; fileMatch := currentFileName
+        myFileName := compareFilenames(myinipath, myFileName, po, cpq, customer)
+        ; if (customer != "")
+        ; {
+        ;     MsgBox before essentials
+        ;     essentialFieldsEntered(autosaveVars)
+        ; }
+        ; checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars) ;, currentFileName)
+        
     }
     else if (currentFileName = "")
     {
         IniFilePath := myinipath . "\" . currentFileName
+        ; MsgBox % "In else if of CheckFocus - IniFilePath: " . IniFilePath
         checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars)
     }
-
-
-    ; if InStr(myFileName, CPQ)
-    ; {
-    ;     checkAndSave(po, cpq, customer,autosaveVars, IniFilePath, vars)
-    ; }
 Return
+
+essentialFieldsEntered(autosaveVars)
+{
+    ; Check if any fields in vars are not blank
+    anyFieldEntered := false
+    for index, var in autosaveVars
+    {
+        GuiControlGet, currentText,, %var%
+        MsgBox % "Control: " . var . ", Text: " . currentText
+        if (currentText != "")
+        {
+            anyFieldEntered := true
+            break
+        }
+    }
+}
 
 SaveToIni:
     ; MsgBox in basic save
-    Gui Submit, NoHide
+    Gosub GuiState
     IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
-    for index, var in vars
-        save(vars, IniFilePath)
+    save(vars, IniFilePath)
     ; MsgBox out basic save
 return
 
 statusBarSave(vars, IniFilePath)
 {
     ; MsgBox in statusBarSave
+    
     ; Show a message in the status bar
     SB_SetText("Autosaving...",,0)
-
+    
+    ; Save the variables to the ini file
     save(vars, IniFilePath)
-
+    
+    ; Wait for a short time to display the message
     Sleep 500
     SB_SetText("",,0)
+    
     ; msgbox out statusBarSave
 }
 
@@ -85,18 +150,18 @@ checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars) ;, currentFileN
     ; Continue checking for a match until the variables are entered
     if (po != "") && (cpq != "") && (customer != "")
     {
-        ; Check if all fields in vars are not blank
-        anyFieldEntered := false
-        for index, var in autosaveVars
-        {
-            GuiControlGet, currentText,, %var%
-            MsgBox % "Control: " . var . ", Text: " . currentText
-            if (currentText != "")
-            {
-                anyFieldEntered := true
-                break
-            }
-        }
+        ; ; Check if all fields in vars are not blank
+        ; anyFieldEntered := false
+        ; for index, var in autosaveVars
+        ; {
+        ;     GuiControlGet, currentText,, %var%
+        ;     ; MsgBox % "Control: " . var . ", Text: " . currentText
+        ;     if (currentText != "")
+        ;     {
+        ;         anyFieldEntered := true
+        ;         break
+        ;     }
+        ; }
 
         ; If any field in vars is entered, save
         ; if (anyFieldEntered)
@@ -108,41 +173,35 @@ checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars) ;, currentFileN
 
 SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
 {
-    ; Set the path for the ini file
-    if (po != "") && (cpq != "") && (customer != "")
+    IniFilePath := myinipath . "\Temp.ini"
+    if (po != "" && cpq != "")
     {
-        IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
-    }
-    else if (po != "") && (cpq != "")
-    {
-        IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini"
-    }
-    else
-    {
-        IniFilePath := myinipath . "\Temp.ini"
+        IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq
+        if (customer != "")
+        {
+            IniFilePath .= " " . customer
+        }
+        IniFilePath .= ".ini"
     }
     return IniFilePath
 }
 
 compareFilenames(myinipath, myFileName, po, cpq, customer)
 {
-    if (customer = "")
+    targetFileName := "PO " . po . " CPQ-" . cpq ; . customer . "ini"
+    if (customer != "")
     {
-        targetFileName := % "PO " . po . " CPQ-" . cpq . ".ini"
+        targetFileName .= customer
     }
-    else If (customer != "")
-    {
-        targetFileName := % "PO " . po . " CPQ-" . cpq . customer . ".ini"
-    }
+    targetFileName .= ".ini"
 
-    Loop, Files, %myinipath%\*.*
+    Loop Files, %myinipath%\*.*
     {
-        SplitPath, A_LoopFileLongPath, currentFileName
+        SplitPath A_LoopFileLongPath, currentFileName
         ; MsgBox % "currentFileName: " . currentFileName . "`ntargetFileName: " . targetFileName
         if (currentFileName = targetFileName)
         {
             ; MsgBox, % "Match found: " . A_LoopFileLongPath
-            MsgBox % myFileName
             return myFileName
         }
     }
