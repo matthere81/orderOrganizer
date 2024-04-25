@@ -16,10 +16,19 @@ readtheini:
 Return
 
 MonitorInputs:
+    ; Save the current state of the GUI to an ini file
+    Gosub GuiState
+
+    
+    return
+    
     ; Get the current values of the cpq, po, and customer fields
     GuiControlGet currentCpq,, cpq
     GuiControlGet currentPo,, po
     GuiControlGet currentCustomer,, customer
+    currentCpq := TrimAndGetValue("cpq")
+    currentPo := TrimAndGetValue("po")
+    currentCustomer := TrimAndGetValue("customer")
 
     ; If the current values are different from the previous values, do something
     if (currentCpq != previousCpq || currentPo != previousPo || currentCustomer != previousCustomer)
@@ -28,6 +37,16 @@ MonitorInputs:
         previousCpq := currentCpq
         previousPo := currentPo
         previousCustomer := currentCustomer
+    }
+    else if (currentCpq = previousCpq || currentPo = previousPo || currentCustomer = previousCustomer)
+    {        
+        IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
+        
+        ; What type of IniFilePath is this
+        SplitPath IniFilePath, myFileName
+
+        ; Time to check against existing files
+        currentFileName := compareFilenames(myinipath, myFileName, currentPo, currentCpq, currentCustomer)
 
         ; Loop through all of the vars in the vars array
         for index, var in vars
@@ -37,14 +56,27 @@ MonitorInputs:
             {
                 ; Get the value of the current field
                 GuiControlGet fieldValue,, %var%
-                MsgBox % "Field: " . var . ", Value: " . fieldValue
+                if (var != "")
+                {
+                    break    
+                }
+                ; MsgBox % "Field: " . var . ", Value: " . fieldValue
 
-                ; Time to check against existing files
+                
                 ; If it checks out, time to save
             }
         }
+        ; MsgBox, % po
+        statusBarSave(vars, IniFilePath, currentPo, currentCpq, currentCustomer)
     }
 return
+
+TrimAndGetValue(controlName)
+{
+    GuiControlGet value,, %controlName%
+    value := Trim(value)
+    return value
+}
 
 IsVarExcluded(var)
 {
@@ -60,54 +92,6 @@ GuiState:
     GuiControlGet focusedControl, FocusV
 return
 
-CheckFocus:
-    ; Save the current state of the GUI to an ini file
-    Gosub GuiState
-    
-    IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
-    
-    ; What type of IniFilePath is this
-    SplitPath IniFilePath, myFileName
-
-    currentFileName := compareFilenames(myinipath, myFileName, po, cpq, customer)
-
-    if (currentFileName = myFileName)
-    {
-        ; MsgBox % currentFileName . " cfn is the same as mfn " . myFileName
-        ; fileMatch := currentFileName
-        myFileName := compareFilenames(myinipath, myFileName, po, cpq, customer)
-        ; if (customer != "")
-        ; {
-        ;     MsgBox before essentials
-        ;     essentialFieldsEntered(autosaveVars)
-        ; }
-        ; checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars) ;, currentFileName)
-        
-    }
-    else if (currentFileName = "")
-    {
-        IniFilePath := myinipath . "\" . currentFileName
-        ; MsgBox % "In else if of CheckFocus - IniFilePath: " . IniFilePath
-        checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars)
-    }
-Return
-
-essentialFieldsEntered(autosaveVars)
-{
-    ; Check if any fields in vars are not blank
-    anyFieldEntered := false
-    for index, var in autosaveVars
-    {
-        GuiControlGet, currentText,, %var%
-        MsgBox % "Control: " . var . ", Text: " . currentText
-        if (currentText != "")
-        {
-            anyFieldEntered := true
-            break
-        }
-    }
-}
-
 SaveToIni:
     ; MsgBox in basic save
     Gosub GuiState
@@ -116,10 +100,13 @@ SaveToIni:
     ; MsgBox out basic save
 return
 
-statusBarSave(vars, IniFilePath)
+statusBarSave(vars, IniFilePath, currentPo, currentCpq, currentCustomer)
 {
-    ; MsgBox in statusBarSave
-    
+    if (po = "") || (cpq = "") || (customer = "")
+    {
+        return
+    }
+    MsgBox, here
     ; Show a message in the status bar
     SB_SetText("Autosaving...",,0)
     
@@ -143,32 +130,6 @@ save(vars, IniFilePath)
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
     ; msgbox out basic save
-}
-
-checkAndSave(po, cpq, customer, autosaveVars, IniFilePath, vars) ;, currentFileName)
-{
-    ; Continue checking for a match until the variables are entered
-    if (po != "") && (cpq != "") && (customer != "")
-    {
-        ; ; Check if all fields in vars are not blank
-        ; anyFieldEntered := false
-        ; for index, var in autosaveVars
-        ; {
-        ;     GuiControlGet, currentText,, %var%
-        ;     ; MsgBox % "Control: " . var . ", Text: " . currentText
-        ;     if (currentText != "")
-        ;     {
-        ;         anyFieldEntered := true
-        ;         break
-        ;     }
-        ; }
-
-        ; If any field in vars is entered, save
-        ; if (anyFieldEntered)
-        ; {
-        ;     statusBarSave(vars, IniFilePath)
-        ; }
-    }
 }
 
 SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
@@ -201,8 +162,19 @@ compareFilenames(myinipath, myFileName, po, cpq, customer)
         ; MsgBox % "currentFileName: " . currentFileName . "`ntargetFileName: " . targetFileName
         if (currentFileName = targetFileName)
         {
-            ; MsgBox, % "Match found: " . A_LoopFileLongPath
-            return myFileName
+            MsgBox, 4, Match found, The following match was found:`n`n%A_LoopFileLongPath%`n`nDo you want to keep the new file and delete the old file?
+                IfMsgBox, Yes
+                {
+                    ; User chose to keep going with the new file and delete the old file
+                    FileDelete, %A_LoopFileLongPath%
+                    return myFileName
+                }
+                else
+                {
+                    ; User chose to run the gClearFields subroutine
+                    Gosub ClearFields
+                    return
+                }
         }
     }
     return

@@ -93,7 +93,6 @@ Gui Font, S9, Segoe UI Semibold
 Gui Add, StatusBar, vMyStatusBar -Theme ;, Type In CPQ/Quote# AND PO# To Begin Autosaving
 
 ; ---- Loop through the fields and create the text and edit fields ----
-
 for index, field in fields
 {
 	if (index = 8 or index = 14 or index = 20)
@@ -134,20 +133,20 @@ for index, field in fields
 		Continue
 	}
 	
-	Gui Add, Edit, yp+20 xp-2.5 v%controlName% ;;+gOnChange ;gCheckFocus 
+	Gui Add, Edit, yp+20 xp-2.5 v%controlName% ;gMonitorInputs ;+gOnChange ;gCheckFocus 
 	yCoordinate += 5
 }
 ; END ---- END - Loop through the fields and create the text and edit fields - END ---- END
+; After the loop, join the array elements into a string and display the string in a MsgBox
+
 
 Gui Add, Text, x0 y475, ________________________________________________________________________________________________________________________________________________________________________________________________
 
 #Include ChecklistGUI.ahk
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
 
-; Set Timer CheckFocus
-SetTimer CheckFocus, 500
 ; Start the timer when the script starts. The timer will trigger the MonitorInputs function every 1000 milliseconds (1 second).
-SetTimer, MonitorInputs, 500
+SetTimer MonitorInputs, 500
 
 
 ; OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why
