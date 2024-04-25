@@ -25,6 +25,8 @@ CheckFocus:
     ; What type of IniFilePath is this
     SplitPath IniFilePath, myFileName
 
+    compareFilenames(myinipath, myFileName, po, cpq, customer)
+
     if InStr(myFileName, CPQ)
     {
         checkAndSave(po, cpq, customer,autosaveVars, IniFilePath, vars)
@@ -98,11 +100,33 @@ SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
     {
         IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . " " . customer . ".ini"
     }
+    else if (po != "") && (cpq != "")
+    {
+        IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq . ".ini"
+    }
     else
     {
         IniFilePath := myinipath . "\Temp.ini"
     }
     return IniFilePath
+}
+
+compareFilenames(myinipath, myFileName, po, cpq, customer)
+{
+    if (po != "") (cpq!= "")
+    {
+        Loop, Files, %myinipath%\*.*
+        {
+            SplitPath, A_LoopFileLongPath, currentFileName
+            MsgBox % "currentFileName: " . currentFileName . "`nmyFileName: " . myFileName
+            if (currentFileName = myFileName)
+            {
+                MsgBox, % "Match found: " . A_LoopFileLongPath
+                return true
+            }
+        }
+    }
+    return false
 }
 
 OpenFileFromMenu:
