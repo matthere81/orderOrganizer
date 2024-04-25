@@ -144,8 +144,6 @@ Gui Add, Text, x0 y475, ________________________________________________________
 #Include ChecklistGUI.ahk
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
 
-; Set Timer CheckFocus
-SetTimer CheckFocus, 500
 ; Start the timer when the script starts. The timer will trigger the MonitorInputs function every 1000 milliseconds (1 second).
 SetTimer, MonitorInputs, 500
 
