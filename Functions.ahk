@@ -53,6 +53,7 @@ SaveToIni:
     Gosub GuiState
     IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars)
     save(vars, allChecklists, IniFilePath)
+    checkIfOrderFolderExists(myOrderDocs, po, cpq, customer)
 return
 
 save(vars, allChecklists, IniFilePath)
@@ -152,6 +153,46 @@ compareFilenames(IniFilePath, myinipath)
         }
     }
     return
+}
+
+checkIfOrderFolderExists(myOrderDocs, po, cpq, customer)
+{
+    folderPath := myOrderDocs . "\PO " . po . " " . customer . " CPQ-" . cpq
+    ; Check if the order folder exists
+    if !FileExist(folderPath)
+    {
+        ; Create the order folder
+        FileCreateDir, %folderPath%
+        run % folderPath
+    }
+    Return folderPath
+}
+
+GuiDropFiles:
+    ; A_GuiEvent contains the names of the files that were dropped
+    Loop, Parse, A_GuiEvent, `n
+    {
+        MsgBox, You dropped file: %A_LoopField%
+    }   
+return
+
+; Handle dropped files
+WM_DROPFILES(wParam, lParam) {
+    ; Get the number of files dropped
+    fileCount := DllCall("shell32\DragQueryFile", "uint", wParam, "uint", 0xFFFFFFFF, "uint", 0, "uint", 0)
+
+    ; Loop through each file
+    Loop, %fileCount% {
+        ; Get the path of the file
+        VarSetCapacity(filePath, 260*2, 0)
+        DllCall("shell32\DragQueryFile", "uint", wParam, "uint", A_Index-1, "str", filePath, "uint", 260)
+
+        ; Copy the file to folderPath
+        FileCopy, %filePath%, %folderPath%
+    }
+
+    ; Release memory
+    DllCall("shell32\DragFinish", "uint", wParam)
 }
 
 OpenFileFromMenu:

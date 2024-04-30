@@ -26,12 +26,18 @@ global guiWidth := 925
 global guiHeight := 510
 global guiChecklistHeight := 765
 global essentialFields := (po != "") && (cpq != "") && (customer != "")
+global folderPath
 
 
 ; Create Order Database Path If It Doesn't Exist
 myinipath := % A_WorkingDir . "\Order Database"
 if !FileExist(myinipath) {
     FileCreateDir, %myinipath%
+}
+
+myOrderDocs := % A_WorkingDir . "\Order Documents"
+if !FileExist(myOrderDocs) {
+    FileCreateDir, %myOrderDocs%
 }
 
 backupDatabase(myinipath)
