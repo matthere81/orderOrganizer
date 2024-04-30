@@ -145,7 +145,7 @@ Gui Add, Text, x0 y475, ________________________________________________________
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
 
 ; Start the timer when the script starts. The timer will trigger the MonitorInputs function every 1000 milliseconds (1 second).
-SetTimer, MonitorInputs, 500
+; SetTimer, MonitorInputs, 500
 
 
 ; OnMessage(0x0201, "WM_LBUTTONDOWN") ; the formatting is weird and i don't know why

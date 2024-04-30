@@ -15,73 +15,11 @@ readtheini:
 
 Return
 
-MonitorInputs:
-    ; Save the current state of the GUI to an ini file
-    Gosub GuiState
-
-    ; Get the current values of the cpq, po, and customer fields
-    GuiControlGet currentCpq,, cpq
-    GuiControlGet currentPo,, po
-    GuiControlGet currentCustomer,, customer
-    currentCpq := TrimAndGetValue("cpq")
-    currentPo := TrimAndGetValue("po")
-    currentCustomer := TrimAndGetValue("customer")
-
-    ; If the current values are different from the previous values, do something
-    if (currentCpq != previousCpq || currentPo != previousPo || currentCustomer != previousCustomer)
-    {
-        ; Save the current values for the next comparison
-        previousCpq := currentCpq
-        previousPo := currentPo
-        previousCustomer := currentCustomer
-    }
-    else if (currentCpq = previousCpq || currentPo = previousPo || currentCustomer = previousCustomer)
-    {        
-        IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
-        
-        ; What type of IniFilePath is this
-        SplitPath IniFilePath, myFileName
-
-        ; Time to check against existing files
-        currentFileName := compareFilenames(myinipath, myFileName, currentPo, currentCpq, currentCustomer)
-
-        ; Loop through all of the vars in the vars array
-        for index, var in vars
-        {
-            ; Check if the current variable is not one of the excluded variables
-            if (IsVarExcluded(var))
-            {
-                ; Get the value of the current field
-                GuiControlGet fieldValue,, %var%
-                if (var != "")
-                {
-                    break    
-                }
-                ; MsgBox % "Field: " . var . ", Value: " . fieldValue
-
-                
-                ; If it checks out, time to save
-            }
-        }
-        ; MsgBox, % po
-        statusBarSave(vars, IniFilePath, currentPo, currentCpq, currentCustomer)
-    }
-return
-
 TrimAndGetValue(controlName)
 {
     GuiControlGet value,, %controlName%
     value := Trim(value)
     return value
-}
-
-IsVarExcluded(var)
-{
-    ; Define the excluded variables
-    excludedVars := "po,cpq,customer,crd,sapDate,poDate"
-
-    ; Check if the current variable is not one of the excluded variables
-    return !InStr(excludedVars, var)
 }
 
 GuiState:
@@ -90,81 +28,90 @@ GuiState:
 return
 
 SaveToIni:
-    ; MsgBox in basic save
     Gosub GuiState
-    IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
-    save(vars, IniFilePath)
-    ; MsgBox out basic save
+    IniFilePath := SetIniFilePath(myinipath, po, cpq, customer, vars)
+    save(vars, allChecklists, IniFilePath)
 return
 
-statusBarSave(vars, IniFilePath, currentPo, currentCpq, currentCustomer)
+save(vars, allChecklists, IniFilePath)
 {
-    if (po = "") || (cpq = "") || (customer = "")
-    {
-        return
-    }
-    MsgBox, here
-    ; Show a message in the status bar
-    SB_SetText("Autosaving...",,0)
-    
-    ; Save the variables to the ini file
-    save(vars, IniFilePath)
-    
-    ; Wait for a short time to display the message
-    Sleep 500
-    SB_SetText("",,0)
-    
-    ; msgbox out statusBarSave
-}
-
-save(vars, IniFilePath)
-{
-    ; msgbox in basic save
     for index, var in vars
     {
         GuiControlGet, fieldValue,, %var%
         fieldValue := Trim(fieldValue) ; Trim whitespace from fieldValue
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
-    ; msgbox out basic save
+
+    ; Save the checklist variables
+    for outerIndex, checklists in allChecklists
+    {
+        for midIndex, checklistArray in checklists
+        {
+            for innerIndex, checklist in checklistArray
+            {
+                GuiControlGet, fieldValue,, %checklist%
+                IniWrite %fieldValue%, %IniFilePath%, orderInfo, %checklist%
+            }
+        }
+    }
+
+    saveStatusBar()
 }
 
-SetIniFilePath(myinipath, po, cpq, customer, vars, autosaveVars)
+saveStatusBar()
 {
-    IniFilePath := myinipath . "\Temp.ini"
-    if (po != "" && cpq != "")
+    ; Update the status bar
+    GuiControl,, MyStatusBar, Saving...
+    
+    ; Pause the script for two seconds
+    Sleep 1000
+    
+    ; Clear the status bar
+    GuiControl,, MyStatusBar, 
+    Return
+}
+
+SetIniFilePath(myinipath, po, cpq, customer, vars)
+{
+    ; Check if po or cpq are empty
+    if (po = "" or cpq = "")
     {
-        IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq
-        if (customer != "")
-        {
-            IniFilePath .= " " . customer
-        }
-        IniFilePath .= ".ini"
+        ; Display a MsgBox and return from the function
+        MsgBox, Please enter a quote# and PO# to enable saving.
+        return
+    }
+
+    IniFilePath := myinipath . "\PO " . po . " CPQ-" . cpq
+    if (customer != "")
+    {
+        IniFilePath .= " " . customer
+    }
+    IniFilePath .= ".ini"
+
+    if customer = ""
+    {
+        compareFilenames(IniFilePath, myinipath)
     }
     return IniFilePath
 }
 
-compareFilenames(myinipath, myFileName, po, cpq, customer)
+compareFilenames(IniFilePath, myinipath)
 {
-    targetFileName := "PO " . po . " CPQ-" . cpq ; . customer . "ini"
-    if (customer != "")
-    {
-        targetFileName .= customer
-    }
-    targetFileName .= ".ini"
-
+    ; Extract the filename from IniFilePath
+    SplitPath IniFilePath, targetFileName
+    
     Loop Files, %myinipath%\*.*
     {
         SplitPath A_LoopFileLongPath, currentFileName
-        ; MsgBox % "currentFileName: " . currentFileName . "`ntargetFileName: " . targetFileName
         if (currentFileName = targetFileName)
         {
-            MsgBox, 4, Match found, The following match was found:`n`n%A_LoopFileLongPath%`n`nDo you want to keep the new file and delete the old file?
+            MsgBox, 4, Match found, % "The following match was found:`n`n" . currentFileName 
+                . "`n`nDo you want to keep your current file and delete the old file?"
                 IfMsgBox, Yes
                 {
                     ; User chose to keep going with the new file and delete the old file
                     FileDelete, %A_LoopFileLongPath%
-                    return myFileName
+                    return targetFileName
                 }
                 else
                 {

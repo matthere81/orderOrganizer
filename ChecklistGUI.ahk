@@ -89,9 +89,7 @@ Loop, % section4.MaxIndex()
     AddSection(section4[A_Index], checklists4[A_Index], true)
 }
 
-; Add radio buttons for the "T&&Cs?" item in the "Pre SAP" section
-; Gui Add, Text, tcs y+10, T&&Cs?
-; Gui Add, Radio, x+5 gsubmitChecklist vtandcYes, Yes
-; Gui Add, Radio, x+5 gsubmitChecklist vtandcNa, N/A
+; Create an array of all checklist arrays
+allChecklists := [checklists1, checklists2, checklists3, checklists4]
 
 ; ---------- END PRE-SAP ----------
