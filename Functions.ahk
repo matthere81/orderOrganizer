@@ -10,6 +10,14 @@ readtheini:
         IniRead myValue, %SelectedFile%, orderInfo, %var%,
         if (myValue = "ERROR")
             myValue := ""
+
+        if (var = "endUse" or var = "notes")
+        {
+            ; Handle endUse and notes differently
+            StringReplace, myValue, myValue, ``n, `n, All
+            StringReplace, myValue, myValue, ``r, `r, All
+        }
+
         GuiControl,, %var%, %myValue%
     }
 
@@ -53,6 +61,14 @@ save(vars, allChecklists, IniFilePath)
     {
         GuiControlGet, fieldValue,, %var%
         fieldValue := Trim(fieldValue) ; Trim whitespace from fieldValue
+
+        if (var = "endUse" or var = "notes")
+        {
+            ; Handle endUse and notes differently
+            StringReplace, fieldValue, fieldValue, `n, ``n, All
+            StringReplace, fieldValue, fieldValue, `r, ``r, All
+        }
+
         IniWrite %fieldValue%, %IniFilePath%, orderInfo, %var%
     }
 
