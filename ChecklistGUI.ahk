@@ -35,7 +35,7 @@ Loop, % section1.MaxIndex()
 Gui Tab, 2
 
 section2 :=["SAP Attachments", "Main Sales Tab"]
-checklists2 := [["PO", "Quote", "Order Notice", "WIN Form", "Merge Report"], ["CRD Date", "First Date Lines Updated", "Incoterms"]]
+checklists2 := [["Purchase Order", "CPQ Quote", "Order Notice To Sales", "WIN Form", "Merge Report"], ["CRD Date", "First Date Lines Updated", "Incoterms"]]
 
 ; Loop over each section
 Loop, % section2.MaxIndex()

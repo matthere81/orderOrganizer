@@ -195,6 +195,19 @@ ClearFields:
     {
         GuiControl,, %field%, 
     }
+
+    ; Clear the checkboxes
+    for outerIndex, checklists in allChecklists
+    {
+        for midIndex, checklistArray in checklists
+        {
+            for innerIndex, checklist in checklistArray
+            {
+                GuiControl,, %checklist%, 0 ; Uncheck the checkbox
+            }
+        }
+    }
+
     GuiControl,, SearchTerm,
     GuiControl,, % endUse
 return
