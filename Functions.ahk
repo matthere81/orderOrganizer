@@ -13,6 +13,20 @@ readtheini:
         GuiControl,, %var%, %myValue%
     }
 
+    ; Read the checklist variables
+    for outerIndex, checklists in allChecklists
+    {
+        for midIndex, checklistArray in checklists
+        {
+            for innerIndex, checklist in checklistArray
+            {
+                IniRead myValue, %SelectedFile%, orderInfo, %checklist%,
+                ; MsgBox, % myValue
+                if (myValue != "ERROR")
+                GuiControl,, %checklist%, %myValue%
+            }
+        }
+    }
 Return
 
 TrimAndGetValue(controlName)
@@ -224,6 +238,7 @@ FileSelected:
     LV_GetText(ListView, SelectedRow, 1) ; Get the text of the selected item from the first column
     SelectedFile := myinipath . "\" . ListView ;. ".ini" ; Add the '.ini' extension to the selected file
     Gui, %MyGui%:Destroy ; Destroy the new GUI
+    Gosub ClearFields
     Gosub readtheini
 return
 

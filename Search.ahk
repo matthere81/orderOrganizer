@@ -20,6 +20,7 @@ Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
 
     if (matchingFiles.Length() = 1) ; If there's only one matching file
     {
+        Gosub ClearFields
         SelectedFile := matchingFiles[1] ; Set the 'file' variable to the name of the file
         SelectedFile := myinipath . "\" . SelectedFile
         Gosub readtheini
@@ -44,17 +45,3 @@ Loop, %myinipath%\\*.* ; Loop through all files in the selected folder
         MsgBox, No matching files were found. ; Display a message box
     }
 return
-
-; GuiClose:
-;     ; Hotkey, Escape, Off ; Turn off the Escape hotkey
-;     Hotkey, Enter, Off ; Turn off the Enter hotkey
-;     Gui, %MyGui%:Destroy ; Destroy the new GUI
-; return
-
-; SetTitleMatchMode 3
-; #IfWinActive, Order Organizer Search Results
-; Esc::Gui %MyGui%:Destroy
-; Enter::Gosub FileSelected
-; ; #IfWinActive
-; SetTitleMatchMode 2
-
