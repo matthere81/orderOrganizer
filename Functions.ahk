@@ -175,25 +175,6 @@ checkIfOrderFolderExists(myOrderDocs, po, cpq, customer)
     Return folderPath
 }
 
-; GuiDropFiles:
-;     ; A_GuiEvent contains the names of the files that were dropped
-;     Loop, Parse, A_GuiEvent, `n
-;     {
-;         ; Check if folderPath is valid
-;         if (folderPath = "" or !FileExist(folderPath))
-;         {
-;             MsgBox, Error: folderPath is not valid.
-;             return
-;         }
-;         ; Move the file to folderPath
-;         FileMove, %A_LoopField%, %folderPath%
-;         if ErrorLevel
-;         {
-;             MsgBox, Error: Failed to move file.
-;         }
-;     } 
-; Return  
-
 GuiDropFiles(GuiHwnd, FileArray, CtrlHwnd, X, Y) ;, po, cpq, customer, myOrderDocs)
 {
     guiDropTemp := "C:\Users\" . A_UserName . "\Order Organizer\Temp"
@@ -204,6 +185,149 @@ GuiDropFiles(GuiHwnd, FileArray, CtrlHwnd, X, Y) ;, po, cpq, customer, myOrderDo
     for i, file in FileArray
         FileCopy, %file%, %guiDropTemp%
     return
+}
+
+ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
+{
+    guiDropTemp := "C:\Users\" . A_UserName . "\Order Organizer\Temp"
+    if !FileExist(guiDropTemp) {
+        FileCreateDir, %guiDropTemp%
+    }
+
+    ; Create a COM object for the running instance of Outlook
+    outlook := ComObjActive("Outlook.Application")
+    ; Get the currently selected item
+    email := outlook.ActiveExplorer.Selection.Item(1)
+
+    ; Check if the item is a mail item
+    if (email.Class == 43) ; 43 is the class type for a mail item
+    {
+        ; Get the subject of the email
+        subject := email.Subject
+
+        ; Define an array of strings to look for in the subject
+        searchStrings := ["purchase order number", "purchase order #", "purchase order","po number", "po #", "po", "cpq"]
+
+        ; Loop through the array and check if the subject contains any of the strings
+        for index, searchString in searchStrings
+        {
+            ; regex := "(?i)?:purchase order(?: number| #)?|po(?: number| #)?|cpq(.*)"
+            ; Define a regular expression that matches the searchString followed by any characters
+            regex := "(?i)" searchString "(?:(.*))"
+
+            if (InStr(subject, searchString))
+            {
+                switch (searchString)
+                {
+                    case "purchase order #":
+                        RegExMatch(subject, regex, match)
+                        ; Extract the number directly after the match
+                        Trim(match1)
+                        po := match1
+                        MsgBox, % po
+                        break
+                ;     case "purchase order":
+                ;         ; Extract the PO number from the subject
+                ;         ; po := RegExReplace(subject, ".*\b(\d{6,})\b.*", "$1")
+                ;         ; MsgBox, % po
+                ;         break
+                ;     case "purchase order number":
+                ;         ; Handle "purchase order number"
+                ;         break
+                ;     case "po":
+                ;         ; Handle "po"
+                ;         break
+                ;     case "po number":
+                ;         ; Handle "po number"
+                ;         break
+                ;     case "po #":
+                ;         ; Handle "po #"
+                ;         break
+                ;     case "cpq":
+                ;         ; Extract the CPQ number from the subject
+                ;         cpq := RegExReplace(subject, ".*\b(\d{6,})\b.*", "$1")
+                ;         ; MsgBox, % cpq
+                ;         break
+                }
+            }
+
+            ; ; Check if the subject matches the regular expression
+            ; if (RegExMatch(subject, regex, match))
+            ; {
+            ;     ; Extract the text directly after the match
+            ;     nextText := match1
+            ;     MsgBox, %nextText%
+            ; }
+        }
+
+        ; Check if the mail item has attachments
+        if (email.Attachments.Count > 0)
+        {
+            saveAttachments(email, guiDropTemp)
+            ; processFiles(guiDropTemp)
+        }
+    }
+    else
+    {
+        MsgBox, No email is currently selected or the selected item is not an email.
+    }
+}
+
+saveAttachments(email, guiDropTemp)
+{
+    ; Loop through the attachments
+    for thisattachment in email.Attachments
+    {
+        ; Save the attachment to the specified path
+        attachmentPath := guiDropTemp . "\" . thisattachment.DisplayName
+        thisattachment.SaveAsFile(attachmentPath)
+    }
+}
+
+processFiles(guiDropTemp)
+{
+    ; Loop through the files in the attachment path
+    Loop, Files, %guiDropTemp%\*.*
+    {
+        processFile(A_LoopFileLongPath)
+    }
+}
+
+processFile(filePath)
+{
+    ; Get the base name and extension of the file
+    SplitPath, filePath, name, dir, ext, name_no_ext, drive
+
+    ; Check if the file extension is "png" or "jpg"
+    if (ext = "png" || ext = "jpg" || ext = "gif")
+    {
+        ; Delete the file
+        FileDelete, %filePath%
+    }
+
+    ; Check if the file name contains "po" or "cpq"
+    if (InStr(name, "po") || InStr(name, "cpq")) ; || InStr(name, "PO") || InStr(name, "CPQ"))
+    {   
+        convertPdfToTextAndProcess(filePath)
+    }
+}
+
+convertPdfToTextAndProcess(filePath)
+{
+    pdftotextPath:= % A_WorkingDir . "\pdftotext.exe"
+
+    ; Convert the PDF to a text file using pdftotext
+    RunWait, %pdftotextPath% -layout "%filePath%" "%filePath%.txt"
+    
+    Loop, Read, %filePath%.txt
+    {
+        ; Append lines that contain "po" or "cpq" to output.txt
+        if (InStr(A_LoopReadLine, "po number") || InStr(A_LoopReadLine, "cpq") || InStr(A_LoopReadLine, "po #"))
+        {
+            line := A_LoopReadLine
+            ; MsgBox % line
+        }
+    }
 }
 
 OpenFileFromMenu:
