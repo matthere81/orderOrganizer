@@ -27,7 +27,10 @@ global guiHeight := 510
 global guiChecklistHeight := 765
 global essentialFields := (po != "") && (cpq != "") && (customer != "")
 global folderPath
-
+global po
+global cpq
+global customer
+global droppedFile
 
 ; Create Order Database Path If It Doesn't Exist
 myinipath := % A_WorkingDir . "\Order Database"
@@ -148,7 +151,7 @@ for index, field in fields
 Gui Add, Text, x0 y475, ________________________________________________________________________________________________________________________________________________________________________________________________
 
 #Include ChecklistGUI.ahk
-Gui Show, w%guiWidth% h%guiHeight%, Order Organizer ;SO# %soNumber%
+Gui Show, w%guiWidth% h%guiHeight%, Order Organizer
 
 ; Start the timer when the script starts. The timer will trigger the MonitorInputs function every 1000 milliseconds (1 second).
 ; SetTimer, MonitorInputs, 500

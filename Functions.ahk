@@ -157,6 +157,13 @@ compareFilenames(IniFilePath, myinipath)
 
 checkIfOrderFolderExists(myOrderDocs, po, cpq, customer)
 {
+    MsgBox, % po . " is PO`n" . cpq  . " is CPQ`n" . customer . " is customer`n" . myOrderDocs . " is myOrderDocs`n" . droppedFile
+    if (po = "" or cpq = "")
+    {
+        MsgBox, Please add PO & CPQ/Quote#.
+        return
+    }
+    ; Create the order folder path
     folderPath := myOrderDocs . "\PO " . po . " " . customer . " CPQ-" . cpq
     ; Check if the order folder exists
     if !FileExist(folderPath)
@@ -168,31 +175,35 @@ checkIfOrderFolderExists(myOrderDocs, po, cpq, customer)
     Return folderPath
 }
 
-GuiDropFiles:
-    ; A_GuiEvent contains the names of the files that were dropped
-    Loop, Parse, A_GuiEvent, `n
-    {
-        MsgBox, You dropped file: %A_LoopField%
-    }   
-return
+; GuiDropFiles:
+;     ; A_GuiEvent contains the names of the files that were dropped
+;     Loop, Parse, A_GuiEvent, `n
+;     {
+;         ; Check if folderPath is valid
+;         if (folderPath = "" or !FileExist(folderPath))
+;         {
+;             MsgBox, Error: folderPath is not valid.
+;             return
+;         }
+;         ; Move the file to folderPath
+;         FileMove, %A_LoopField%, %folderPath%
+;         if ErrorLevel
+;         {
+;             MsgBox, Error: Failed to move file.
+;         }
+;     } 
+; Return  
 
-; Handle dropped files
-WM_DROPFILES(wParam, lParam) {
-    ; Get the number of files dropped
-    fileCount := DllCall("shell32\DragQueryFile", "uint", wParam, "uint", 0xFFFFFFFF, "uint", 0, "uint", 0)
-
-    ; Loop through each file
-    Loop, %fileCount% {
-        ; Get the path of the file
-        VarSetCapacity(filePath, 260*2, 0)
-        DllCall("shell32\DragQueryFile", "uint", wParam, "uint", A_Index-1, "str", filePath, "uint", 260)
-
-        ; Copy the file to folderPath
-        FileCopy, %filePath%, %folderPath%
+GuiDropFiles(GuiHwnd, FileArray, CtrlHwnd, X, Y) ;, po, cpq, customer, myOrderDocs)
+{
+    guiDropTemp := "C:\Users\" . A_UserName . "\Order Organizer\Temp"
+    if !FileExist(guiDropTemp) {
+        FileCreateDir, %guiDropTemp%
     }
 
-    ; Release memory
-    DllCall("shell32\DragFinish", "uint", wParam)
+    for i, file in FileArray
+        FileCopy, %file%, %guiDropTemp%
+    return
 }
 
 OpenFileFromMenu:
