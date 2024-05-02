@@ -157,10 +157,10 @@ Gui Add, Text, x0 y475, ________________________________________________________
 #Include ChecklistGUI.ahk
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer
 #Include %A_ScriptDir%\Menu.ahk
-
 ; ExtractAllAttachmentsFromCurrentEmail(myOrderDocs)
 Return
 
+#Include %A_ScriptDir%\QuoteInfo.ahk
 #include %A_ScriptDir%\Hotkeys.ahk
 #Include %A_ScriptDir%\Functions.ahk
 #Include %A_ScriptDir%\Search.ahk

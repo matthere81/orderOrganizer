@@ -9,14 +9,22 @@ SetWorkingDir, %A_ScriptDir%
 getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactEmail, ByRef contactPhone, ByRef customerName, ByRef quoteOwner, ByRef creatorManager, ByRef totalNetAmount, ByRef totalFreight, ByRef surcharge, ByRef totalTax, ByRef quoteTotal, ByRef soldToID, ByRef paymentTerms, ByRef opportunity)
 {
     SetTitleMatchMode 2
-
-    InputBox, userInput, CPQ#, Please enter CPQ#.
-    if ErrorLevel  ; If the user clicked Cancel or didn't enter anything
+    
+    if (quoteId = "")
     {
-        MsgBox, CANCEL was pressed or no input was given.
-        Return
+        InputBox, userInput, CPQ#, Please enter CPQ#.
+        if ErrorLevel  ; If the user clicked Cancel or didn't enter anything
+        {
+            MsgBox, CANCEL was pressed or no input was given.
+            Return
+        }
+        userInput := Trim(userInput)
     }
-    userInput := Trim(userInput)
+    else
+    {
+        userInput := quoteId
+    }
+    
     
     runSalesforceSearch(cUIA, inSearch)
     inSearch.SetValue(userInput)
