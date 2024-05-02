@@ -10,7 +10,8 @@ SetWorkingDir, C:\Users\%A_UserName%\Order Organizer ; Ensures a consistent star
 #include <UIA_Browser>
 
 ;  Create Order Organizer Path If It Doesn't Exist
-if !FileExist("C:\Users\" . A_UserName . "\Order Organizer") {
+if !FileExist("C:\Users\" . A_UserName . "\Order Organizer")
+{
     FileCreateDir, A_WorkingDir . "\Order Organizer"
     SetWorkingDir, A_WorkingDir . "\Order Organizer"
 }
@@ -34,12 +35,14 @@ global droppedFile
 
 ; Create Order Database Path If It Doesn't Exist
 myinipath := % A_WorkingDir . "\Order Database"
-if !FileExist(myinipath) {
+if !FileExist(myinipath)
+{
     FileCreateDir, %myinipath%
 }
 
 myOrderDocs := % A_WorkingDir . "\Order Documents"
-if !FileExist(myOrderDocs) {
+if !FileExist(myOrderDocs)
+{
     FileCreateDir, %myOrderDocs%
 }
 
@@ -96,6 +99,7 @@ Gui Add, Button, Default gSearch y20, Search ; Add a button that triggers the 'S
 Gui Add, Button, y20 gRestart, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
 Gui Add, Button, y20 gSaveToIni, &Save
 Gui Add, Button, y20 gClearFields, &New PO/Order
+Gui Add, Button, y20 gExtractAllAttachmentsFromCurrentEmail, &Info
 Gui Add, Button, y20, Get Quote Info  ; Create a button
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
@@ -154,7 +158,7 @@ Gui Add, Text, x0 y475, ________________________________________________________
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer
 #Include %A_ScriptDir%\Menu.ahk
 
-ExtractAllAttachmentsFromCurrentEmail(myOrderDocs)
+; ExtractAllAttachmentsFromCurrentEmail(myOrderDocs)
 Return
 
 #include %A_ScriptDir%\Hotkeys.ahk

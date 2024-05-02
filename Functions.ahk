@@ -194,6 +194,19 @@ ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
         FileCreateDir, %guiDropTemp%
     }
 
+    try
+    {
+        ; Try to get a COM object for the running instance of Outlook
+        outlook := ComObjActive("Outlook.Application")
+        ; MsgBox, Outlook is open.
+    }
+    catch
+    {
+        ; If an exception is thrown, Outlook is not open
+        MsgBox, Please open Outlook and try again.
+        return
+    }
+
     ; Create a COM object for the running instance of Outlook
     outlook := ComObjActive("Outlook.Application")
     ; Get the currently selected item
@@ -206,65 +219,17 @@ ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
         subject := email.Subject
 
         ; Define an array of strings to look for in the subject
-        searchStrings := ["purchase order number", "purchase order #", "purchase order","po number", "po #", "po", "cpq"]
+        searchStrings := ["cpq", "purchase order number", "purchase order #", "purchase order","po number", "po#", "po #", "po"]
 
-        ; Loop through the array and check if the subject contains any of the strings
-        for index, searchString in searchStrings
-        {
-            ; regex := "(?i)?:purchase order(?: number| #)?|po(?: number| #)?|cpq(.*)"
-            ; Define a regular expression that matches the searchString followed by any characters
-            regex := "(?i)" searchString "(?:(.*))"
+        findInfoFromSubject(subject, searchStrings, potentialPo)
 
-            if (InStr(subject, searchString))
-            {
-                switch (searchString)
-                {
-                    case "purchase order #":
-                        RegExMatch(subject, regex, match)
-                        ; Extract the number directly after the match
-                        Trim(match1)
-                        po := match1
-                        MsgBox, % po
-                        break
-                ;     case "purchase order":
-                ;         ; Extract the PO number from the subject
-                ;         ; po := RegExReplace(subject, ".*\b(\d{6,})\b.*", "$1")
-                ;         ; MsgBox, % po
-                ;         break
-                ;     case "purchase order number":
-                ;         ; Handle "purchase order number"
-                ;         break
-                ;     case "po":
-                ;         ; Handle "po"
-                ;         break
-                ;     case "po number":
-                ;         ; Handle "po number"
-                ;         break
-                ;     case "po #":
-                ;         ; Handle "po #"
-                ;         break
-                ;     case "cpq":
-                ;         ; Extract the CPQ number from the subject
-                ;         cpq := RegExReplace(subject, ".*\b(\d{6,})\b.*", "$1")
-                ;         ; MsgBox, % cpq
-                ;         break
-                }
-            }
-
-            ; ; Check if the subject matches the regular expression
-            ; if (RegExMatch(subject, regex, match))
-            ; {
-            ;     ; Extract the text directly after the match
-            ;     nextText := match1
-            ;     MsgBox, %nextText%
-            ; }
-        }
+        ; MsgBox, % potentialPo
 
         ; Check if the mail item has attachments
         if (email.Attachments.Count > 0)
         {
             saveAttachments(email, guiDropTemp)
-            ; processFiles(guiDropTemp)
+            processFiles(guiDropTemp)
         }
     }
     else
@@ -272,6 +237,56 @@ ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
         MsgBox, No email is currently selected or the selected item is not an email.
     }
 }
+
+findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
+{
+    ; MsgBox % subject . " is the subject." . "`n" . searchStrings . " is the searchStrings."
+    ; Loop through the array and check if the subject contains any of the strings
+    for index, searchString in searchStrings
+    {
+        MsgBox % subject . " is the subject - in the for loop."
+        ; Define a regular expression that matches the searchString followed by any characters
+        regex := "(?i)" searchString "(?:\s*-\s*|\s*)(\S+)" 
+
+        if (InStr(subject, searchString))
+        {
+            if (searchString = "cpq")
+            {
+                regex := "(?i)" searchString "\s*-\s*(\d{8})"
+                ; Extract the CPQ number from the subject
+                extractNumbersFromSubject(subject, regex, searchString, potentialPo)
+            }
+            else
+            {
+                MsgBox % subject . " is the subject - in the ELSE."
+                ; Extract the PO number from the subject
+                extractNumbersFromSubject(subject, regex, searchString, potentialPo)
+                break
+            }
+        }
+    }
+}
+
+extractNumbersFromSubject(ByRef subject, regex, searchString, ByRef potentialPo)
+{
+    ; MsgBox % subject . " is the subject. In the extractNumbersFromSubject function."
+    RegExMatch(subject, regex, match)
+    ; Extract the number directly after the match
+    Trim(match1)
+    if (searchString = "cpq")
+    {
+        potentialPo := match1
+        potentialQuote := potentialPo
+        return potentialQuote
+    }
+    Else
+    {
+        MsgBox % match1
+        potentialPo := match1
+        return potentialPo
+    }
+}
+
 
 saveAttachments(email, guiDropTemp)
 {
@@ -322,11 +337,14 @@ convertPdfToTextAndProcess(filePath)
     Loop, Read, %filePath%.txt
     {
         ; Append lines that contain "po" or "cpq" to output.txt
-        if (InStr(A_LoopReadLine, "po number") || InStr(A_LoopReadLine, "cpq") || InStr(A_LoopReadLine, "po #"))
-        {
-            line := A_LoopReadLine
+        ; if (InStr(A_LoopReadLine, "po number") || InStr(A_LoopReadLine, "cpq") || InStr(A_LoopReadLine, "po #"))
+        ; {
+            ; line := A_LoopReadLine
             ; MsgBox % line
-        }
+            subject := A_LoopReadLine
+
+            findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
+        ; }
     }
 }
 
@@ -423,6 +441,10 @@ ButtonDefault:
     If (FocusControl!="SysListView321")
         Return
     Gosub FileSelected
+Return
+
+ExtractAllAttachmentsFromCurrentEmail:
+    ExtractAllAttachmentsFromCurrentEmail(myOrderDocs)
 Return
 
 FileSelected:
