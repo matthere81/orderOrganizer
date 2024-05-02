@@ -90,6 +90,9 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactEmail, ByRef contact
     surcharge := StrReplace(surcharge, "$")
     totalTax := StrReplace(totalTax, "$")
     quoteTotal := StrReplace(quoteTotal, "$")
+    opportunity := StrSplit(opportunity, "-")[1]
+    Trim(opportunity)
+    MsgBox % opportunity
 
     ; -------- Customer Details Tab -------- ;
     cUIA.FindFirstByName("Customer Details").Click()
@@ -113,6 +116,7 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactEmail, ByRef contact
     if InStr(paymentTerms, "intercompany")
         paymentTerms := "CINC"
 
+    getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
 
 }
 
@@ -174,7 +178,7 @@ getWinForm(ByRef opportunity, ByRef winFormLink, ByRef endUser, ByRef endUserPho
 getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
 
 
-getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
+; getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
 
 
 runSalesforceSearch(ByRef cUIA, ByRef inSearch)

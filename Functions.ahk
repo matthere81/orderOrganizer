@@ -238,7 +238,23 @@ ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
             {
                 quoteId := cpq
                 getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
-
+                GuiControl,, cpq, %quoteID%
+                GuiControl,, customer, %customerName%
+                GuiControl,, contact, %contactName%
+                GuiControl,, email, %contactEmail%
+                GuiControl,, phone, %contactPhone%
+                GuiControl,, address, %contactAddress%
+                GuiControl,, soldTo, %soldToID%
+                GuiControl,, salesPerson, %quoteOwner%
+                GuiControl,, poValue, %totalNetAmount%
+                GuiControl,, freightCost, %totalFreight%
+                GuiControl,, surcharge, %surcharge%
+                GuiControl,, tax, %totalTax%
+                GuiControl,, totalCost, %quoteTotal%
+                GuiControl,, salesPerson, %quoteOwner%
+                GuiControl,, salesManager, %creatorManager%
+                GuiControl,, terms, %paymentTerms%
+                GuiControl,, system, %opportunity%
             }
         }
     }
