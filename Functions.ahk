@@ -232,6 +232,7 @@ ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
             processFiles(guiDropTemp, searchStrings, potentialPo)
             ; MsgBox % "PO is " . po . "`n" . "CPQ is " . cpq
             ; global cpq := cpq
+            return
             GuiControl,, po, %po%
             GuiControl,, cpq, %cpq%
             if (cpq != "")
@@ -273,7 +274,7 @@ findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
         ; MsgBox % subject . " is the subject - in the for loop."
         ; Define a regular expression that matches the searchString followed by any characters
         regex := "(?i)" searchString "(?:\s*-\s*|\s*)(\S+)" 
-
+    
         if (InStr(subject, searchString))
         {
             if (searchString = "cpq")
@@ -306,10 +307,10 @@ extractNumbersFromSubject(ByRef subject, regex, searchString, ByRef potentialPo)
         if (potentialPo = match1)
         {
             cpq := potentialQuote
-            ; MsgBox % cpq
+            MsgBox % cpq . " is the CPQ number."
             return cpq
         }
-        ; MsgBox, % potentialQuote
+        MsgBox, % potentialQuote . " is the potentialQuote."
         return potentialQuote
     }
     Else
@@ -317,11 +318,12 @@ extractNumbersFromSubject(ByRef subject, regex, searchString, ByRef potentialPo)
         if (potentialPo = match1)
         {
             po := potentialPo
-            ; MsgBox % po
+            MsgBox % po . " is the PO number."
             return po
         }
         
         potentialPo := match1
+        MsgBox % potentialPo . " is the potentialPo."
         return potentialPo
     }
 }
@@ -358,7 +360,7 @@ processFile(filePath, searchStrings, potentialPo)
         ; Delete the file
         FileDelete, %filePath%
     }
-
+    MsgBox % filePath
     ; Check if the file name contains "po" or "cpq"
     if (InStr(name, "po") || InStr(name, "cpq")) ; || InStr(name, "PO") || InStr(name, "CPQ"))
     {   
