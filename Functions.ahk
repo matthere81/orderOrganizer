@@ -223,7 +223,8 @@ ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
 
         findInfoFromSubject(subject, searchStrings, potentialPo)
 
-        ; MsgBox, % potentialPo
+        MsgBox, % "Potential PO " . potentialPo . "`n" . "Potential CPQ " . potentialQuote
+        Return
 
         ; Check if the mail item has attachments
         if (email.Attachments.Count > 0)
