@@ -219,18 +219,32 @@ ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
         subject := email.Subject
 
         ; Define an array of strings to look for in the subject
-        searchStrings := ["cpq", "purchase order number", "purchase order #", "purchase order","po number", "po#", "po #", "po"]
+        searchStrings := ["cpq", "purchase order number", "purchase order #", "purchase order","po number", "po#", "po #", "po", "p.o."]
 
         findInfoFromSubject(subject, searchStrings, potentialPo)
 
-        MsgBox, % "Potential PO " . potentialPo . "`n" . "Potential CPQ " . potentialQuote
+        MsgBox % PO  . " is the PO number." . "`n" . cpq . " is the CPQ number."
+        ; ---- At this point any PO or CPQ number found in the subject should be stored in the po or cpq variables ----
+
+        if (po != "")
+        {
+            GuiControl,, po, %po%
+        }
+        if (cpq != "")
+        {
+            GuiControl,, cpq, %cpq%
+        }
+
         Return
 
+        ; MsgBox, % "PO " . po . " from below findInfoFromSubject function."
+
         ; Check if the mail item has attachments
-        if (email.Attachments.Count > 0)
+        if (email.Attachments.Count > 0) ;&& (po = "") ;|| cpq != "")
         {
             saveAttachments(email, guiDropTemp)
-            processFiles(guiDropTemp, searchStrings, potentialPo)
+            Return
+            processFiles(guiDropTemp, searchStrings)
             ; MsgBox % "PO is " . po . "`n" . "CPQ is " . cpq
             ; global cpq := cpq
             return
@@ -284,13 +298,14 @@ findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
                 ; Extract the CPQ number from the subject
                 extractNumbersFromSubject(subject, regex, searchString, potentialPo)
             }
-            else
+            else if (searchString != "")
             {
                 ; MsgBox % subject . " is the subject - in the ELSE."
                 ; Extract the PO number from the subject
                 extractNumbersFromSubject(subject, regex, searchString, potentialPo)
-                break
+                
             }
+            ; break
         }
     }
 }
@@ -304,32 +319,40 @@ extractNumbersFromSubject(ByRef subject, regex, searchString, ByRef potentialPo)
     if (searchString = "cpq")
     {
         potentialPo := match1
-        potentialQuote := potentialPo
-        if (potentialPo = match1)
-        {
-            cpq := potentialQuote
-            MsgBox % cpq . " is the CPQ number."
-            return cpq
-        }
-        MsgBox, % potentialQuote . " is the potentialQuote."
-        return potentialQuote
+        cpq := potentialPo
+        ; if (potentialPo = match1)
+        ; {
+        ;     cpq := potentialQuote
+        ;     MsgBox % cpq . " is the CPQ number."
+        ;     return cpq
+        ; }
+        ; MsgBox, % cpq . " is the potentialQuote."
+        return cpq
     }
     Else
     {
-        if (potentialPo = match1)
+        ; MsgBox, % match1 . " is the match1."
+        ; if (potentialPo = match1)
+        ; {
+        ;     po := potentialPo
+        ;     MsgBox % po . " is the PO number."
+        ;     return po
+        ; }
+
+        ; If match1 is three letters, set it to an empty string
+        if (match1 = "for")
         {
-            po := potentialPo
-            MsgBox % po . " is the PO number."
-            return po
+            match1 := ""
         }
         
-        potentialPo := match1
-        MsgBox % potentialPo . " is the potentialPo."
-        return potentialPo
+        po := match1
+        ; MsgBox % po . " is the potentialPo."
+        return po
     }
 }
 
 
+; Save the attachments to the temp path
 saveAttachments(email, guiDropTemp)
 {
     ; Loop through the attachments
@@ -341,16 +364,16 @@ saveAttachments(email, guiDropTemp)
     }
 }
 
-processFiles(guiDropTemp, searchStrings, potentialPo)
+processFiles(guiDropTemp, searchStrings)
 {
     ; Loop through the files in the attachment path
     Loop, Files, %guiDropTemp%\*.*
     {
-        processFile(A_LoopFileLongPath, searchStrings, potentialPo)
+        processFile(A_LoopFileLongPath, searchStrings)
     }
 }
 
-processFile(filePath, searchStrings, potentialPo)
+processFile(filePath, searchStrings)
 {
     ; Get the base name and extension of the file
     SplitPath, filePath, name, dir, ext, name_no_ext, drive
@@ -361,15 +384,15 @@ processFile(filePath, searchStrings, potentialPo)
         ; Delete the file
         FileDelete, %filePath%
     }
-    MsgBox % filePath
+    MsgBox, % name
     ; Check if the file name contains "po" or "cpq"
     if (InStr(name, "po") || InStr(name, "cpq")) ; || InStr(name, "PO") || InStr(name, "CPQ"))
     {   
-        convertPdfToTextAndProcess(filePath, searchStrings, potentialPo)
+        convertPdfToTextAndProcess(filePath, searchStrings)
     }
 }
 
-convertPdfToTextAndProcess(filePath, searchStrings, potentialPo)
+convertPdfToTextAndProcess(filePath, searchStrings)
 {
     pdftotextPath:= % A_WorkingDir . "\pdftotext.exe"
 
@@ -384,8 +407,8 @@ convertPdfToTextAndProcess(filePath, searchStrings, potentialPo)
             ; line := A_LoopReadLine
             ; MsgBox % line
             subject := A_LoopReadLine
-
-            findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
+            ; MsgBox, % subject
+            ; findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
         ; }
     }
 }
