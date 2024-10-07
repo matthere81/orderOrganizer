@@ -99,8 +99,8 @@ Gui Add, Button, Default gSearch y20, Search ; Add a button that triggers the 'S
 Gui Add, Button, y20 gRestart, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
 Gui Add, Button, y20 gSaveToIni, &Save
 Gui Add, Button, y20 gClearFields, &New PO/Order
-Gui Add, Button, y20 gExtractAllAttachmentsFromCurrentEmail, &Info
-Gui Add, Button, y20, Get Quote Info  ; Create a button
+; Gui Add, Button, y20 gExtractAllAttachmentsFromCurrentEmail, &Info
+Gui Add, Button, y20 gQuoteInfo, Get Quote Info  ; Create a button
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
 Gui Add, StatusBar, vMyStatusBar -Theme ;, Type In CPQ/Quote# AND PO# To Begin Autosaving

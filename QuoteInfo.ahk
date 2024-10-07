@@ -92,7 +92,7 @@ getQuoteInfo(ByRef quoteID, ByRef contactName, ByRef contactEmail, ByRef contact
     quoteTotal := StrReplace(quoteTotal, "$")
     opportunity := StrSplit(opportunity, "-")[1]
     Trim(opportunity)
-    MsgBox % opportunity
+    ; MsgBox % opportunity
 
     ; -------- Customer Details Tab -------- ;
     cUIA.FindFirstByName("Customer Details").Click()

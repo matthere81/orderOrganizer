@@ -157,7 +157,7 @@ compareFilenames(IniFilePath, myinipath)
 
 checkIfOrderFolderExists(myOrderDocs, po, cpq, customer)
 {
-    MsgBox, % po . " is PO`n" . cpq  . " is CPQ`n" . customer . " is customer`n" . myOrderDocs . " is myOrderDocs`n" . droppedFile
+    ; MsgBox, % po . " is PO`n" . cpq  . " is CPQ`n" . customer . " is customer`n" . myOrderDocs . " is myOrderDocs`n" . droppedFile
     if (po = "" or cpq = "")
     {
         MsgBox, Please add PO & CPQ/Quote#.
@@ -175,243 +175,238 @@ checkIfOrderFolderExists(myOrderDocs, po, cpq, customer)
     Return folderPath
 }
 
-GuiDropFiles(GuiHwnd, FileArray, CtrlHwnd, X, Y) ;, po, cpq, customer, myOrderDocs)
-{
-    guiDropTemp := "C:\Users\" . A_UserName . "\Order Organizer\Temp"
-    if !FileExist(guiDropTemp) {
-        FileCreateDir, %guiDropTemp%
-    }
+; GuiDropFiles(GuiHwnd, FileArray, CtrlHwnd, X, Y) ;, po, cpq, customer, myOrderDocs)
+; {
+;     guiDropTemp := "C:\Users\" . A_UserName . "\Order Organizer\Temp"
+;     if !FileExist(guiDropTemp) {
+;         FileCreateDir, %guiDropTemp%
+;     }
 
-    for i, file in FileArray
-        FileCopy, %file%, %guiDropTemp%
-    return
-}
+;     for i, file in FileArray
+;         FileCopy, %file%, %guiDropTemp%
+;     return
+; }
 
-ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
-{
-    guiDropTemp := "C:\Users\" . A_UserName . "\Order Organizer\Temp"
-    if !FileExist(guiDropTemp) {
-        FileCreateDir, %guiDropTemp%
-    }
+; ExtractAllAttachmentsFromCurrentEmail(PathToSaveTo)
+; {
+;     guiDropTemp := "C:\Users\" . A_UserName . "\Order Organizer\Temp"
+;     if !FileExist(guiDropTemp) {
+;         FileCreateDir, %guiDropTemp%
+;     }
 
-    try
-    {
-        ; Try to get a COM object for the running instance of Outlook
-        outlook := ComObjActive("Outlook.Application")
-        ; MsgBox, Outlook is open.
-    }
-    catch
-    {
-        ; If an exception is thrown, Outlook is not open
-        MsgBox, Please open Outlook and try again.
-        return
-    }
+;     try
+;     {
+;         ; Try to get a COM object for the running instance of Outlook
+;         outlook := ComObjActive("Outlook.Application")
+;         ; MsgBox, Outlook is open.
+;     }
+;     catch
+;     {
+;         ; If an exception is thrown, Outlook is not open
+;         MsgBox, Please open Outlook and try again.
+;         return
+;     }
 
-    ; Create a COM object for the running instance of Outlook
-    outlook := ComObjActive("Outlook.Application")
-    ; Get the currently selected item
-    email := outlook.ActiveExplorer.Selection.Item(1)
+;     ; Create a COM object for the running instance of Outlook
+;     outlook := ComObjActive("Outlook.Application")
+;     ; Get the currently selected item
+;     email := outlook.ActiveExplorer.Selection.Item(1)
 
-    ; Check if the item is a mail item
-    if (email.Class == 43) ; 43 is the class type for a mail item
-    {
-        ; Get the subject of the email
-        subject := email.Subject
+;     ; Check if the item is a mail item
+;     if (email.Class == 43) ; 43 is the class type for a mail item
+;     {
+;         ; Get the subject of the email
+;         subject := email.Subject
 
-        ; Define an array of strings to look for in the subject
-        searchStrings := ["cpq", "purchase order number", "purchase order #", "purchase order","po number", "po#", "po #", "po", "p.o."]
+;         ; Define an array of strings to look for in the subject
+;         searchStrings := ["cpq", "purchase order number", "purchase order #", "purchase order","po number", "po#", "po #", "po", "p.o."]
 
-        findInfoFromSubject(subject, searchStrings, potentialPo)
+;         findInfoFromSubject(subject, searchStrings, potentialPo)
 
-        MsgBox % PO  . " is the PO number." . "`n" . cpq . " is the CPQ number."
-        ; ---- At this point any PO or CPQ number found in the subject should be stored in the po or cpq variables ----
+;         MsgBox % PO  . " is the PO number." . "`n" . cpq . " is the CPQ number."
+;         ; ---- At this point any PO or CPQ number found in the subject should be stored in the po or cpq variables ----
 
-        if (po != "")
-        {
-            GuiControl,, po, %po%
-        }
-        if (cpq != "")
-        {
-            GuiControl,, cpq, %cpq%
-        }
+;         if (po != "")
+;         {
+;             GuiControl,, po, %po%
+;         }
+;         if (cpq != "")
+;         {
+;             GuiControl,, cpq, %cpq%
+;         }
 
-        Return
+;         Return
 
-        ; MsgBox, % "PO " . po . " from below findInfoFromSubject function."
+;         ; MsgBox, % "PO " . po . " from below findInfoFromSubject function."
 
-        ; Check if the mail item has attachments
-        if (email.Attachments.Count > 0) ;&& (po = "") ;|| cpq != "")
-        {
-            saveAttachments(email, guiDropTemp)
-            Return
-            processFiles(guiDropTemp, searchStrings)
-            ; MsgBox % "PO is " . po . "`n" . "CPQ is " . cpq
-            ; global cpq := cpq
-            return
-            GuiControl,, po, %po%
-            GuiControl,, cpq, %cpq%
-            if (cpq != "")
-            {
-                quoteId := cpq
-                getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
-                GuiControl,, cpq, %quoteID%
-                GuiControl,, customer, %customerName%
-                GuiControl,, contact, %contactName%
-                GuiControl,, email, %contactEmail%
-                GuiControl,, phone, %contactPhone%
-                GuiControl,, address, %contactAddress%
-                GuiControl,, soldTo, %soldToID%
-                GuiControl,, salesPerson, %quoteOwner%
-                GuiControl,, poValue, %totalNetAmount%
-                GuiControl,, freightCost, %totalFreight%
-                GuiControl,, surcharge, %surcharge%
-                GuiControl,, tax, %totalTax%
-                GuiControl,, totalCost, %quoteTotal%
-                GuiControl,, salesPerson, %quoteOwner%
-                GuiControl,, salesManager, %creatorManager%
-                GuiControl,, terms, %paymentTerms%
-                GuiControl,, system, %opportunity%
-            }
-        }
-    }
-    else
-    {
-        MsgBox, No email is currently selected or the selected item is not an email.
-    }
-}
+;         ; Check if the mail item has attachments
+;         if (email.Attachments.Count > 0) ;&& (po = "") ;|| cpq != "")
+;         {
+;             saveAttachments(email, guiDropTemp)
+;             Return
+;             processFiles(guiDropTemp, searchStrings)
+;             ; MsgBox % "PO is " . po . "`n" . "CPQ is " . cpq
+;             ; global cpq := cpq
+;             return
+;             GuiControl,, po, %po%
+;             GuiControl,, cpq, %cpq%
+;             if (cpq != "")
+;             {
+;                 quoteId := cpq
+;                 getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
+;                 GuiControl,, cpq, %quoteID%
+;                 GuiControl,, customer, %customerName%
+;                 GuiControl,, contact, %contactName%
+;                 GuiControl,, email, %contactEmail%
+;                 GuiControl,, phone, %contactPhone%
+;                 GuiControl,, address, %contactAddress%
+;                 GuiControl,, soldTo, %soldToID%
+;                 GuiControl,, salesPerson, %quoteOwner%
+;                 GuiControl,, poValue, %totalNetAmount%
+;                 GuiControl,, freightCost, %totalFreight%
+;                 GuiControl,, surcharge, %surcharge%
+;                 GuiControl,, tax, %totalTax%
+;                 GuiControl,, totalCost, %quoteTotal%
+;                 GuiControl,, salesPerson, %quoteOwner%
+;                 GuiControl,, salesManager, %creatorManager%
+;                 GuiControl,, terms, %paymentTerms%
+;                 GuiControl,, system, %opportunity%
+;             }
+;         }
+;     }
+;     else
+;     {
+;         MsgBox, No email is currently selected or the selected item is not an email.
+;     }
+; }
 
-findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
-{
-    ; MsgBox % subject . " is the subject." . "`n" . searchStrings . " is the searchStrings."
-    ; Loop through the array and check if the subject contains any of the strings
-    for index, searchString in searchStrings
-    {
-        ; MsgBox % subject . " is the subject - in the for loop."
-        ; Define a regular expression that matches the searchString followed by any characters
-        regex := "(?i)" searchString "(?:\s*-\s*|\s*)(\S+)" 
+; findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
+; {
+;     ; MsgBox % subject . " is the subject." . "`n" . searchStrings . " is the searchStrings."
+;     ; Loop through the array and check if the subject contains any of the strings
+;     for index, searchString in searchStrings
+;     {
+;         ; MsgBox % subject . " is the subject - in the for loop."
+;         ; Define a regular expression that matches the searchString followed by any characters
+;         regex := "(?i)" searchString "(?:\s*-\s*|\s*)(\S+)" 
     
-        if (InStr(subject, searchString))
-        {
-            if (searchString = "cpq")
-            {
-                regex := "(?i)" searchString "\s*-\s*(\d{8})"
-                ; Extract the CPQ number from the subject
-                extractNumbersFromSubject(subject, regex, searchString, potentialPo)
-            }
-            else if (searchString != "")
-            {
-                ; MsgBox % subject . " is the subject - in the ELSE."
-                ; Extract the PO number from the subject
-                extractNumbersFromSubject(subject, regex, searchString, potentialPo)
+;         if (InStr(subject, searchString))
+;         {
+;             if (searchString = "cpq")
+;             {
+;                 regex := "(?i)" searchString "\s*-\s*(\d{8})"
+;                 ; Extract the CPQ number from the subject
+;                 extractNumbersFromSubject(subject, regex, searchString, potentialPo)
+;             }
+;             else ;if (searchString != "")
+;             {
+;                 ; MsgBox % subject . " is the subject - in the ELSE."
+;                 ; Extract the PO number from the subject
+;                 extractNumbersFromSubject(subject, regex, searchString, potentialPo)
                 
-            }
-            ; break
-        }
-    }
-}
+;             }
+;             ; break
+;         }
+;     }
+; }
 
-extractNumbersFromSubject(ByRef subject, regex, searchString, ByRef potentialPo)
-{
-    ; MsgBox % subject . " is the subject. In the extractNumbersFromSubject function."
-    RegExMatch(subject, regex, match)
-    ; Extract the number directly after the match
-    Trim(match1)
-    if (searchString = "cpq")
-    {
-        potentialPo := match1
-        cpq := potentialPo
-        ; if (potentialPo = match1)
-        ; {
-        ;     cpq := potentialQuote
-        ;     MsgBox % cpq . " is the CPQ number."
-        ;     return cpq
-        ; }
-        ; MsgBox, % cpq . " is the potentialQuote."
-        return cpq
-    }
-    Else
-    {
-        ; MsgBox, % match1 . " is the match1."
-        ; if (potentialPo = match1)
-        ; {
-        ;     po := potentialPo
-        ;     MsgBox % po . " is the PO number."
-        ;     return po
-        ; }
+; extractNumbersFromSubject(ByRef subject, regex, searchString, ByRef potentialPo)
+; {
+;     ; MsgBox % searchString . " is the searchString.
+;     RegExMatch(subject, regex, match)
+    
+;     ; Extract the number directly after the match
+;     Trim(match1)
 
-        ; If match1 is three letters, set it to an empty string
-        if (match1 = "for")
-        {
-            match1 := ""
-        }
-        
-        po := match1
-        ; MsgBox % po . " is the potentialPo."
-        return po
-    }
-}
+;     if (searchString = "cpq")
+;     {
+;         potentialPo := match1
+;         cpq := potentialPo
+;         return cpq
+;     }
+;     Else
+;     {
+    
+;         regex := "(?i).*?" searchString
+;         subject := RegExReplace(subject, regex, searchString)
 
+;         MsgBox, % match1 . " is the match1.`n" . searchString . " is the searchString.`n" . subject . " is the subject."
+
+;          ; Call the function again with the modified subject
+;          return extractNumbersFromSubject(subject, regex, searchString, potentialPo)
+
+;     ; If match1 is three letters, set it to an empty string
+;     ; if (match1 = "for") or (match1 = "#") or (match1 = "po")
+;     ; {
+;     ;     match1 := ""
+;     }
+    
+;     po := match1
+;     MsgBox % po . " is the potentialPo."
+;     return po
+;     ; }
+; }
 
 ; Save the attachments to the temp path
-saveAttachments(email, guiDropTemp)
-{
-    ; Loop through the attachments
-    for thisattachment in email.Attachments
-    {
-        ; Save the attachment to the specified path
-        attachmentPath := guiDropTemp . "\" . thisattachment.DisplayName
-        thisattachment.SaveAsFile(attachmentPath)
-    }
-}
+; saveAttachments(email, guiDropTemp)
+; {
+;     ; Loop through the attachments
+;     for thisattachment in email.Attachments
+;     {
+;         ; Save the attachment to the specified path
+;         attachmentPath := guiDropTemp . "\" . thisattachment.DisplayName
+;         thisattachment.SaveAsFile(attachmentPath)
+;     }
+; }
 
-processFiles(guiDropTemp, searchStrings)
-{
-    ; Loop through the files in the attachment path
-    Loop, Files, %guiDropTemp%\*.*
-    {
-        processFile(A_LoopFileLongPath, searchStrings)
-    }
-}
+; processFiles(guiDropTemp, searchStrings)
+; {
+;     ; Loop through the files in the attachment path
+;     Loop, Files, %guiDropTemp%\*.*
+;     {
+;         processFile(A_LoopFileLongPath, searchStrings)
+;     }
+; }
 
-processFile(filePath, searchStrings)
-{
-    ; Get the base name and extension of the file
-    SplitPath, filePath, name, dir, ext, name_no_ext, drive
+; processFile(filePath, searchStrings)
+; {
+;     ; Get the base name and extension of the file
+;     SplitPath, filePath, name, dir, ext, name_no_ext, drive
 
-    ; Check if the file extension is "png" or "jpg"
-    if (ext = "png" || ext = "jpg" || ext = "gif")
-    {
-        ; Delete the file
-        FileDelete, %filePath%
-    }
-    MsgBox, % name
-    ; Check if the file name contains "po" or "cpq"
-    if (InStr(name, "po") || InStr(name, "cpq")) ; || InStr(name, "PO") || InStr(name, "CPQ"))
-    {   
-        convertPdfToTextAndProcess(filePath, searchStrings)
-    }
-}
+;     ; Check if the file extension is "png" or "jpg"
+;     if (ext = "png" || ext = "jpg" || ext = "gif")
+;     {
+;         ; Delete the file
+;         FileDelete, %filePath%
+;     }
+;     MsgBox, % name
+;     ; Check if the file name contains "po" or "cpq"
+;     if (InStr(name, "po") || InStr(name, "cpq")) ; || InStr(name, "PO") || InStr(name, "CPQ"))
+;     {   
+;         convertPdfToTextAndProcess(filePath, searchStrings)
+;     }
+; }
 
-convertPdfToTextAndProcess(filePath, searchStrings)
-{
-    pdftotextPath:= % A_WorkingDir . "\pdftotext.exe"
+; convertPdfToTextAndProcess(filePath, searchStrings)
+; {
+;     pdftotextPath:= % A_WorkingDir . "\pdftotext.exe"
 
-    ; Convert the PDF to a text file using pdftotext
-    RunWait, %pdftotextPath% -layout "%filePath%" "%filePath%.txt"
+;     ; Convert the PDF to a text file using pdftotext
+;     RunWait, %pdftotextPath% -layout "%filePath%" "%filePath%.txt"
     
-    Loop, Read, %filePath%.txt
-    {
-        ; Append lines that contain "po" or "cpq" to output.txt
-        ; if (InStr(A_LoopReadLine, "po number") || InStr(A_LoopReadLine, "cpq") || InStr(A_LoopReadLine, "po #"))
-        ; {
-            ; line := A_LoopReadLine
-            ; MsgBox % line
-            subject := A_LoopReadLine
-            ; MsgBox, % subject
-            ; findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
-        ; }
-    }
-}
+;     Loop, Read, %filePath%.txt
+;     {
+;         ; Append lines that contain "po" or "cpq" to output.txt
+;         ; if (InStr(A_LoopReadLine, "po number") || InStr(A_LoopReadLine, "cpq") || InStr(A_LoopReadLine, "po #"))
+;         ; {
+;             ; line := A_LoopReadLine
+;             ; MsgBox % line
+;             subject := A_LoopReadLine
+;             ; MsgBox, % subject
+;             ; findInfoFromSubject(ByRef subject, searchStrings, ByRef potentialPo)
+;         ; }
+;     }
+; }
 
 OpenFileFromMenu:
     FileSelectFile, SelectedFile,r,%myinipath%, Open a file
@@ -483,7 +478,13 @@ ClearFields:
     for index, field in vars
     {
         GuiControl,, %field%, 
+        %field% := "" ; Set the original variable to an empty string
     }
+
+    for var in vars
+    {
+        var := ""
+    }        
 
     ; Clear the checkboxes
     for outerIndex, checklists in allChecklists
@@ -493,12 +494,14 @@ ClearFields:
             for innerIndex, checklist in checklistArray
             {
                 GuiControl,, %checklist%, 0 ; Uncheck the checkbox
+                checklist := 0 ; Set the original variable to an empty string
             }
         }
     }
 
     GuiControl,, SearchTerm,
     GuiControl,, % endUse
+    
 return
 
 ButtonDefault:
@@ -508,9 +511,9 @@ ButtonDefault:
     Gosub FileSelected
 Return
 
-ExtractAllAttachmentsFromCurrentEmail:
-    ExtractAllAttachmentsFromCurrentEmail(myOrderDocs)
-Return
+; ExtractAllAttachmentsFromCurrentEmail:
+;     ExtractAllAttachmentsFromCurrentEmail(myOrderDocs)
+; Return
 
 FileSelected:
     SelectedRow := LV_GetNext() ; Get the selected row number
@@ -625,3 +628,44 @@ backupDatabase(myinipath)
     }
     FileCopy, %sourceDir%, %backupDir%, 1
 }
+
+;|------------------------------------------|
+;|                                          |
+;|          Get Quote Info                  |
+;|                                          |
+;|------------------------------------------|
+
+#Include QuoteInfo.ahk
+QuoteInfo:  ; Label for the button
+	Gosub goGetQuoteInfo
+	; Gosub goGetWinForm
+return
+
+goGetQuoteInfo:
+	getQuoteInfo(quoteID, contactName, contactEmail, contactPhone, customerName, quoteOwner, creatorManager, totalNetAmount, totalFreight, surcharge, totalTax, quoteTotal, soldToID, paymentTerms, opportunity)
+	GuiControl,, cpq, %quoteID%
+	GuiControl,, customer, %customerName%
+	GuiControl,, contact, %contactName%
+	GuiControl,, email, %contactEmail%
+	GuiControl,, phone, %contactPhone%
+	; GuiControl,, address, %contactAddress%
+	GuiControl,, soldTo, %soldToID%
+	GuiControl,, salesPerson, %quoteOwner%
+	GuiControl,, poValue, %totalNetAmount%
+	GuiControl,, freightCost, %totalFreight%
+	GuiControl,, surcharge, %surcharge%
+	GuiControl,, tax, %totalTax%
+	GuiControl,, totalCost, %quoteTotal%
+	GuiControl,, salesPerson, %quoteOwner%
+	GuiControl,, salesManager, %creatorManager%
+	GuiControl,, terms, %paymentTerms%
+	GuiControl,, system, %opportunity%
+Return
+
+goGetWinForm:
+	getWinForm(opportunity, winFormLink, endUser, endUserPhoneNumber, endUserEmail, endUse)
+	GuiControl,, endUser, %endUser%
+	GuiControl,, phone, %endUserPhoneNumber%
+	GuiControl,, email, %endUserEmail%
+	GuiControl,, endUse, %endUse%
+Return
