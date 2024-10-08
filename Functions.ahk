@@ -441,7 +441,7 @@ return
 ArchiveFiles:
     ; Get the current time
     CurrentTime := A_Now
-
+    
     ; Loop over all files in the myinipath directory
     Loop, Files, %myinipath%\*
     {
@@ -452,7 +452,7 @@ ArchiveFiles:
         YearsOld := (CurrentTime - CreationTime) // 31536000
 
         ; If the file is more than three years old
-        if (YearsOld >= 3)
+        if (YearsOld >= 2)
         {
             ; Get the year the file was created
             YearCreated := SubStr(CreationTime, 1, 4)

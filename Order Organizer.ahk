@@ -28,10 +28,9 @@ global guiHeight := 510
 global guiChecklistHeight := 765
 global essentialFields := (po != "") && (cpq != "") && (customer != "")
 global folderPath
-global po
-global cpq
-global customer
 global droppedFile
+; Declare variables as global
+global soNumber, cpq, po, customer, poValue, soldTo, salesPerson, salesManager, managerCode, salesDirector, directorCode, contact, serialNumber, crd, freightCost, totalCost, endUser, phone, email, endUseDeescaped
 
 ; Create Order Database Path If It Doesn't Exist
 myinipath := % A_WorkingDir . "\Order Database"
@@ -91,16 +90,17 @@ Gui destroy
 Gui +Resize +MinSize%guiWidth%x%guiHeight% +MaxSize%guiWidth%x%guiChecklistHeight% +HwndhGui
 Gui Font
 Gui Font, s12 w600 Italic cBlack, Tahoma
-Gui Add, Text, x10 y30, _________________________________
+Gui Add, Text, x10 y30, _____________________________________
 Gui Add, Text, hWndhTxtOrderOrganizer23 x15 y20 w300 +Left, Order Organizer ; - SO# %soNumber%
 Gui Font
-Gui Add, Edit, vSearchTerm w200 y20 gSetSearchAsDefault ; Add an Edit field with 'Search for' as placeholder text
+Gui Add, Edit, vSearchTerm x170 w200 y20 gSetSearchAsDefault ; Add an Edit field with 'Search for' as placeholder text
 Gui Add, Button, Default gSearch y20, Search ; Add a button that triggers the 'Search' subroutine when clicked
-Gui Add, Button, y20 gRestart, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
 Gui Add, Button, y20 gSaveToIni, &Save
 Gui Add, Button, y20 gClearFields, &New PO/Order
 ; Gui Add, Button, y20 gExtractAllAttachmentsFromCurrentEmail, &Info
 Gui Add, Button, y20 gQuoteInfo, Get Quote Info  ; Create a button
+Gui Add, Button, y20 gShowHotstrings, Show Shortcuts  ; Show Hotstring Shortcuts
+Gui Add, Button, y20 gRestart, Restart ; Add a button that triggers the 'Restart' subroutine when clicked
 Gui Color, 79b8d1
 Gui Font, S9, Segoe UI Semibold
 Gui Add, StatusBar, vMyStatusBar -Theme ;, Type In CPQ/Quote# AND PO# To Begin Autosaving
@@ -158,10 +158,20 @@ Gui Add, Text, x0 y475, ________________________________________________________
 Gui Show, w%guiWidth% h%guiHeight%, Order Organizer
 #Include %A_ScriptDir%\Menu.ahk
 ; ExtractAllAttachmentsFromCurrentEmail(myOrderDocs)
+
+#Include %A_ScriptDir%\Hotkeys.ahk
+#z::Menu, HotstringsContext, Show  ; i.e. press the Win-Z hotkey to show the menu.
+ShowHotstrings:
+	Menu, HotstringsContext, Show
 Return
 
 #Include %A_ScriptDir%\QuoteInfo.ahk
-#include %A_ScriptDir%\Hotkeys.ahk
 #Include %A_ScriptDir%\Functions.ahk
 #Include %A_ScriptDir%\Search.ahk
 
+; Esc to close the search GUI
+SetTitleMatchMode 3
+#IfWinActive, Order Organizer Search Results
+Esc::Gui %MyGui%:Destroy
+#IfWinActive
+SetTitleMatchMode 2
